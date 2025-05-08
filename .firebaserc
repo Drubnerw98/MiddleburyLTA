@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "middlebury-low-tax",
+    "middlebury": "middlebury-low-tax"
+  },
+  "targets": {},
+  "etags": {}
+}
