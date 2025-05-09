@@ -1,3 +1,4 @@
+// src/app/post/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,13 +11,18 @@ import {
   query,
   orderBy,
   getDocs,
-  serverTimestamp,
   deleteDoc,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db, auth } from "../../../../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import ReactMarkdown from "react-markdown";
+
+import PostDisplay from "@/app/components/Posts/PostDisplay";
+import PostEdit from "@/app/components/Posts/PostEdit";
+import PostAction from "@/app/components/Posts/PostAction";
+import { CommentForm } from "@/app/components/Comments/CommentForm";
+import CommentList from "@/app/components/Comments/CommentList";
 
 interface Comment {
   id: string;
@@ -30,24 +36,19 @@ export default function PostDetail() {
   const postId = params.id as string;
 
   const [post, setPost] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [user] = useAuthState(auth);
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
+  const isAdmin = user?.email === "drubnation@gmail.com"; // Simplified admin check
 
   useEffect(() => {
     async function fetchPost() {
       const docRef = doc(db, "posts", postId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const postData = docSnap.data();
-        setPost(postData);
-        setEditTitle(postData.title);
-        setEditContent(postData.content);
+        setPost(docSnap.data());
       }
     }
 
@@ -64,17 +65,9 @@ export default function PostDetail() {
       setComments(loadedComments);
     }
 
-    async function checkAdminStatus() {
-      if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        setIsAdmin(userDoc.exists() && userDoc.data()?.isAdmin === true);
-      }
-    }
-
     fetchPost();
     fetchComments();
-    checkAdminStatus();
-  }, [postId, user]);
+  }, [postId]);
 
   async function handleAddComment() {
     if (!commentText || !user) return;
@@ -100,121 +93,55 @@ export default function PostDetail() {
     setComments(updatedComments);
   }
 
-  async function handleDeletePost() {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-
-    try {
-      await deleteDoc(doc(db, "posts", postId));
-      window.location.href = "/home";
-    } catch (err) {
-      console.error("Error deleting post:", err);
-      alert("Failed to delete the post.");
-    }
+  async function handleDeleteComment(commentId: string) {
+    await deleteDoc(doc(db, "posts", postId, "comments", commentId));
+    setComments(comments.filter((c) => c.id !== commentId));
   }
 
-  async function handleEditSubmit() {
-    try {
-      await updateDoc(doc(db, "posts", postId), {
-        title: editTitle,
-        content: editContent,
-      });
-      setPost({ ...post, title: editTitle, content: editContent });
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Error updating post:", err);
-      alert("Failed to update the post.");
-    }
+  async function handleDeletePost() {
+    if (!isAdmin) return;
+    await deleteDoc(doc(db, "posts", postId));
+    window.location.href = "/";
+  }
+
+  async function handleUpdatePost(updatedPost: any) {
+    await updateDoc(doc(db, "posts", postId), updatedPost);
+    setPost(updatedPost);
+    setEditing(false);
   }
 
   if (!post) return <p>Loading...</p>;
 
   return (
     <div style={{ padding: "1rem" }}>
-      {isEditing ? (
-        <>
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            style={{ width: "100%", marginBottom: "0.5rem" }}
-          />
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            rows={6}
-            style={{ width: "100%", marginBottom: "0.5rem" }}
-          />
-          <button onClick={handleEditSubmit}>Save Changes</button>
-          <button
-            onClick={() => setIsEditing(false)}
-            style={{ marginLeft: "0.5rem" }}
-          >
-            Cancel
-          </button>
-        </>
+      {editing ? (
+        <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
       ) : (
-        <>
-          <h2>{post.title}</h2>
-          <div className="markdown-content">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
-          </div>
-        </>
-      )}
-
-      {post.imageUrl && (
-        <img
-          src={post.imageUrl}
-          alt={post.title}
-          style={{ maxWidth: "100%", margin: "1rem 0", borderRadius: "8px" }}
+        <PostDisplay
+          title={post.title}
+          content={post.content}
+          imageUrl={post.imageUrl}
         />
       )}
 
-      {isAdmin && !isEditing && (
-        <div style={{ marginTop: "1rem" }}>
-          <button
-            onClick={() => setIsEditing(true)}
-            style={{ marginRight: "0.5rem" }}
-          >
-            Edit Post
-          </button>
-          <button
-            onClick={handleDeletePost}
-            style={{
-              backgroundColor: "#8b0000",
-              color: "white",
-              padding: "0.5rem",
-              borderRadius: "4px",
-            }}
-          >
-            Delete Post
-          </button>
-        </div>
-      )}
+      <PostAction
+        isEditing={editing}
+        onEdit={() => setEditing(true)}
+        onDelete={handleDeletePost}
+      />
 
       <h3>Comments</h3>
-      {user ? (
-        <>
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            rows={3}
-            placeholder="Write a comment..."
-            style={{ width: "100%", marginBottom: "0.5rem" }}
-          />
-          <button onClick={handleAddComment}>Post Comment</button>
-        </>
-      ) : (
-        <p>Please sign in to comment.</p>
-      )}
-
-      <div style={{ marginTop: "1rem" }}>
-        {comments.map((comment) => (
-          <div key={comment.id} style={{ marginBottom: "1rem" }}>
-            <p>{comment.content}</p>
-            <small>by {comment.author}</small>
-          </div>
-        ))}
-      </div>
+      <CommentForm
+        commentText={commentText}
+        SetCommentText={setCommentText}
+        onSubmit={handleAddComment}
+        isAuthenticated={!!user}
+      />
+      <CommentList
+        comments={comments}
+        isAdmin={isAdmin}
+        onDeleteComment={handleDeleteComment}
+      />
     </div>
   );
 }
