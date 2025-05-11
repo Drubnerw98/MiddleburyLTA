@@ -20,7 +20,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import PostDisplay from "@/app/components/Posts/PostDisplay";
 import PostEdit from "@/app/components/Posts/PostEdit";
-import PostAction from "@/app/components/Posts/PostAction";
+import {
+  createPostAction,
+  editPostAction,
+  deletePostAction,
+} from "@/app/components/Posts/PostControls";
+
 import { CommentForm } from "@/app/components/Comments/CommentForm";
 import CommentList from "@/app/components/Comments/CommentList";
 
@@ -48,7 +53,7 @@ export default function PostDetail() {
       const docRef = doc(db, "posts", postId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setPost(docSnap.data());
+        setPost({ id: docSnap.id, ...docSnap.data() });
       }
     }
 
@@ -123,12 +128,6 @@ export default function PostDetail() {
           imageUrl={post.imageUrl}
         />
       )}
-
-      <PostAction
-        isEditing={editing}
-        onEdit={() => setEditing(true)}
-        onDelete={handleDeletePost}
-      />
 
       <h3>Comments</h3>
       <CommentForm

@@ -1,9 +1,8 @@
-// src/app/components/NavBar.tsx
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuthState } from "react-firebase-hooks/auth";
-
 import { useRouter } from "next/navigation";
 import { auth } from "../../../../lib/firebase";
 
@@ -18,14 +17,23 @@ export default function NavBar() {
 
   return (
     <nav className="w-full bg-black text-white px-6 py-3 flex justify-between items-center border-b border-gray-800">
-      <div className="flex items-center space-x-6">
-        <Link href="/" className="font-bold text-lg hover:underline">
-          Middlebury Info Hub
+      <div className="flex items-center space-x-4">
+        <Link href="/" className="flex items-center space-x-2">
+          <Image
+            src="/logo.png"
+            alt="Middlebury Info Hub logo"
+            width={32}
+            height={32}
+            className="rounded-sm"
+          />
+          <span className="font-bold text-lg hover:underline">
+            Middlebury Info Hub
+          </span>
         </Link>
+
         <Link href="/about" className="hover:underline">
           About
         </Link>
-        {/* Add more links as needed */}
         {user && (
           <Link href="/admin" className="hover:underline">
             Admin

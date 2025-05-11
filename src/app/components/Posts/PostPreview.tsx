@@ -32,9 +32,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
           {post.title}
         </h2>
       </Link>
-      <p className="text-sm text-gray-500 mb-2">
-        by {post.author} • {date}
-      </p>
+      <p className="text-sm text-gray-500 mb-2">{date}</p>
       <p className="text-gray-800 mb-2">{excerpt}</p>
       <Link
         href={`/post/${post.id}`}

@@ -27,9 +27,18 @@ export default function LoginButton() {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCred.user.getIdToken();
+
+      await fetch("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+
       setEmail("");
       setPassword("");
+      setError(null);
     } catch (error: any) {
       setError("Login Failed");
     }
