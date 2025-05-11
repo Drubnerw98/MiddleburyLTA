@@ -20,6 +20,7 @@ export default function AdminPostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -39,30 +40,18 @@ export default function AdminPostForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setStatus(editingId ? "Updating..." : "Submitting...");
 
     const formData = new FormData();
     if (image) formData.append("image", image);
     formData.append("title", title);
     formData.append("content", content);
-
-    setStatus(editingId ? "Updating..." : "Submitting...");
+    if (editingId) formData.append("id", editingId);
 
     startTransition(() => {
-      const action = () => {
-        const formData = new FormData();
-        if (image) formData.append("image", image);
-        formData.append("title", title);
-        formData.append("content", content);
+      const action = editingId ? editPostAction : createPostAction;
 
-        if (editingId) {
-          formData.append("id", editingId);
-          return editPostAction(formData);
-        } else {
-          return createPostAction(formData);
-        }
-      };
-
-      action().then((res) => {
+      action(formData).then((res) => {
         setStatus(
           res.success ? "Success!" : res?.message || "Something went wrong."
         );
@@ -71,6 +60,7 @@ export default function AdminPostForm() {
           setContent("");
           setImage(null);
           setEditingId(null);
+          setPreviewUrl(null);
         }
       });
     });
@@ -80,6 +70,7 @@ export default function AdminPostForm() {
     setTitle(post.title || "");
     setContent(post.content || "");
     setEditingId(post.id);
+    setPreviewUrl(post.imageUrl || null);
   };
 
   const handleDelete = (id: string) => {
@@ -90,6 +81,16 @@ export default function AdminPostForm() {
         );
       });
     });
+  };
+
+  const handleImageChange = (file: File | null) => {
+    setImage(file);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl(null);
+    }
   };
 
   return (
@@ -116,12 +117,25 @@ export default function AdminPostForm() {
           required
           className="w-full p-2 border rounded"
         />
+
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setImage(e.target.files?.[0] || null)}
+          onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
           className="w-full"
         />
+
+        {previewUrl && (
+          <div className="mt-2">
+            <p className="text-sm text-gray-500">Image Preview:</p>
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-full max-w-xs rounded border"
+            />
+          </div>
+        )}
+
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded"

@@ -1,4 +1,3 @@
-// src/app/components/Posts/PostPreview.tsx
 "use client";
 
 import Link from "next/link";
@@ -7,9 +6,8 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  author: string;
   imageUrl?: string;
-  timestamp?: { seconds: number };
+  createdAt?: number; // using createdAt instead of timestamp
 }
 
 interface PostPreviewProps {
@@ -21,8 +19,9 @@ export default function PostPreview({ post }: PostPreviewProps) {
     post.content.length > 200
       ? post.content.slice(0, 200) + "..."
       : post.content;
-  const date = post.timestamp
-    ? new Date(post.timestamp.seconds * 1000).toLocaleDateString()
+
+  const date = post.createdAt
+    ? new Date(post.createdAt).toLocaleDateString()
     : "";
 
   return (
@@ -32,11 +31,14 @@ export default function PostPreview({ post }: PostPreviewProps) {
           {post.title}
         </h2>
       </Link>
-      <p className="text-sm text-gray-500 mb-2">{date}</p>
-      <p className="text-gray-800 mb-2">{excerpt}</p>
+
+      {date && <p className="text-sm text-gray-500 mb-2">{date}</p>}
+
+      <p className="text-gray-300 mb-2">{excerpt}</p>
+
       <Link
         href={`/post/${post.id}`}
-        className="text-blue-500 hover:underline text-sm"
+        className="text-blue-400 hover:underline text-sm"
       >
         Read more →
       </Link>

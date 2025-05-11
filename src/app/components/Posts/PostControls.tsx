@@ -78,7 +78,11 @@ export async function editPostAction(formData: FormData) {
   }
 
   await adminDb.collection("posts").doc(id).update(updateData);
-  return { success: true };
+
+  return {
+    success: true,
+    ...(updateData.imageUrl && { imageUrl: updateData.imageUrl }),
+  };
 }
 
 export async function deletePostAction(id: string) {

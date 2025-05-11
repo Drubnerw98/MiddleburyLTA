@@ -30,7 +30,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Fetch first posts on mount
   useEffect(() => {
     fetchPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,13 +50,17 @@ export default function HomePage() {
       }
 
       const snapshot = await getDocs(q);
-
       const newPosts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Post[];
 
-      setPosts((prev) => [...prev, ...newPosts]);
+      // ✅ Deduplicate posts by ID
+      setPosts((prev) => {
+        const combined = [...prev, ...newPosts];
+        const uniqueMap = new Map(combined.map((p) => [p.id, p]));
+        return Array.from(uniqueMap.values());
+      });
 
       const lastVisible = snapshot.docs[snapshot.docs.length - 1];
       setLastDoc(lastVisible);
