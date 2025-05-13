@@ -1,3 +1,4 @@
+// src/app/components/AdminPostForm.tsx
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -6,7 +7,7 @@ import {
   deletePostAction,
   editPostAction,
 } from "@/app/components/Posts/PostControls";
-import { getDocs, collection } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 
 interface Post {
@@ -14,83 +15,90 @@ interface Post {
   title?: string;
   content?: string;
   imageUrl?: string;
+  tags?: string[];
 }
 
 export default function AdminPostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Fetch posts
   useEffect(() => {
-    async function fetchPosts() {
+    const fetchPosts = async () => {
       const snapshot = await getDocs(collection(db, "posts"));
       const fetched = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Post[];
       setPosts(fetched);
-    }
+    };
     fetchPosts();
   }, [status]);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus(editingId ? "Updating..." : "Submitting...");
 
     const formData = new FormData();
-    if (image) formData.append("image", image);
     formData.append("title", title);
     formData.append("content", content);
+    formData.append("tags", tags);
+    if (image) formData.append("image", image);
     if (editingId) formData.append("id", editingId);
 
-    startTransition(() => {
-      const action = editingId ? editPostAction : createPostAction;
+    const action = editingId ? editPostAction : createPostAction;
 
+    startTransition(() => {
       action(formData).then((res) => {
         setStatus(
-          res.success ? "Success!" : res?.message || "Something went wrong."
+          res.success
+            ? "✅ Success!"
+            : res.message || "❌ Something went wrong."
         );
         if (res.success) {
           setTitle("");
           setContent("");
+          setTags("");
           setImage(null);
-          setEditingId(null);
           setPreviewUrl(null);
+          setEditingId(null);
         }
       });
     });
   };
 
+  // Edit post
   const handleEdit = (post: Post) => {
     setTitle(post.title || "");
     setContent(post.content || "");
-    setEditingId(post.id);
+    setTags(post.tags?.join(", ") || "");
     setPreviewUrl(post.imageUrl || null);
+    setEditingId(post.id);
   };
 
+  // Delete post
   const handleDelete = (id: string) => {
     startTransition(() => {
       deletePostAction(id).then((res) => {
         setStatus(
-          res.success ? "Deleted!" : res?.message || "Error deleting post."
+          res.success ? "🗑️ Deleted!" : res.message || "Error deleting post."
         );
       });
     });
   };
 
+  // Image preview handler
   const handleImageChange = (file: File | null) => {
     setImage(file);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } else {
-      setPreviewUrl(null);
-    }
+    setPreviewUrl(file ? URL.createObjectURL(file) : null);
   };
 
   return (
@@ -99,22 +107,30 @@ export default function AdminPostForm() {
         <h2 className="text-xl font-semibold">
           {editingId ? "Edit Post" : "Create New Post"}
         </h2>
+
         <input
           type="text"
-          name="title"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Post Title"
           required
           className="w-full p-2 border rounded"
         />
+
         <textarea
-          name="content"
+          placeholder="Content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Post Content"
           rows={5}
           required
+          className="w-full p-2 border rounded"
+        />
+
+        <input
+          type="text"
+          placeholder="Tags (comma separated)"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
           className="w-full p-2 border rounded"
         />
 
@@ -126,7 +142,7 @@ export default function AdminPostForm() {
         />
 
         {previewUrl && (
-          <div className="mt-2">
+          <div>
             <p className="text-sm text-gray-500">Image Preview:</p>
             <img
               src={previewUrl}
@@ -138,11 +154,15 @@ export default function AdminPostForm() {
 
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          disabled={isPending}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {editingId ? "Update Post" : "Submit Post"}
         </button>
-        <p className="text-sm text-gray-600">{status}</p>
+
+        {status && (
+          <p className="text-sm mt-2 text-gray-700 italic">{status}</p>
+        )}
       </form>
 
       <div className="space-y-4">
@@ -150,6 +170,9 @@ export default function AdminPostForm() {
         {posts.map((post) => (
           <div key={post.id} className="border p-4 rounded">
             <h3 className="font-bold">{post.title || "(Untitled Post)"}</h3>
+            <p className="text-sm text-gray-600 mb-1">
+              {post.tags?.length ? `Tags: ${post.tags.join(", ")}` : ""}
+            </p>
             <p className="text-sm text-gray-700 mb-2">
               {post.content?.slice(0, 100) || "(No content)"}...
             </p>

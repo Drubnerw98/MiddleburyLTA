@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/Layout/NavBar";
+import Footer from "./components/Layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Middlebury Info Hub",
-  description: "A community-driven space for sharing facts and discussion.",
+  description:
+    "A community-driven space for sharing facts, updates, and discussion.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -27,10 +32,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#1e2633] text-white min-h-screen`}
       >
         <NavBar />
-        {children}
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

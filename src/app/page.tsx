@@ -13,17 +13,22 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../../lib/firebase";
 import PostPreview from "@/app/components/Posts/PostPreview";
+import SearchBar from "@/app/components/SearchBar";
+import { useSearchParams } from "next/navigation";
 
 interface Post {
   id: string;
   title: string;
   content: string;
-  author: string;
   imageUrl?: string;
   createdAt?: number;
+  tags?: string[];
 }
 
 export default function HomePage() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("q")?.toLowerCase() || "";
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -31,41 +36,57 @@ export default function HomePage() {
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    fetchPosts();
+    setPosts([]);
+    setLastDoc(null);
+    setHasMore(true);
+    fetchPosts(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchQuery]);
 
-  const fetchPosts = async () => {
-    if (loading || !hasMore) return;
+  const fetchPosts = async (reset = false) => {
+    if (loading || (!hasMore && !reset)) return;
     setLoading(true);
 
     try {
       let q = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
-        limit(5)
+        limit(10)
       );
-      if (lastDoc) {
+
+      if (lastDoc && !reset) {
         q = query(q, startAfter(lastDoc));
       }
 
       const snapshot = await getDocs(q);
-      const newPosts = snapshot.docs.map((doc) => ({
+      const fetched = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Post[];
 
-      // ✅ Deduplicate posts by ID
+      const filtered = searchQuery
+        ? fetched.filter((p) => {
+            const matchTitle = p.title.toLowerCase().includes(searchQuery);
+            const matchContent = p.content.toLowerCase().includes(searchQuery);
+            const matchTags = p.tags?.some((tag) =>
+              tag.toLowerCase().includes(searchQuery)
+            );
+            return matchTitle || matchContent || matchTags;
+          })
+        : fetched;
+
       setPosts((prev) => {
-        const combined = [...prev, ...newPosts];
-        const uniqueMap = new Map(combined.map((p) => [p.id, p]));
-        return Array.from(uniqueMap.values());
+        const combined = reset ? filtered : [...prev, ...filtered];
+        const unique = Array.from(
+          new Map(combined.map((p) => [p.id, p])).values()
+        );
+        return unique;
       });
 
       const lastVisible = snapshot.docs[snapshot.docs.length - 1];
       setLastDoc(lastVisible);
 
-      if (snapshot.empty || snapshot.docs.length < 5) {
+      if (snapshot.empty || snapshot.docs.length < 10) {
         setHasMore(false);
       }
     } catch (err) {
@@ -82,16 +103,18 @@ export default function HomePage() {
         A community-driven space for sharing facts, updates, and discussion.
       </p>
 
+      <SearchBar />
+
       <div className="space-y-6">
         {posts.map((post) => (
           <PostPreview key={post.id} post={post} />
         ))}
       </div>
 
-      {hasMore && (
+      {hasMore && !searchQuery && (
         <div className="text-center mt-6">
           <button
-            onClick={fetchPosts}
+            onClick={() => fetchPosts()}
             disabled={loading}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
           >

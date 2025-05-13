@@ -1,4 +1,3 @@
-// src/app/post/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,13 +6,11 @@ import {
   doc,
   getDoc,
   collection,
-  addDoc,
   query,
   orderBy,
   getDocs,
   deleteDoc,
   updateDoc,
-  serverTimestamp,
 } from "firebase/firestore";
 import { db, auth } from "../../../../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -21,13 +18,13 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import PostDisplay from "@/app/components/Posts/PostDisplay";
 import PostEdit from "@/app/components/Posts/PostEdit";
 import {
-  createPostAction,
   editPostAction,
   deletePostAction,
 } from "@/app/components/Posts/PostControls";
 
 import { CommentForm } from "@/app/components/Comments/CommentForm";
 import CommentList from "@/app/components/Comments/CommentList";
+import { createCommentAction } from "@/app/actions/createCommentAction";
 
 interface Comment {
   id: string;
@@ -44,9 +41,10 @@ export default function PostDetail() {
   const [editing, setEditing] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
+  const [commentError, setCommentError] = useState<string | null>(null);
   const [user] = useAuthState(auth);
 
-  const isAdmin = user?.email === "drubnation@gmail.com"; // Simplified admin check
+  const isAdmin = user?.email === "drubnation@gmail.com";
 
   useEffect(() => {
     async function fetchPost() {
@@ -62,8 +60,8 @@ export default function PostDetail() {
         collection(db, "posts", postId, "comments"),
         orderBy("timestamp", "asc")
       );
-      const querySnapshot = await getDocs(q);
-      const loadedComments = querySnapshot.docs.map((doc) => ({
+      const snapshot = await getDocs(q);
+      const loadedComments = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Comment[];
@@ -77,14 +75,19 @@ export default function PostDetail() {
   async function handleAddComment() {
     if (!commentText || !user) return;
 
-    const newComment = {
-      content: commentText,
-      author: user.email || "Anonymous",
-      timestamp: serverTimestamp(),
-    };
+    const result = await createCommentAction(
+      postId,
+      commentText,
+      user.email || "Anonymous"
+    );
 
-    await addDoc(collection(db, "posts", postId, "comments"), newComment);
+    if (!result.success) {
+      setCommentError(result.message ?? "Something went wrong.");
+      return;
+    }
+
     setCommentText("");
+    setCommentError(null);
 
     const q = query(
       collection(db, "posts", postId, "comments"),
@@ -105,7 +108,7 @@ export default function PostDetail() {
 
   async function handleDeletePost() {
     if (!isAdmin) return;
-    await deleteDoc(doc(db, "posts", postId));
+    await deletePostAction(postId);
     window.location.href = "/";
   }
 
@@ -118,29 +121,37 @@ export default function PostDetail() {
   if (!post) return <p>Loading...</p>;
 
   return (
-    <div style={{ padding: "1rem" }}>
-      {editing ? (
-        <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
-      ) : (
-        <PostDisplay
-          title={post.title}
-          content={post.content}
-          imageUrl={post.imageUrl}
-        />
-      )}
+    <div className="flex justify-center px-4">
+      <div className="w-full max-w-3xl">
+        {editing ? (
+          <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
+        ) : (
+          <PostDisplay
+            title={post.title}
+            content={post.content}
+            imageUrl={post.imageUrl}
+          />
+        )}
 
-      <h3>Comments</h3>
-      <CommentForm
-        commentText={commentText}
-        SetCommentText={setCommentText}
-        onSubmit={handleAddComment}
-        isAuthenticated={!!user}
-      />
-      <CommentList
-        comments={comments}
-        isAdmin={isAdmin}
-        onDeleteComment={handleDeleteComment}
-      />
+        <h3 className="mt-8 mb-2 text-lg font-semibold text-white">Comments</h3>
+
+        <CommentForm
+          commentText={commentText}
+          SetCommentText={setCommentText}
+          onSubmit={handleAddComment}
+          isAuthenticated={!!user}
+        />
+
+        {commentError && (
+          <p className="text-red-400 text-sm mt-2">{commentError}</p>
+        )}
+
+        <CommentList
+          comments={comments}
+          isAdmin={isAdmin}
+          onDeleteComment={handleDeleteComment}
+        />
+      </div>
     </div>
   );
 }
