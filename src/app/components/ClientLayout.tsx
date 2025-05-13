@@ -2,7 +2,6 @@
 "use client";
 
 import Link from "next/link";
-import LoginButton from "../login/LoginButton";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../lib/firebase";
@@ -34,7 +33,6 @@ export default function ClientLayout({
             <Link href="/register">Register</Link>
           )}
         </div>
-        <LoginButton />
       </header>
       <main>{children}</main>
     </body>

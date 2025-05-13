@@ -1,4 +1,3 @@
-// src/app/components/About/FeedbackForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,6 @@ export default function FeedbackForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Placeholder logic, this could be hooked into Firestore or email
     console.log({ name, email, message });
     setSubmitted(true);
     setName("");
@@ -20,36 +18,43 @@ export default function FeedbackForm() {
   }
 
   return (
-    <section>
-      <h2 className="text-xl font-semibold mb-2">Send Us Feedback</h2>
+    <section className="bg-[#2c3545] border border-gray-700 rounded-lg p-6 max-w-2xl mx-auto shadow-md">
+      <h2 className="text-xl font-bold text-blue-400 mb-4">Send Us Feedback</h2>
+
       {submitted && (
-        <p className="text-green-400 mb-2">Thanks for your feedback!</p>
+        <p className="text-green-400 bg-[#1e2633] border border-green-600 p-3 rounded mb-4">
+          ✅ Thanks for your feedback!
+        </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-3">
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Your Name"
-          className="w-full px-3 py-2 border rounded bg-gray-800 text-white"
+          className="w-full px-4 py-2 border border-gray-600 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+
         <input
           type="email"
           placeholder="Your Email"
-          className="w-full px-3 py-2 border rounded bg-gray-800 text-white"
+          className="w-full px-4 py-2 border border-gray-600 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <textarea
           placeholder="Your Message"
-          className="w-full px-3 py-2 border rounded bg-gray-800 text-white"
           rows={4}
+          className="w-full px-4 py-2 border border-gray-600 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         ></textarea>
+
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition"
         >
           Submit
         </button>

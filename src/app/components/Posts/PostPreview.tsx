@@ -29,34 +29,34 @@ export default function PostPreview({ post, onTagClick }: PostPreviewProps) {
     : "";
 
   return (
-    <div className="bg-[#2c3545] border border-gray-700 rounded p-4 shadow-sm hover:shadow transition max-w-3xl w-full mx-auto mb-6">
+    <div className="bg-[#2c3545] border border-gray-700 rounded-lg p-6 shadow-md hover:shadow-lg transition-all duration-200 max-w-3xl w-full mx-auto mb-8">
       {post.imageUrl && (
         <Link href={`/post/${post.id}`}>
-          <div className="mb-3">
+          <div className="mb-4">
             <Image
               src={post.imageUrl}
               alt={post.title}
               width={800}
               height={400}
-              className="w-full h-auto object-cover rounded max-h-60"
+              className="w-full h-auto object-cover rounded-md max-h-60"
             />
           </div>
         </Link>
       )}
 
       <Link href={`/post/${post.id}`}>
-        <h2 className="text-2xl font-bold text-blue-300 hover:underline break-words mb-1">
+        <h2 className="text-3xl font-serif font-semibold text-blue-300 hover:underline break-words mb-3 tracking-tight">
           {post.title}
         </h2>
       </Link>
 
       {post.tags && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-3">
           {post.tags.map((tag) => (
             <button
               key={tag}
               onClick={() => onTagClick?.(tag)}
-              className="text-xs px-2 py-1 bg-blue-700 text-white rounded-full hover:bg-blue-600"
+              className="text-xs px-2 py-1 bg-blue-700 text-white rounded-full hover:bg-blue-600 transition"
             >
               #{tag}
             </button>
@@ -64,9 +64,9 @@ export default function PostPreview({ post, onTagClick }: PostPreviewProps) {
         </div>
       )}
 
-      {date && <p className="text-sm text-gray-400 mb-2">{date}</p>}
+      {date && <p className="text-xs text-gray-400 italic mb-3">{date}</p>}
 
-      <p className="text-gray-300 mb-2 whitespace-pre-wrap break-words">
+      <p className="text-gray-300 whitespace-pre-wrap break-words leading-relaxed text-[15px]">
         {excerpt}
         {isTruncated && (
           <>

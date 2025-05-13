@@ -31,17 +31,17 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+    <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
       <input
         type="text"
         placeholder="Search posts..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="flex-1 p-2 border rounded bg-black border-gray-600 text-white"
+        className="flex-1 px-4 py-2 rounded bg-[#2c3545] text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition"
       >
         Search
       </button>
@@ -49,7 +49,7 @@ export default function SearchBar() {
         <button
           type="button"
           onClick={handleClear}
-          className="bg-gray-700 text-white px-3 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-700 text-white px-3 py-2 rounded hover:bg-gray-600 transition"
         >
           ✕
         </button>

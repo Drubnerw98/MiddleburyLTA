@@ -109,11 +109,12 @@ export default function AdminPostForm() {
 
   return (
     <div className="space-y-10 p-6 max-w-3xl mx-auto text-white">
+      {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 bg-[#2c3545] p-6 rounded shadow-md border border-gray-700"
+        className="space-y-5 bg-[#2c3545] p-6 rounded-lg shadow-md border border-gray-700"
       >
-        <h2 className="text-2xl font-bold mb-2">
+        <h2 className="text-2xl font-bold text-blue-400 mb-2">
           {editingId ? "✏️ Edit Post" : "📝 Create New Post"}
         </h2>
 
@@ -124,7 +125,7 @@ export default function AdminPostForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -135,7 +136,7 @@ export default function AdminPostForm() {
             onChange={(e) => setContent(e.target.value)}
             rows={6}
             required
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 whitespace-pre-wrap break-words"
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 whitespace-pre-wrap break-words focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -145,7 +146,7 @@ export default function AdminPostForm() {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -155,7 +156,7 @@ export default function AdminPostForm() {
             type="file"
             accept="image/*"
             onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-            className="w-full"
+            className="w-full text-sm"
           />
         </div>
 
@@ -165,7 +166,7 @@ export default function AdminPostForm() {
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-full max-w-xs rounded border mb-2"
+              className="w-full max-w-xs rounded border border-gray-600 mb-2"
             />
             {editingId && (
               <button
@@ -186,7 +187,7 @@ export default function AdminPostForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition"
         >
           {editingId ? "Update Post" : "Submit Post"}
         </button>
@@ -198,11 +199,13 @@ export default function AdminPostForm() {
 
       {/* POSTS LIST */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">📚 Your Posts</h2>
+        <h2 className="text-xl font-semibold text-emerald-400">
+          📚 Your Posts
+        </h2>
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-[#1f2937] border border-gray-700 p-4 rounded shadow text-white"
+            className="bg-[#1f2937] border border-gray-700 p-4 rounded-lg shadow text-white"
           >
             <h3 className="text-lg font-bold text-blue-300 mb-1">
               {post.title || "(Untitled Post)"}
@@ -221,13 +224,13 @@ export default function AdminPostForm() {
             <div className="space-x-2">
               <button
                 onClick={() => handleEdit(post)}
-                className="px-3 py-1 text-sm bg-yellow-500 text-white rounded"
+                className="px-3 py-1 text-sm bg-yellow-500 text-black rounded hover:bg-yellow-400 transition"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(post.id)}
-                className="px-3 py-1 text-sm bg-red-600 text-white rounded"
+                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-500 transition"
               >
                 Delete
               </button>

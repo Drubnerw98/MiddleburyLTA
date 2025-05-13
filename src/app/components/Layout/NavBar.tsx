@@ -54,9 +54,13 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="w-full bg-[#1a202c] text-white px-6 py-3 flex justify-between items-center border-b border-gray-700 shadow-sm">
-      <div className="flex items-center space-x-4">
-        <Link href="/" className="flex items-center space-x-2">
+    <nav className="w-full bg-[#1e2633] text-white px-6 py-4 flex justify-between items-center border-b border-gray-700 shadow-sm z-50">
+      {/* Logo + Links */}
+      <div className="flex items-center space-x-5">
+        <Link
+          href="/"
+          className="flex items-center space-x-2 hover:opacity-90 transition"
+        >
           <Image
             src="/logo.png"
             alt="Middlebury Info Hub logo"
@@ -64,28 +68,27 @@ export default function NavBar() {
             height={32}
             className="rounded-sm"
           />
-          <span className="font-bold text-lg">
+          <span className="font-bold text-lg tracking-tight">
             Middlebury Lower Tax Alliance
           </span>
         </Link>
 
-        <Link
-          href="/about"
-          className="hover:underline text-sm text-gray-300 hover:text-white"
-        >
+        <Link href="/about" className="hover:text-blue-400 text-sm transition">
           About
         </Link>
+
         {user && (
           <Link
             href="/admin"
-            className="hover:underline text-sm text-gray-300 hover:text-white"
+            className="hover:text-emerald-400 text-sm transition"
           >
             Admin
           </Link>
         )}
       </div>
 
-      <div className="text-sm flex items-center space-x-3">
+      {/* Right-side user/login controls */}
+      <div className="text-sm flex items-center space-x-3 relative">
         {user ? (
           <>
             <span className="text-gray-300">
@@ -107,25 +110,25 @@ export default function NavBar() {
               Login
             </button>
             {showLoginForm && (
-              <div className="absolute top-16 right-6 bg-[#2d3748] p-4 rounded shadow-md w-64 z-50">
+              <div className="absolute top-14 right-0 bg-[#2d3748] border border-gray-600 p-4 rounded shadow-md w-64 z-50">
                 <input
                   type="email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400"
+                  className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
                 />
                 <input
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400"
+                  className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
                 />
                 {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
                 <button
                   onClick={handleLogin}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 rounded"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition"
                 >
                   Sign In
                 </button>

@@ -16,17 +16,17 @@ export default function PostDisplay({
   tags,
 }: PostDisplayProps) {
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-[#2c3545] rounded shadow-md text-white overflow-x-auto">
-      <h2 className="text-3xl font-bold mb-2 text-blue-300 break-words">
+    <div className="max-w-3xl mx-auto p-6 bg-[#2c3545] border border-gray-700 rounded-lg shadow-md text-white overflow-x-auto">
+      <h1 className="text-4xl font-serif font-semibold text-blue-300 break-words mb-4 leading-tight">
         {title}
-      </h2>
+      </h1>
 
       {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           {tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs px-2 py-1 bg-blue-700 text-white rounded-full"
+              className="text-xs px-2 py-1 bg-blue-700 text-white rounded-full hover:bg-blue-600 transition"
             >
               #{tag}
             </span>
@@ -38,11 +38,11 @@ export default function PostDisplay({
         <img
           src={imageUrl}
           alt={title}
-          className="w-full h-auto rounded mb-4 max-h-96 object-contain"
+          className="w-full h-auto rounded-lg mb-6 max-h-96 object-contain"
         />
       )}
 
-      <div className="markdown-content break-words whitespace-pre-wrap text-gray-200">
+      <div className="prose prose-invert prose-base max-w-none break-words text-gray-200 leading-relaxed">
         <ReactMarkdown>{content}</ReactMarkdown>
       </div>
     </div>

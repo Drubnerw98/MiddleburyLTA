@@ -98,17 +98,24 @@ export default function HomePage() {
   };
 
   return (
-    <main className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">MLTA Tax Impact Center</h1>
-      <p className="text-gray-400 mb-6">
-        A community-driven space for sharing facts, updates, and discussion.
-      </p>
+    <main className="max-w-5xl mx-auto px-6 sm:px-8 py-12 space-y-10">
+      {/* Hero Section */}
+      <div className="relative rounded-xl overflow-hidden border border-gray-700 bg-gradient-to-br from-blue-900/30 via-blue-800/10 to-transparent backdrop-blur-md p-6 shadow-md">
+        <h1 className="text-4xl font-serif font-semibold text-blue-300 tracking-tight mb-2">
+          MLTA Tax Impact Center
+        </h1>
+        <p className="text-gray-400 text-base leading-relaxed">
+          A community-driven space for sharing facts, updates, and discussion.
+        </p>
+      </div>
 
+      {/* Search */}
       <SearchBar />
 
+      {/* Posts */}
       <div className="space-y-6">
         {posts.length === 0 && !loading ? (
-          <p className="text-center text-gray-400 mt-8">
+          <p className="text-center text-gray-500 mt-8">
             No posts found. Try a different search.
           </p>
         ) : (
@@ -125,12 +132,13 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* Load More */}
       {hasMore && !searchQuery && (
         <div className="text-center mt-6">
           <button
             onClick={() => fetchPosts()}
             disabled={loading}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-500 disabled:opacity-50 transition"
           >
             {loading ? "Loading..." : "Load More"}
           </button>
