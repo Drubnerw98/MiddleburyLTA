@@ -1,9 +1,20 @@
-// src/app/components/Posts/PostControls.ts
 "use server";
 
 import { v4 as uuidv4 } from "uuid";
 import { getUserIfAdmin } from "../../../../lib/auth";
 import { adminDb, adminStorage } from "../../../../lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
+
+/**
+ * Helper to parse and sanitize comma-separated tags.
+ */
+function parseTags(raw: unknown): string[] {
+  if (typeof raw !== "string") return [];
+  return raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
 
 /**
  * Uploads an image to Firebase Storage and returns its public URL.
@@ -27,25 +38,34 @@ async function uploadImageToStorage(image: File): Promise<string> {
 }
 
 /**
- * Handles post creation.
+ * Deletes an image from Firebase Storage by its public URL.
+ */
+async function deleteImageByUrl(imageUrl: string) {
+  const filename = decodeURIComponent(imageUrl.split("/").pop() || "");
+  const file = adminStorage.bucket().file(`post-images/${filename}`);
+  try {
+    await file.delete();
+  } catch (err) {
+    console.warn("Image deletion failed (may not exist):", filename);
+  }
+}
+
+/**
+ * Creates a new post.
  */
 export async function createPostAction(formData: FormData) {
   const user = await getUserIfAdmin();
   if (!user) return { success: false, message: "Unauthorized" };
 
-  const title = formData.get("title")?.toString();
-  const content = formData.get("content")?.toString();
-  const rawTags = formData.get("tags")?.toString() || "";
-  const tags = rawTags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+  const title = formData.get("title");
+  const content = formData.get("content");
 
-  const image = formData.get("image") as File | null;
-
-  if (!title || !content) {
+  if (typeof title !== "string" || typeof content !== "string") {
     return { success: false, message: "Missing title or content" };
   }
+
+  const tags = parseTags(formData.get("tags"));
+  const image = formData.get("image") as File | null;
 
   let imageUrl = "";
   if (image && image.size > 0) {
@@ -57,63 +77,84 @@ export async function createPostAction(formData: FormData) {
     content,
     imageUrl,
     tags,
-    createdAt: Date.now(),
+    createdAt: FieldValue.serverTimestamp(),
   });
 
   return { success: true };
 }
 
 /**
- * Handles post editing.
+ * Edits an existing post.
  */
 export async function editPostAction(formData: FormData) {
   const user = await getUserIfAdmin();
   if (!user) return { success: false, message: "Unauthorized" };
 
-  const id = formData.get("id")?.toString();
-  const title = formData.get("title")?.toString();
-  const content = formData.get("content")?.toString();
-  const rawTags = formData.get("tags")?.toString() || "";
-  const tags = rawTags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+  const id = formData.get("id");
+  const title = formData.get("title");
+  const content = formData.get("content");
 
-  const image = formData.get("image") as File | null;
-
-  if (!id || !title || !content) {
+  if (
+    typeof id !== "string" ||
+    typeof title !== "string" ||
+    typeof content !== "string"
+  ) {
     return { success: false, message: "Missing required fields" };
   }
 
-  const updateData: Record<string, any> = {
-    title,
-    content,
-    tags,
-  };
+  const tags = parseTags(formData.get("tags"));
+  const image = formData.get("image") as File | null;
+  const removeImage = formData.get("removeImage") === "true";
+
+  const docRef = adminDb.collection("posts").doc(id);
+  const snapshot = await docRef.get();
+  if (!snapshot.exists) {
+    return { success: false, message: "Post not found" };
+  }
+
+  const existingData = snapshot.data() as { imageUrl?: string };
+  const updateData: Record<string, any> = { title, content, tags };
+
+  if (removeImage && existingData.imageUrl) {
+    await deleteImageByUrl(existingData.imageUrl);
+    updateData.imageUrl = "";
+  }
 
   if (image && image.size > 0) {
+    if (existingData.imageUrl) {
+      await deleteImageByUrl(existingData.imageUrl);
+    }
     updateData.imageUrl = await uploadImageToStorage(image);
   }
 
-  await adminDb.collection("posts").doc(id).update(updateData);
+  await docRef.update(updateData);
 
   return {
     success: true,
-    ...(updateData.imageUrl && { imageUrl: updateData.imageUrl }),
+    ...(typeof updateData.imageUrl === "string" && {
+      imageUrl: updateData.imageUrl,
+    }),
   };
 }
 
 /**
- * Handles post deletion.
+ * Deletes a post and its image if present.
  */
 export async function deletePostAction(id: string) {
   const user = await getUserIfAdmin();
   if (!user) return { success: false, message: "Unauthorized" };
 
-  if (!id) return { success: false, message: "Missing post ID" };
-
   try {
-    await adminDb.collection("posts").doc(id).delete();
+    const docRef = adminDb.collection("posts").doc(id);
+    const snapshot = await docRef.get();
+    if (!snapshot.exists) return { success: false, message: "Post not found" };
+
+    const data = snapshot.data() as { imageUrl?: string };
+    if (data?.imageUrl) {
+      await deleteImageByUrl(data.imageUrl);
+    }
+
+    await docRef.delete();
     return { success: true };
   } catch (err) {
     console.error("Error deleting post:", err);

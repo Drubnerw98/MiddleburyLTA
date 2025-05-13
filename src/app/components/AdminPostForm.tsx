@@ -1,4 +1,3 @@
-// src/app/components/AdminPostForm.tsx
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -24,12 +23,12 @@ export default function AdminPostForm() {
   const [tags, setTags] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       const snapshot = await getDocs(collection(db, "posts"));
@@ -42,7 +41,6 @@ export default function AdminPostForm() {
     fetchPosts();
   }, [status]);
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus(editingId ? "Updating..." : "Submitting...");
@@ -52,7 +50,10 @@ export default function AdminPostForm() {
     formData.append("content", content);
     formData.append("tags", tags);
     if (image) formData.append("image", image);
-    if (editingId) formData.append("id", editingId);
+    if (editingId) {
+      formData.append("id", editingId);
+      if (removeImage) formData.append("removeImage", "true");
+    }
 
     const action = editingId ? editPostAction : createPostAction;
 
@@ -64,27 +65,22 @@ export default function AdminPostForm() {
             : res.message || "❌ Something went wrong."
         );
         if (res.success) {
-          setTitle("");
-          setContent("");
-          setTags("");
-          setImage(null);
-          setPreviewUrl(null);
-          setEditingId(null);
+          resetForm();
         }
       });
     });
   };
 
-  // Edit post
   const handleEdit = (post: Post) => {
     setTitle(post.title || "");
     setContent(post.content || "");
     setTags(post.tags?.join(", ") || "");
     setPreviewUrl(post.imageUrl || null);
+    setImage(null);
+    setRemoveImage(false);
     setEditingId(post.id);
   };
 
-  // Delete post
   const handleDelete = (id: string) => {
     startTransition(() => {
       deletePostAction(id).then((res) => {
@@ -95,60 +91,95 @@ export default function AdminPostForm() {
     });
   };
 
-  // Image preview handler
   const handleImageChange = (file: File | null) => {
     setImage(file);
     setPreviewUrl(file ? URL.createObjectURL(file) : null);
+    setRemoveImage(false);
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setTags("");
+    setImage(null);
+    setPreviewUrl(null);
+    setRemoveImage(false);
+    setEditingId(null);
   };
 
   return (
-    <div className="space-y-6 p-4 max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4 border p-4 rounded">
-        <h2 className="text-xl font-semibold">
-          {editingId ? "Edit Post" : "Create New Post"}
+    <div className="space-y-10 p-6 max-w-3xl mx-auto text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5 bg-[#2c3545] p-6 rounded shadow-md border border-gray-700"
+      >
+        <h2 className="text-2xl font-bold mb-2">
+          {editingId ? "✏️ Edit Post" : "📝 Create New Post"}
         </h2>
 
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        />
+        <div>
+          <label className="block text-sm mb-1">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
 
-        <textarea
-          placeholder="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={5}
-          required
-          className="w-full p-2 border rounded"
-        />
+        <div>
+          <label className="block text-sm mb-1">Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={6}
+            required
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 whitespace-pre-wrap break-words"
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Tags (comma separated)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
+        <div>
+          <label className="block text-sm mb-1">Tags (comma separated)</label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-          className="w-full"
-        />
+        <div>
+          <label className="block text-sm mb-1">Image (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
+            className="w-full"
+          />
+        </div>
 
-        {previewUrl && (
+        {previewUrl && !removeImage && (
           <div>
-            <p className="text-sm text-gray-500">Image Preview:</p>
+            <p className="text-sm text-gray-400 mb-1">Image Preview:</p>
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-full max-w-xs rounded border"
+              className="w-full max-w-xs rounded border mb-2"
             />
+            {editingId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setRemoveImage(true);
+                  setPreviewUrl(null);
+                  setImage(null);
+                }}
+                className="text-sm text-red-400 hover:underline"
+              >
+                Remove Current Image
+              </button>
+            )}
           </div>
         )}
 
@@ -161,21 +192,32 @@ export default function AdminPostForm() {
         </button>
 
         {status && (
-          <p className="text-sm mt-2 text-gray-700 italic">{status}</p>
+          <p className="text-sm mt-2 text-gray-300 italic">{status}</p>
         )}
       </form>
 
+      {/* POSTS LIST */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Your Posts</h2>
+        <h2 className="text-xl font-semibold">📚 Your Posts</h2>
         {posts.map((post) => (
-          <div key={post.id} className="border p-4 rounded">
-            <h3 className="font-bold">{post.title || "(Untitled Post)"}</h3>
-            <p className="text-sm text-gray-600 mb-1">
-              {post.tags?.length ? `Tags: ${post.tags.join(", ")}` : ""}
+          <div
+            key={post.id}
+            className="bg-[#1f2937] border border-gray-700 p-4 rounded shadow text-white"
+          >
+            <h3 className="text-lg font-bold text-blue-300 mb-1">
+              {post.title || "(Untitled Post)"}
+            </h3>
+
+            {Array.isArray(post.tags) && post.tags.length > 0 && (
+              <p className="text-sm text-blue-400 mb-1">
+                Tags: {post.tags.join(", ")}
+              </p>
+            )}
+
+            <p className="text-sm text-gray-300 mb-3 whitespace-pre-wrap break-words">
+              {post.content?.slice(0, 200) || "(No content)"}...
             </p>
-            <p className="text-sm text-gray-700 mb-2">
-              {post.content?.slice(0, 100) || "(No content)"}...
-            </p>
+
             <div className="space-x-2">
               <button
                 onClick={() => handleEdit(post)}

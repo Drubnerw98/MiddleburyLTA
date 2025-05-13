@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { adminDb } from "../../../lib/firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
 import { commentRatelimit } from "../../../lib/commentRateLimiter";
 
 export async function createCommentAction(
@@ -30,7 +31,7 @@ export async function createCommentAction(
     await adminDb.collection("posts").doc(postId).collection("comments").add({
       content,
       author,
-      timestamp: Date.now(),
+      timestamp: Timestamp.now(), // ✅ Correct Firestore format
     });
 
     return { success: true };

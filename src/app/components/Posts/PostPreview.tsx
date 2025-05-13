@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 
 interface Post {
   id: string;
@@ -24,7 +25,7 @@ export default function PostPreview({ post, onTagClick }: PostPreviewProps) {
     : post.content;
 
   const date = post.createdAt
-    ? new Date(post.createdAt).toLocaleDateString()
+    ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
     : "";
 
   return (

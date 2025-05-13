@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../lib/firebase";
 import PostPreview from "@/app/components/Posts/PostPreview";
 import SearchBar from "@/app/components/SearchBar";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Post {
   id: string;
@@ -26,6 +26,7 @@ interface Post {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q")?.toLowerCase() || "";
 
@@ -106,9 +107,22 @@ export default function HomePage() {
       <SearchBar />
 
       <div className="space-y-6">
-        {posts.map((post) => (
-          <PostPreview key={post.id} post={post} />
-        ))}
+        {posts.length === 0 && !loading ? (
+          <p className="text-center text-gray-400 mt-8">
+            No posts found. Try a different search.
+          </p>
+        ) : (
+          posts.map((post) => (
+            <PostPreview
+              key={post.id}
+              post={post}
+              onTagClick={(tag) => {
+                const encoded = encodeURIComponent(tag);
+                router.push(`/?q=${encoded}`);
+              }}
+            />
+          ))
+        )}
       </div>
 
       {hasMore && !searchQuery && (
