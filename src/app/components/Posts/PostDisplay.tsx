@@ -16,7 +16,7 @@ export default function PostDisplay({
   tags,
 }: PostDisplayProps) {
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-[#2c3545] border border-gray-700 rounded-lg shadow-md text-white overflow-x-auto">
+    <div className="max-w-3xl mx-auto p-6 pb-12 bg-[#2c3545]/90 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg text-white overflow-x-auto">
       <h1 className="text-4xl font-serif font-semibold text-blue-300 break-words mb-4 leading-tight">
         {title}
       </h1>

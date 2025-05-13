@@ -118,11 +118,17 @@ export default function PostDetail() {
     setEditing(false);
   }
 
-  if (!post) return <p>Loading...</p>;
+  if (!post)
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
+        Loading post...
+      </div>
+    );
 
   return (
     <div className="flex justify-center px-4">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-3xl space-y-8">
+        {/* Post */}
         {editing ? (
           <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
         ) : (
@@ -130,27 +136,31 @@ export default function PostDetail() {
             title={post.title}
             content={post.content}
             imageUrl={post.imageUrl}
+            tags={post.tags}
           />
         )}
 
-        <h3 className="mt-8 mb-2 text-lg font-semibold text-white">Comments</h3>
+        {/* Comments */}
+        <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
+          <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
 
-        <CommentForm
-          commentText={commentText}
-          SetCommentText={setCommentText}
-          onSubmit={handleAddComment}
-          isAuthenticated={!!user}
-        />
+          <CommentForm
+            commentText={commentText}
+            SetCommentText={setCommentText}
+            onSubmit={handleAddComment}
+            isAuthenticated={!!user}
+          />
 
-        {commentError && (
-          <p className="text-red-400 text-sm mt-2">{commentError}</p>
-        )}
+          {commentError && (
+            <p className="text-red-400 text-sm mt-2">{commentError}</p>
+          )}
 
-        <CommentList
-          comments={comments}
-          isAdmin={isAdmin}
-          onDeleteComment={handleDeleteComment}
-        />
+          <CommentList
+            comments={comments}
+            isAdmin={isAdmin}
+            onDeleteComment={handleDeleteComment}
+          />
+        </div>
       </div>
     </div>
   );

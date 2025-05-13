@@ -29,7 +29,7 @@ export default function PostPreview({ post, onTagClick }: PostPreviewProps) {
     : "";
 
   return (
-    <div className="bg-[#2c3545] border border-gray-700 rounded-lg p-6 shadow-md hover:shadow-lg transition-all duration-200 max-w-3xl w-full mx-auto mb-8">
+    <div className="bg-[#2c3545]/90 border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 backdrop-blur transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg max-w-3xl w-full mx-auto mb-8">
       {post.imageUrl && (
         <Link href={`/post/${post.id}`}>
           <div className="mb-4">

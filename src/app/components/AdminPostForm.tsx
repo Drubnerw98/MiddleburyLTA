@@ -108,14 +108,14 @@ export default function AdminPostForm() {
   };
 
   return (
-    <div className="space-y-10 p-6 max-w-3xl mx-auto text-white">
+    <div className="space-y-12 px-4 py-10 max-w-3xl mx-auto text-white">
       {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 bg-[#2c3545] p-6 rounded-lg shadow-md border border-gray-700"
+        className="space-y-6 bg-[#2c3545]/90 border border-white/10 backdrop-blur rounded-lg shadow-md p-6"
       >
-        <h2 className="text-2xl font-bold text-blue-400 mb-2">
-          {editingId ? "✏️ Edit Post" : "📝 Create New Post"}
+        <h2 className="text-xl font-semibold border-b border-white/10 pb-2 text-blue-300">
+          {editingId ? "Edit Post" : "Create New Post"}
         </h2>
 
         <div>
@@ -125,7 +125,7 @@ export default function AdminPostForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mb-1 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function AdminPostForm() {
             onChange={(e) => setContent(e.target.value)}
             rows={6}
             required
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 whitespace-pre-wrap break-words focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 rounded bg-[#1e2633] text-white border border-gray-600 whitespace-pre-wrap break-words focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
@@ -146,7 +146,7 @@ export default function AdminPostForm() {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 rounded bg-[#1e2633] text-white border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
         </div>
 
@@ -156,7 +156,7 @@ export default function AdminPostForm() {
             type="file"
             accept="image/*"
             onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-            className="w-full text-sm"
+            className="w-full text-sm text-gray-300"
           />
         </div>
 
@@ -187,7 +187,7 @@ export default function AdminPostForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition disabled:opacity-50"
         >
           {editingId ? "Update Post" : "Submit Post"}
         </button>
@@ -198,14 +198,15 @@ export default function AdminPostForm() {
       </form>
 
       {/* POSTS LIST */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-emerald-400">
-          📚 Your Posts
+      <div className="space-y-6">
+        <h2 className="text-lg font-semibold text-blue-400 border-b border-white/10 pb-2">
+          Your Posts
         </h2>
+
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-[#1f2937] border border-gray-700 p-4 rounded-lg shadow text-white"
+            className="bg-[#2c3545] border border-white/10 p-4 rounded-lg shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] transition hover:shadow-lg"
           >
             <h3 className="text-lg font-bold text-blue-300 mb-1">
               {post.title || "(Untitled Post)"}
