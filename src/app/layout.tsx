@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Middlebury Info Hub",
+  title: "MLTA Tax Impact Center",
   description:
     "A community-driven space for sharing facts, updates, and discussion.",
   icons: {

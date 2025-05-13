@@ -64,7 +64,9 @@ export default function NavBar() {
             height={32}
             className="rounded-sm"
           />
-          <span className="font-bold text-lg">Middlebury Info Hub</span>
+          <span className="font-bold text-lg">
+            Middlebury Lower Tax Alliance
+          </span>
         </Link>
 
         <Link

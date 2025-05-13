@@ -99,7 +99,7 @@ export default function HomePage() {
 
   return (
     <main className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Middlebury Info Hub</h1>
+      <h1 className="text-3xl font-bold mb-2">MLTA Tax Impact Center</h1>
       <p className="text-gray-400 mb-6">
         A community-driven space for sharing facts, updates, and discussion.
       </p>
