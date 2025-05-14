@@ -53,10 +53,12 @@ export default function NavBar() {
     router.push("/");
   };
 
+  const isAdmin = user?.email === "drubnation@gmail.com";
+
   return (
-    <nav className="w-full border-b border-white/10 backdrop-blur bg-[#1e2633]/70 z-50">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Logo + Links */}
+    <nav className="w-full border-b border-white/10 backdrop-blur bg-[#1e2633]/70 z-50 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between">
+        {/* Logo and nav links */}
         <div className="flex items-center space-x-5">
           <Link
             href="/"
@@ -81,7 +83,7 @@ export default function NavBar() {
             About
           </Link>
 
-          {user && (
+          {isAdmin && (
             <Link
               href="/admin"
               className="hover:text-emerald-400 text-sm transition"
@@ -91,8 +93,8 @@ export default function NavBar() {
           )}
         </div>
 
-        {/* Right-side user/login controls */}
-        <div className="text-sm flex items-center space-x-4 relative">
+        {/* Auth controls (right side) */}
+        <div className="flex items-center space-x-4 text-sm relative">
           {user ? (
             <>
               <span className="text-gray-300 hidden sm:inline">
@@ -113,39 +115,42 @@ export default function NavBar() {
               >
                 Register
               </Link>
-              <button
-                onClick={() => setShowLoginForm(!showLoginForm)}
-                className="text-blue-400 hover:text-blue-300 underline"
-              >
-                Login
-              </button>
-              {showLoginForm && (
-                <div className="absolute top-14 right-0 bg-[#2d3748] border border-gray-600 p-4 rounded shadow-md w-64 z-50">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
-                  />
-                  {error && (
-                    <p className="text-red-400 text-sm mb-2">{error}</p>
-                  )}
-                  <button
-                    onClick={handleLogin}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              )}
+              <div className="relative">
+                <button
+                  onClick={() => setShowLoginForm(!showLoginForm)}
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  Login
+                </button>
+
+                {showLoginForm && (
+                  <div className="absolute right-0 mt-2 bg-[#2d3748] border border-gray-600 p-4 rounded shadow-md w-64 z-50">
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full mb-2 p-2 rounded bg-[#1e2633] text-white placeholder-gray-400 border border-gray-600"
+                    />
+                    {error && (
+                      <p className="text-red-400 text-sm mb-2">{error}</p>
+                    )}
+                    <button
+                      onClick={handleLogin}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>
