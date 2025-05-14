@@ -9,6 +9,7 @@ interface Post {
   content: string;
   imageUrl?: string;
   tags?: string[];
+  commentsDisabled?: boolean; // ✅ NEW
 }
 
 interface PostEditProps {
@@ -21,6 +22,10 @@ export default function PostEdit({ postId, post, onSave }: PostEditProps) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
   const [tags, setTags] = useState(post.tags?.join(", ") || "");
+  const [commentsDisabled, setCommentsDisabled] = useState(
+    // ✅ NEW
+    post.commentsDisabled || false
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     post.imageUrl || null
@@ -42,14 +47,11 @@ export default function PostEdit({ postId, post, onSave }: PostEditProps) {
     formData.append("title", title);
     formData.append("content", content);
     formData.append("tags", tags);
+    formData.append("commentsDisabled", String(commentsDisabled)); // ✅ NEW
     if (imageFile) formData.append("image", imageFile);
     if (removeImage) formData.append("removeImage", "true");
 
-    const result: {
-      success: boolean;
-      message?: string;
-      imageUrl?: string;
-    } = await editPostAction(formData);
+    const result = await editPostAction(formData);
 
     setLoading(false);
 
@@ -65,11 +67,12 @@ export default function PostEdit({ postId, post, onSave }: PostEditProps) {
           .map((t) => t.trim())
           .filter(Boolean),
         imageUrl:
-          typeof result.imageUrl === "string"
+          "imageUrl" in result && typeof result.imageUrl === "string"
             ? result.imageUrl
             : removeImage
               ? ""
               : post.imageUrl,
+        commentsDisabled, // ✅ NEW
       });
     } else {
       setMessage({
@@ -120,6 +123,16 @@ export default function PostEdit({ postId, post, onSave }: PostEditProps) {
           onChange={(e) => setTags(e.target.value)}
           className="block w-full mt-1 text-black p-2 rounded"
         />
+      </label>
+
+      <label className="block mb-3">
+        <input
+          type="checkbox"
+          checked={commentsDisabled}
+          onChange={(e) => setCommentsDisabled(e.target.checked)}
+          className="mr-2"
+        />
+        <span className="text-sm">Disable Comments</span>
       </label>
 
       <label className="block mb-4">

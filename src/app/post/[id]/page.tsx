@@ -141,26 +141,32 @@ export default function PostDetail() {
         )}
 
         {/* Comments */}
-        <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
-          <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
+        {!post.commentsDisabled ? (
+          <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
+            <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
 
-          <CommentForm
-            commentText={commentText}
-            SetCommentText={setCommentText}
-            onSubmit={handleAddComment}
-            isAuthenticated={!!user}
-          />
+            <CommentForm
+              commentText={commentText}
+              SetCommentText={setCommentText}
+              onSubmit={handleAddComment}
+              isAuthenticated={!!user}
+            />
 
-          {commentError && (
-            <p className="text-red-400 text-sm mt-2">{commentError}</p>
-          )}
+            {commentError && (
+              <p className="text-red-400 text-sm mt-2">{commentError}</p>
+            )}
 
-          <CommentList
-            comments={comments}
-            isAdmin={isAdmin}
-            onDeleteComment={handleDeleteComment}
-          />
-        </div>
+            <CommentList
+              comments={comments}
+              isAdmin={isAdmin}
+              onDeleteComment={handleDeleteComment}
+            />
+          </div>
+        ) : (
+          <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 mb-12 text-gray-400 italic text-center text-sm shadow-inner">
+            Comments are disabled for this post.
+          </div>
+        )}
       </div>
     </div>
   );

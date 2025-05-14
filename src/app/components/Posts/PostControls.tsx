@@ -66,6 +66,7 @@ export async function createPostAction(formData: FormData) {
 
   const tags = parseTags(formData.get("tags"));
   const image = formData.get("image") as File | null;
+  const commentsDisabled = formData.get("commentsDisabled") === "true";
 
   let imageUrl = "";
   if (image && image.size > 0) {
@@ -77,6 +78,7 @@ export async function createPostAction(formData: FormData) {
     content,
     imageUrl,
     tags,
+    commentsDisabled,
     createdAt: FieldValue.serverTimestamp(),
   });
 
@@ -105,6 +107,7 @@ export async function editPostAction(formData: FormData) {
   const tags = parseTags(formData.get("tags"));
   const image = formData.get("image") as File | null;
   const removeImage = formData.get("removeImage") === "true";
+  const commentsDisabled = formData.get("commentsDisabled") === "true";
 
   const docRef = adminDb.collection("posts").doc(id);
   const snapshot = await docRef.get();
@@ -113,7 +116,12 @@ export async function editPostAction(formData: FormData) {
   }
 
   const existingData = snapshot.data() as { imageUrl?: string };
-  const updateData: Record<string, any> = { title, content, tags };
+  const updateData: Record<string, any> = {
+    title,
+    content,
+    tags,
+    commentsDisabled,
+  };
 
   if (removeImage && existingData.imageUrl) {
     await deleteImageByUrl(existingData.imageUrl);

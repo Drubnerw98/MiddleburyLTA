@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { auth } from "../../../../lib/firebase";
 
 export default function WithAdminGuard({
@@ -9,20 +10,24 @@ export default function WithAdminGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [user, loading] = useAuthState(auth);
+  const router = useRouter();
+
+  const allowedAdmins = ["drubnation@gmail.com"]; // 👈 Add more admin emails here if needed
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) return setIsAdmin(false);
-      const token = await user.getIdTokenResult();
-      setIsAdmin(token.claims.admin === true);
-    });
+    if (!loading && (!user || !allowedAdmins.includes(user.email ?? ""))) {
+      router.push("/");
+    }
+  }, [user, loading, router]);
 
-    return () => unsub();
-  }, []);
-
-  if (isAdmin === null) return <p className="p-4">Checking access...</p>;
-  if (!isAdmin) return <p className="p-4">Access denied. Admins only.</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
+        Checking admin access...
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }

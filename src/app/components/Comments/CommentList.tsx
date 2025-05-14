@@ -38,26 +38,30 @@ export default function CommentList({
         return (
           <div
             key={comment.id}
-            className="bg-[#2c3545] border border-gray-700 p-4 rounded shadow text-white overflow-x-auto"
+            className="bg-[#2c3545]/90 border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] backdrop-blur p-4 rounded-lg transition-all duration-200"
           >
-            <p className="text-sm text-gray-100 whitespace-pre-wrap break-words leading-relaxed mb-2">
+            <p className="text-sm text-gray-100 whitespace-pre-wrap break-words leading-relaxed mb-3">
               {comment.content}
             </p>
 
-            <p className="text-xs text-gray-400">
-              by {comment.author}
-              {friendlyTime && (
-                <span className="ml-2 text-gray-500">• {friendlyTime}</span>
-              )}
+            <div className="text-xs text-gray-400 flex flex-wrap items-center justify-between">
+              <span>
+                by{" "}
+                <span className="text-white font-medium">{comment.author}</span>
+                {friendlyTime && (
+                  <span className="ml-2 text-gray-500">• {friendlyTime}</span>
+                )}
+              </span>
+
               {isAdmin && (
                 <button
                   onClick={() => onDeleteComment(comment.id)}
-                  className="ml-4 text-red-400 hover:underline"
+                  className="text-red-400 hover:text-red-300 hover:underline transition ml-2"
                 >
                   Delete
                 </button>
               )}
-            </p>
+            </div>
           </div>
         );
       })}

@@ -38,8 +38,11 @@ export default function RootLayout({
           <div className="absolute top-0 right-0 h-full w-[180px] bg-gradient-to-l from-blue-500/20 to-transparent blur-2xl" />
         </div>
 
-        {/* Noise Overlay */}
-        <div className="fixed inset-0 -z-30 pointer-events-none bg-[url('/noise.png')] opacity-[0.035]" />
+        {/* Noise Overlay (Refined) */}
+        <div
+          className="fixed inset-0 -z-30 pointer-events-none bg-[url('/noise.png')] bg-repeat bg-[length:200px_200px]"
+          style={{ opacity: 0.01 }} // You can adjust between 0.01 - 0.05 for subtlety
+        />
 
         {/* Subtle Vignette */}
         <div className="fixed inset-0 -z-40 pointer-events-none bg-gradient-to-b from-transparent via-black/5 to-black/10" />
