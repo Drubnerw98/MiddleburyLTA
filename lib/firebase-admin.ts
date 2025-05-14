@@ -2,10 +2,10 @@ import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
-// ✅ Read service account from environment variable
-const serviceAccount = JSON.parse(
-  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
-);
+// Parse and fix newlines in the private key
+const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}";
+const serviceAccount = JSON.parse(raw);
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
 
 const adminApp =
   getApps().length === 0
