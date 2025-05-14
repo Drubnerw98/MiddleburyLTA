@@ -2,10 +2,30 @@ import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
-// Parse and fix newlines in the private key
-const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}";
-const serviceAccount = JSON.parse(raw);
-serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+// Safely load and parse the service account key from the environment
+const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+
+if (!raw) {
+  throw new Error(
+    "FIREBASE_SERVICE_ACCOUNT_KEY is not set in the environment."
+  );
+}
+
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(raw);
+  if (typeof serviceAccount.private_key === "string") {
+    serviceAccount.private_key = serviceAccount.private_key.replace(
+      /\\n/g,
+      "\n"
+    );
+  } else {
+    throw new Error("Missing private_key in FIREBASE_SERVICE_ACCOUNT_KEY");
+  }
+} catch (err) {
+  console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:", err);
+  throw err;
+}
 
 const adminApp =
   getApps().length === 0
