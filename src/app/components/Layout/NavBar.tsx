@@ -57,9 +57,9 @@ export default function NavBar() {
 
   return (
     <nav className="w-full border-b border-white/10 backdrop-blur bg-[#1e2633]/70 z-50 relative">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between">
-        {/* Logo and nav links */}
-        <div className="flex items-center space-x-5">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        {/* Left side: Logo + Nav links */}
+        <div className="flex items-center space-x-4 flex-shrink-0">
           <Link
             href="/"
             className="flex items-center space-x-2 hover:opacity-90 transition"
@@ -93,8 +93,8 @@ export default function NavBar() {
           )}
         </div>
 
-        {/* Auth controls (right side) */}
-        <div className="flex items-center space-x-4 text-sm relative">
+        {/* Right side: Auth controls */}
+        <div className="relative flex items-center space-x-4 text-sm ml-auto">
           {user ? (
             <>
               <span className="text-gray-300 hidden sm:inline">
@@ -124,7 +124,7 @@ export default function NavBar() {
                 </button>
 
                 {showLoginForm && (
-                  <div className="absolute right-0 mt-2 bg-[#2d3748] border border-gray-600 p-4 rounded shadow-md w-64 z-50">
+                  <div className="absolute right-0 sm:right-0 mt-2 w-screen max-w-xs sm:max-w-sm bg-[#2d3748] border border-gray-600 p-4 rounded shadow-md z-[999] sm:w-64">
                     <input
                       type="email"
                       placeholder="Email"
