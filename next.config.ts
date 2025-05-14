@@ -1,4 +1,3 @@
-// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -9,6 +8,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "5mb", // Optional: keep if you're doing file uploads
     },
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

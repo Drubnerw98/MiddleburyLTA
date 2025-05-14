@@ -157,8 +157,9 @@ export default function PostDetail() {
             )}
 
             <CommentList
-              comments={comments}
-              isAdmin={isAdmin}
+              postId={postId}
+              comments={comments} // Pass the comments prop
+              isAdmin={isAdmin} // Pass the isAdmin prop
               onDeleteComment={handleDeleteComment}
             />
           </div>
