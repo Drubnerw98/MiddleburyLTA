@@ -1,13 +1,17 @@
 import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import serviceAccount from "../firebase-service-account.json";
+
+// Parse the service account key from the environment variable
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
+);
 
 const adminApp =
   getApps().length === 0
     ? initializeApp({
-        credential: cert(serviceAccount as any),
-        storageBucket: "middlebury-low-tax.firebasestorage.app", // Updated bucket name
+        credential: cert(serviceAccount),
+        storageBucket: "middlebury-low-tax.firebasestorage.app",
       })
     : getApp();
 
