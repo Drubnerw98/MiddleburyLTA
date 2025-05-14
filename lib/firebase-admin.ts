@@ -1,12 +1,10 @@
 import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import path from "path";
-import { readFileSync } from "fs";
 
-// Read the service account file directly
+// ✅ Read service account from environment variable
 const serviceAccount = JSON.parse(
-  readFileSync(path.resolve(process.cwd(), "serviceAccountKey.json"), "utf8")
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
 );
 
 const adminApp =
