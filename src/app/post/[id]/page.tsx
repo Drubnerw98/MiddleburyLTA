@@ -9,7 +9,6 @@ import {
   query,
   orderBy,
   getDocs,
-  deleteDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../../../../lib/firebase";
@@ -26,11 +25,17 @@ import { CommentForm } from "@/app/components/Comments/CommentForm";
 import CommentList from "@/app/components/Comments/CommentList";
 import { createCommentAction } from "@/app/actions/createCommentAction";
 
+import { softDeleteComment } from "../../../../lib/comments";
+import { editCommentContent } from "../../../../lib/editcomments";
+
 interface Comment {
   id: string;
+  uid: string;
   author: string;
   content: string;
   timestamp?: { seconds: number };
+  edited?: boolean;
+  deleted?: boolean;
 }
 
 export default function PostDetail() {
@@ -72,6 +77,19 @@ export default function PostDetail() {
     fetchComments();
   }, [postId]);
 
+  async function refreshComments() {
+    const q = query(
+      collection(db, "posts", postId, "comments"),
+      orderBy("timestamp", "asc")
+    );
+    const snapshot = await getDocs(q);
+    const updatedComments = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Comment[];
+    setComments(updatedComments);
+  }
+
   async function handleAddComment() {
     if (!commentText || !user) return;
 
@@ -88,22 +106,25 @@ export default function PostDetail() {
 
     setCommentText("");
     setCommentError(null);
-
-    const q = query(
-      collection(db, "posts", postId, "comments"),
-      orderBy("timestamp", "asc")
-    );
-    const snapshot = await getDocs(q);
-    const updatedComments = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Comment[];
-    setComments(updatedComments);
+    await refreshComments();
   }
 
   async function handleDeleteComment(commentId: string) {
-    await deleteDoc(doc(db, "posts", postId, "comments", commentId));
-    setComments(comments.filter((c) => c.id !== commentId));
+    try {
+      await softDeleteComment(postId, commentId);
+      await refreshComments();
+    } catch (err) {
+      console.error("Failed to delete comment:", err);
+    }
+  }
+
+  async function handleEditComment(commentId: string, newContent: string) {
+    try {
+      await editCommentContent(postId, commentId, newContent);
+      await refreshComments();
+    } catch (err) {
+      console.error("Failed to edit comment:", err);
+    }
   }
 
   async function handleDeletePost() {
@@ -128,7 +149,6 @@ export default function PostDetail() {
   return (
     <div className="flex justify-center px-4">
       <div className="w-full max-w-3xl space-y-8">
-        {/* Post */}
         {editing ? (
           <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
         ) : (
@@ -140,7 +160,6 @@ export default function PostDetail() {
           />
         )}
 
-        {/* Comments */}
         {!post.commentsDisabled ? (
           <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
             <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
@@ -159,7 +178,9 @@ export default function PostDetail() {
             <CommentList
               comments={comments}
               isAdmin={isAdmin}
+              currentUserId={user?.uid || ""}
               onDeleteComment={handleDeleteComment}
+              onEditComment={handleEditComment}
             />
           </div>
         ) : (
