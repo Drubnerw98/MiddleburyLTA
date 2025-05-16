@@ -28,10 +28,10 @@ export default function TaxImpactPage() {
     }
   };
 
-  // Realistic rates and assumptions
-  const projectedHomeValue = confirmedValue * 1.5; // 50% reassessment increase
-  const millRateWithoutDev = 0.027; // No distribution center
-  const millRateWithDev = 0.02589; // With distribution center
+  // Realistic values and mill rates
+  const projectedHomeValue = confirmedValue * 1.5;
+  const millRateWithoutDev = 0.027;
+  const millRateWithDev = 0.02589;
 
   const taxWithoutDev = Math.round(projectedHomeValue * millRateWithoutDev);
   const taxWithDev = Math.round(projectedHomeValue * millRateWithDev);
@@ -47,10 +47,10 @@ export default function TaxImpactPage() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
-      <h1 className="text-4xl font-serif font-semibold text-blue-300">
+      <h1 className="text-3xl sm:text-4xl font-serif font-semibold text-blue-300">
         Next Year's Taxes: With and Without the Distribution Center
       </h1>
-      <p className="text-gray-300 text-lg">
+      <p className="text-gray-300 text-base sm:text-lg">
         Property taxes are increasing due to a mandatory reassessment. Use this
         tool to see how much the new distribution center could reduce the size
         of that increase.
@@ -58,14 +58,12 @@ export default function TaxImpactPage() {
 
       {/* Calculator Card */}
       <div className="bg-[#2c3545]/90 border border-white/10 rounded-lg p-6 shadow-md backdrop-blur space-y-6">
-        {/* Input + Buttons */}
+        {/* Input Section */}
         <div className="space-y-2">
           <label htmlFor="homeInput" className="block text-blue-200 text-lg">
             Your Home Value Today:
           </label>
-
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-3 sm:space-y-0 w-full">
-            {/* Input w/ $ prefix */}
             <div className="flex items-center space-x-2 w-full sm:w-auto">
               <span className="text-white text-lg font-semibold">$</span>
               <input
@@ -82,8 +80,6 @@ export default function TaxImpactPage() {
                 placeholder="e.g. 350000"
               />
             </div>
-
-            {/* Buttons */}
             <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0 w-full sm:w-auto">
               <button
                 onClick={handleSubmit}
@@ -123,6 +119,16 @@ export default function TaxImpactPage() {
           )}
         </div>
 
+        {/* Projected Home Value Display */}
+        <div className="bg-[#3b455a]/80 border border-white/10 rounded-md p-4 text-center space-y-1">
+          <p className="text-sm text-gray-300">
+            Projected Home Value Next Year (50% Increase)
+          </p>
+          <p className="text-xl font-bold text-blue-200">
+            {formatMoneyShort(projectedHomeValue)}
+          </p>
+        </div>
+
         {/* Results Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
           <div className="bg-red-900/50 rounded-md p-4 break-words">
@@ -141,6 +147,7 @@ export default function TaxImpactPage() {
           </div>
         </div>
 
+        {/* Estimated Savings */}
         <div className="text-center text-yellow-200 text-lg font-medium">
           Estimated Savings:{" "}
           <span className="font-bold text-yellow-100">
@@ -149,8 +156,8 @@ export default function TaxImpactPage() {
         </div>
       </div>
 
-      {/* Explanation section */}
-      <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-3">
+      {/* Explanation Section */}
+      <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-4">
         <h2 className="text-xl font-semibold text-blue-200">
           Why Are Taxes Going Up?
         </h2>
