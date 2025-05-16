@@ -28,12 +28,14 @@ export default function TaxImpactPage() {
     }
   };
 
-  const currentRate = 0.025;
-  const newRate = 0.0225;
+  // Realistic rates and assumptions
+  const projectedHomeValue = confirmedValue * 1.5; // 50% reassessment increase
+  const millRateWithoutDev = 0.027; // No distribution center
+  const millRateWithDev = 0.02589; // With distribution center
 
-  const currentTax = Math.round(confirmedValue * currentRate);
-  const newTax = Math.round(confirmedValue * newRate);
-  const savings = currentTax - newTax;
+  const taxWithoutDev = Math.round(projectedHomeValue * millRateWithoutDev);
+  const taxWithDev = Math.round(projectedHomeValue * millRateWithDev);
+  const taxDifference = taxWithoutDev - taxWithDev;
 
   const formatMoneyShort = (num: number) => {
     if (num >= 1_000_000_000_000) return "$999.9B+";
@@ -46,11 +48,12 @@ export default function TaxImpactPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
       <h1 className="text-4xl font-serif font-semibold text-blue-300">
-        Tax Savings with the Distribution Center
+        Next Year's Taxes: With and Without the Distribution Center
       </h1>
       <p className="text-gray-300 text-lg">
-        Use the slider or enter your home's value to see how the new
-        distribution center could lower your property taxes.
+        Property taxes are increasing due to a mandatory reassessment. Use this
+        tool to see how much the new distribution center could reduce the size
+        of that increase.
       </p>
 
       {/* Calculator Card */}
@@ -58,7 +61,7 @@ export default function TaxImpactPage() {
         {/* Input + Buttons */}
         <div className="space-y-2">
           <label htmlFor="homeInput" className="block text-blue-200 text-lg">
-            Your Home Value:
+            Your Home Value Today:
           </label>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-3 sm:space-y-0 w-full">
@@ -121,43 +124,59 @@ export default function TaxImpactPage() {
         </div>
 
         {/* Results Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="bg-blue-900/60 rounded-md p-4 break-words">
-            <p className="text-sm text-blue-300">Current Taxes</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+          <div className="bg-red-900/50 rounded-md p-4 break-words">
+            <p className="text-sm text-red-300">Taxes Next Year (No Center)</p>
             <p className="text-2xl font-bold text-white">
-              {formatMoneyShort(currentTax)}
+              {formatMoneyShort(taxWithoutDev)}
             </p>
           </div>
           <div className="bg-green-900/50 rounded-md p-4 break-words">
-            <p className="text-sm text-green-300">After Distribution Center</p>
-            <p className="text-2xl font-bold text-green-100">
-              {formatMoneyShort(newTax)}
+            <p className="text-sm text-green-300">
+              Taxes Next Year (With Center)
             </p>
-          </div>
-          <div className="bg-yellow-900/50 rounded-md p-4 break-words">
-            <p className="text-sm text-yellow-300">Estimated Savings</p>
-            <p className="text-2xl font-bold text-yellow-100">
-              {formatMoneyShort(savings)}
+            <p className="text-2xl font-bold text-green-100">
+              {formatMoneyShort(taxWithDev)}
             </p>
           </div>
         </div>
+
+        <div className="text-center text-yellow-200 text-lg font-medium">
+          Estimated Savings:{" "}
+          <span className="font-bold text-yellow-100">
+            {formatMoneyShort(taxDifference)}
+          </span>
+        </div>
       </div>
 
-      {/* Explanation placeholder */}
+      {/* Explanation section */}
       <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-3">
         <h2 className="text-xl font-semibold text-blue-200">
-          Why would taxes go down?
+          Why Are Taxes Going Up?
         </h2>
         <p className="text-gray-300 text-base leading-relaxed">
-          [You’ll put your explanation here later — e.g. added tax revenue from
-          commercial properties reduces burden on homeowners, etc.]
+          Like every town in Connecticut, Middlebury is undergoing a property
+          value reassessment. Most home values will go up around{" "}
+          <strong>50%</strong>, and that means taxes will go up too — even if
+          the mill rate stays flat.
+        </p>
+        <p className="text-gray-300 text-base leading-relaxed">
+          But there's good news: the new{" "}
+          <strong>$90 million distribution center</strong> would bring in around{" "}
+          <strong>$3 million in tax revenue</strong>, helping to spread the
+          burden and lower the mill rate town-wide. This keeps your tax increase
+          smaller.
+        </p>
+        <p className="text-gray-300 text-base leading-relaxed">
+          Without the project, the town would need to raise the mill rate to
+          cover the budget. With the project, the rate actually{" "}
+          <em>drops slightly</em>, helping homeowners save.
         </p>
       </div>
 
       <p className="text-sm text-gray-400 italic text-center">
-        This is a simple estimate based on a projected reduction in the local
-        tax rate. Exact savings may vary depending on budget decisions and
-        property assessments.
+        This estimate assumes a 50% reassessment increase in home value and uses
+        mill rate data provided by local financial experts.
       </p>
     </main>
   );
