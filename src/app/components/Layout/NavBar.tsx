@@ -83,6 +83,13 @@ export default function NavBar() {
             About
           </Link>
 
+          <Link
+            href="/tax-impact"
+            className="hover:text-yellow-300 text-sm transition"
+          >
+            Tax Impact
+          </Link>
+
           {isAdmin && (
             <Link
               href="/admin"
