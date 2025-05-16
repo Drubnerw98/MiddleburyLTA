@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "../../lib/firebase";
 import PostPreview from "@/app/components/Posts/PostPreview";
 import SearchBar from "@/app/components/SearchBar";
+import TaxImpactCTA from "@/app/components/TaxImpactCTA"; // ✅ Import CTA button
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface Post {
@@ -132,6 +133,9 @@ export default function HomePageClient() {
         </div>
         <SearchBar />
       </div>
+
+      {/* ✅ Call to Action Button */}
+      <TaxImpactCTA />
 
       {/* Posts */}
       <div className="space-y-6">
