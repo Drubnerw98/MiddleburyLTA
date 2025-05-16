@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function TaxImpactPage() {
   const SLIDER_MIN = 100000;
   const SLIDER_MAX = 10000000;
-  const DEFAULT_VALUE = 350000;
+  const DEFAULT_VALUE = 360000;
 
   const [inputValue, setInputValue] = useState(DEFAULT_VALUE.toString());
   const [confirmedValue, setConfirmedValue] = useState(DEFAULT_VALUE);
@@ -28,17 +28,18 @@ export default function TaxImpactPage() {
     }
   };
 
-  // Realistic values and mill rates
+  // Official rates and assumptions
   const projectedHomeValue = confirmedValue * 1.5;
-  const millRateWithoutDev = 0.027;
-  const millRateWithDev = 0.02589;
+  const tax2024 = Math.round(confirmedValue * 0.03258); // 2024 baseline
+  const millRateWithoutDev = 0.0247;
+  const millRateWithDev = 0.0231;
 
   const taxWithoutDev = Math.round(projectedHomeValue * millRateWithoutDev);
   const taxWithDev = Math.round(projectedHomeValue * millRateWithDev);
   const taxDifference = taxWithoutDev - taxWithDev;
+  const percentSavings = ((taxDifference / taxWithoutDev) * 100).toFixed(1);
 
   const formatMoneyShort = (num: number) => {
-    if (num >= 1_000_000_000_000) return "$999.9B+";
     if (num >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(1)}B`;
     if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(1)}M`;
     if (num >= 1_000) return `$${(num / 1_000).toFixed(1)}K`;
@@ -51,12 +52,12 @@ export default function TaxImpactPage() {
         Next Year's Taxes: With and Without the Distribution Center
       </h1>
       <p className="text-gray-300 text-base sm:text-lg">
-        Property taxes are increasing due to a mandatory reassessment. Use this
-        tool to see how much the new distribution center could reduce the size
-        of that increase.
+        Use this tool to estimate how your taxes will change due to mandatory
+        property reassessment — and how much the new distribution center could
+        help reduce that increase.
       </p>
 
-      {/* Calculator Card */}
+      {/* Calculator */}
       <div className="bg-[#2c3545]/90 border border-white/10 rounded-lg p-6 shadow-md backdrop-blur space-y-6">
         {/* Input Section */}
         <div className="space-y-2">
@@ -77,7 +78,7 @@ export default function TaxImpactPage() {
                 }
                 onKeyDown={handleKeyDown}
                 className="w-full bg-gray-800 text-white border border-blue-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
-                placeholder="e.g. 350000"
+                placeholder="e.g. 360000"
               />
             </div>
             <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0 w-full sm:w-auto">
@@ -119,7 +120,7 @@ export default function TaxImpactPage() {
           )}
         </div>
 
-        {/* Projected Home Value Display */}
+        {/* Projected Home Value */}
         <div className="bg-[#3b455a]/80 border border-white/10 rounded-md p-4 text-center space-y-1">
           <p className="text-sm text-gray-300">
             Projected Home Value Next Year (50% Increase)
@@ -129,61 +130,72 @@ export default function TaxImpactPage() {
           </p>
         </div>
 
-        {/* Results Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+        {/* Tax Comparison Grid (2024, 2025 w/o, 2025 w/) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+          <div className="bg-blue-900/50 rounded-md p-4 break-words">
+            <p className="text-sm text-blue-300">2024 Taxes</p>
+            <p className="text-2xl font-bold text-white">
+              {formatMoneyShort(tax2024)}
+            </p>
+          </div>
           <div className="bg-red-900/50 rounded-md p-4 break-words">
-            <p className="text-sm text-red-300">Taxes Next Year (No Center)</p>
+            <p className="text-sm text-red-300">2025 Without Dev</p>
             <p className="text-2xl font-bold text-white">
               {formatMoneyShort(taxWithoutDev)}
             </p>
           </div>
           <div className="bg-green-900/50 rounded-md p-4 break-words">
-            <p className="text-sm text-green-300">
-              Taxes Next Year (With Center)
-            </p>
+            <p className="text-sm text-green-300">2025 With Dev</p>
             <p className="text-2xl font-bold text-green-100">
               {formatMoneyShort(taxWithDev)}
             </p>
           </div>
         </div>
 
-        {/* Estimated Savings */}
-        <div className="text-center text-yellow-200 text-lg font-medium">
-          Estimated Savings:{" "}
-          <span className="font-bold text-yellow-100">
-            {formatMoneyShort(taxDifference)}
-          </span>
+        {/* Savings */}
+        <div className="text-center text-yellow-200 text-lg font-medium space-y-1">
+          <div>
+            Estimated Savings:{" "}
+            <span className="font-bold text-yellow-100">
+              {formatMoneyShort(taxDifference)}
+            </span>
+          </div>
+          <p className="text-sm text-yellow-200">
+            Percent Savings:{" "}
+            <span className="font-semibold">{percentSavings}%</span>
+          </p>
         </div>
       </div>
 
-      {/* Explanation Section */}
+      {/* Explanation */}
       <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-4">
         <h2 className="text-xl font-semibold text-blue-200">
           Why Are Taxes Going Up?
         </h2>
         <p className="text-gray-300 text-base leading-relaxed">
-          Like every town in Connecticut, Middlebury is undergoing a property
-          value reassessment. Most home values will go up around{" "}
-          <strong>50%</strong>, and that means taxes will go up too — even if
-          the mill rate stays flat.
+          Middlebury is undergoing a property value reassessment, and most home
+          values are expected to rise by about <strong>50%</strong>. That means
+          tax bills will also increase — even if the town’s budget stays the
+          same.
         </p>
         <p className="text-gray-300 text-base leading-relaxed">
-          But there's good news: the new{" "}
-          <strong>$90 million distribution center</strong> would bring in around{" "}
-          <strong>$3 million in tax revenue</strong>, helping to spread the
-          burden and lower the mill rate town-wide. This keeps your tax increase
-          smaller.
+          The proposed <strong>$90 million distribution center</strong> helps
+          offset that by generating an estimated{" "}
+          <strong>$2.9 million in tax revenue</strong>. This revenue lets the
+          town keep the mill rate lower, softening the tax increase for
+          homeowners.
         </p>
         <p className="text-gray-300 text-base leading-relaxed">
-          Without the project, the town would need to raise the mill rate to
-          cover the budget. With the project, the rate actually{" "}
-          <em>drops slightly</em>, helping homeowners save.
+          Without the development, the average tax bill on a $540k home would be{" "}
+          <strong>$13,172</strong>. With the development, that same bill would
+          be <strong>$12,490</strong> — a savings of <strong>$681</strong>{" "}
+          (about <strong>5.2%</strong>).
         </p>
       </div>
 
       <p className="text-sm text-gray-400 italic text-center">
-        This estimate assumes a 50% reassessment increase in home value and uses
-        mill rate data provided by local financial experts.
+        Based on 2025 mill rate estimates from updated Grand List projections
+        and budget assumptions. Data provided by local financial experts.
       </p>
     </main>
   );
