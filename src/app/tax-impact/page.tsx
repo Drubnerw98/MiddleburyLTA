@@ -9,6 +9,7 @@ export default function TaxImpactPage() {
 
   const [inputValue, setInputValue] = useState(DEFAULT_VALUE.toString());
   const [confirmedValue, setConfirmedValue] = useState(DEFAULT_VALUE);
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = () => {
     const raw = parseInt(inputValue.replace(/[^\d]/g, "") || "0");
@@ -28,9 +29,8 @@ export default function TaxImpactPage() {
     }
   };
 
-  // Official rates and assumptions
   const projectedHomeValue = confirmedValue * 1.5;
-  const tax2024 = Math.round(confirmedValue * 0.03258); // 2024 baseline
+  const tax2024 = Math.round(confirmedValue * 0.03258);
   const millRateWithoutDev = 0.0247;
   const millRateWithDev = 0.0231;
 
@@ -130,7 +130,7 @@ export default function TaxImpactPage() {
           </p>
         </div>
 
-        {/* Tax Comparison Grid (2024, 2025 w/o, 2025 w/) */}
+        {/* Tax Comparison Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div className="bg-blue-900/50 rounded-md p-4 break-words">
             <p className="text-sm text-blue-300">2024 Taxes</p>
@@ -175,8 +175,16 @@ export default function TaxImpactPage() {
         <p className="text-gray-300 text-base leading-relaxed">
           Middlebury is undergoing a property value reassessment, and most home
           values are expected to rise by about <strong>50%</strong>. That means
-          tax bills will also increase — even if the town’s budget stays the
-          same.
+          tax bills will also increase — even if the town’s{" "}
+          <span className="text-blue-300 font-semibold">mill rate</span>
+          <button
+            onClick={() => setShowModal(true)}
+            className="ml-1 inline-flex items-center justify-center bg-blue-800 text-white text-xs font-bold w-4 h-4 rounded-full hover:bg-blue-700"
+            aria-label="What is mill rate?"
+          >
+            ?
+          </button>{" "}
+          stays the same.
         </p>
         <p className="text-gray-300 text-base leading-relaxed">
           The proposed <strong>$90 million distribution center</strong> helps
@@ -197,6 +205,28 @@ export default function TaxImpactPage() {
         Based on 2025 mill rate estimates from updated Grand List projections
         and budget assumptions. Data provided by local financial experts.
       </p>
+
+      {/* Modal Definition */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-[#2c3545] border border-white/10 p-6 rounded-lg max-w-sm w-full text-white shadow-lg space-y-4">
+            <h3 className="text-xl font-semibold text-blue-300">
+              What is a mill rate?
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-200">
+              The <strong>mill rate</strong> is the amount of tax you pay per
+              $1,000 of your home’s assessed value. For example, a mill rate of
+              25 means you owe $25 for every $1,000 in property value.
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-4 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-medium"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
