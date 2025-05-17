@@ -97,7 +97,8 @@ export default function TaxImpactPage() {
             </div>
           </div>
           <p className="text-sm text-gray-400 mt-2">
-            Don’t know your assessment? You can look it up by name or address on{" "}
+            Don’t know your assessment? You can look it up by name or address by
+            clicking this link at{" "}
             <a
               href="https://gis.vgsi.com/MiddleburyCT/"
               target="_blank"
