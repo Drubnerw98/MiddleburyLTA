@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../../../../lib/firebase";
 
 export default function FeedbackForm() {
   const [name, setName] = useState("");
@@ -8,9 +10,33 @@ export default function FeedbackForm() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log({ name, email, message });
+
+    const feedback = { name, email, message };
+
+    console.log("🔍 Feedback submitted:", feedback);
+
+    // Check if email notifications are enabled
+    try {
+      const settingsRef = doc(db, "admin", "settings");
+      const settingsSnap = await getDoc(settingsRef);
+      const shouldNotify =
+        settingsSnap.exists() && settingsSnap.data().emailNotifications;
+
+      if (shouldNotify) {
+        await fetch("/api/send-feedback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(feedback),
+        });
+      }
+    } catch (err) {
+      console.error("Error checking settings or sending email:", err);
+    }
+
     setSubmitted(true);
     setName("");
     setEmail("");

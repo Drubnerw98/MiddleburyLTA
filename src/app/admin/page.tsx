@@ -1,15 +1,12 @@
 "use client";
 
-import AdminPostForm from "../components/AdminPostForm";
+import AdminDashboardLayout from "../components/Admin/AdminDashboardLayout";
 import WithAdminGuard from "../components/Auth/WithAdminGuard";
 
 export default function AdminPage() {
   return (
     <WithAdminGuard>
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4 text-white">Admin Panel</h1>
-        <AdminPostForm />
-      </div>
+      <AdminDashboardLayout />
     </WithAdminGuard>
   );
 }
