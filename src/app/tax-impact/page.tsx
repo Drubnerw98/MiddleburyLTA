@@ -49,12 +49,12 @@ export default function TaxImpactPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
       <h1 className="text-3xl sm:text-4xl font-serif font-semibold text-blue-300">
-        Next Year's Taxes: With and Without the Distribution Center
+        Next Year's Taxes: With and Without the Warehouse Projects
       </h1>
       <p className="text-gray-300 text-base sm:text-lg">
         Use this tool to estimate how your taxes will change due to mandatory
-        property reassessment — and how much the new distribution center could
-        help reduce that increase.
+        property reassessment — and how much the new warehouse properties on
+        Southford Road and Straits Turnpike could help reduce that increase.
       </p>
 
       {/* Calculator */}
@@ -96,6 +96,18 @@ export default function TaxImpactPage() {
               </button>
             </div>
           </div>
+          <p className="text-sm text-gray-400 mt-2">
+            Don’t know your assessment? You can look it up by name or address on{" "}
+            <a
+              href="https://gis.vgsi.com/MiddleburyCT/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 underline hover:text-blue-300"
+            >
+              Vision Appraisal
+            </a>
+            .
+          </p>
         </div>
 
         {/* Slider */}
@@ -187,17 +199,20 @@ export default function TaxImpactPage() {
           stays the same.
         </p>
         <p className="text-gray-300 text-base leading-relaxed">
-          The proposed <strong>$90 million distribution center</strong> helps
-          offset that by generating an estimated{" "}
+          The proposed{" "}
+          <strong>
+            warehouse properties on Southford Road and Straits Turnpike
+          </strong>{" "}
+          will help offset that increase by generating an estimated{" "}
           <strong>$2.9 million in tax revenue</strong>. This revenue lets the
           town keep the mill rate lower, softening the tax increase for
           homeowners.
         </p>
         <p className="text-gray-300 text-base leading-relaxed">
-          Without the development, the average tax bill on a $540k home would be{" "}
-          <strong>$13,172</strong>. With the development, that same bill would
-          be <strong>$12,490</strong> — a savings of <strong>$681</strong>{" "}
-          (about <strong>5.2%</strong>).
+          Without the projects, the average tax bill on a $540k home would be{" "}
+          <strong>$13,172</strong>. With them, that same bill would be{" "}
+          <strong>$12,490</strong> — a savings of <strong>$681</strong> (about{" "}
+          <strong>5.2%</strong>).
         </p>
       </div>
 
