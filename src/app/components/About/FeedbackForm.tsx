@@ -14,10 +14,8 @@ export default function FeedbackForm() {
     e.preventDefault();
 
     const feedback = { name, email, message };
-
     console.log("🔍 Feedback submitted:", feedback);
 
-    // Check if email notifications are enabled
     try {
       const settingsRef = doc(db, "admin", "settings");
       const settingsSnap = await getDoc(settingsRef);
@@ -25,16 +23,21 @@ export default function FeedbackForm() {
         settingsSnap.exists() && settingsSnap.data().emailNotifications;
 
       if (shouldNotify) {
-        await fetch("/api/send-feedback", {
+        const res = await fetch(`${window.location.origin}/api/send-feedback`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(feedback),
         });
+
+        const result = await res.json();
+        console.log("📬 API response:", result);
+
+        if (!res.ok) {
+          console.error("❌ Email failed:", result.error);
+        }
       }
     } catch (err) {
-      console.error("Error checking settings or sending email:", err);
+      console.error("❌ Error in submission flow:", err);
     }
 
     setSubmitted(true);
