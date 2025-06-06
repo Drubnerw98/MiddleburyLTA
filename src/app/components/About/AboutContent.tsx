@@ -1,3 +1,4 @@
+// src/app/components/About/AboutContent.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,24 +26,24 @@ export default function AboutContent() {
   }, []);
 
   return (
-    <section className="bg-[#2c3545] border border-gray-700 rounded-lg p-6 max-w-3xl mx-auto mb-8 shadow-md">
-      <h1 className="text-3xl font-bold text-blue-400 mb-4">
-        About Middlebury Lower Tax Alliance
-      </h1>
+      <section className="bg-[#2c3545] border border-gray-700 rounded-lg p-6 max-w-3xl mx-auto mb-8 shadow-md">
+        <h1 className="text-3xl font-bold text-blue-400 mb-4">
+          About Middlebury Taxpayers
+        </h1>
 
-      {content ? (
-        <div className="prose prose-invert text-gray-300">
-          <ReactMarkdown>{content}</ReactMarkdown>
-        </div>
-      ) : (
-        <p className="text-gray-400 italic">Loading...</p>
-      )}
+        {content ? (
+            <div className="prose prose-invert text-gray-300">
+              <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+        ) : (
+            <p className="text-gray-400 italic">Loading...</p>
+        )}
 
-      <img
-        src="https://source.unsplash.com/random/800x200/?community"
-        alt="Middlebury Community"
-        className="w-full h-auto rounded-lg border border-gray-600 shadow-sm mt-6"
-      />
-    </section>
+        <img
+            src="https://source.unsplash.com/random/800x200/?community"
+            alt="Middlebury Community"
+            className="w-full h-auto rounded-lg border border-gray-600 shadow-sm mt-6"
+        />
+      </section>
   );
 }
