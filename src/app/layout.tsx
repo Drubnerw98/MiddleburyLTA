@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/Layout/NavBar";
 import Footer from "./components/Layout/Footer";
-import { Toaster } from "react-hot-toast"; // ✅ ADDED
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,44 +18,48 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MLTA Tax Impact Center",
   description:
-    "A community-driven space for sharing facts, updates, and discussion.",
+      "A community-driven space for sharing facts, updates, and discussion.",
   icons: { icon: "/favicon.ico" },
 };
 
 export default function RootLayout({
-  children,
-}: {
+                                     children,
+                                   }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+      <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased text-white min-h-screen relative bg-[#1e2633]`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased text-white min-h-screen relative bg-[#1e2633]`}
       >
-        {/* Side Glow Gradients */}
-        <div className="fixed inset-0 -z-20 pointer-events-none">
-          <div className="absolute top-0 left-0 h-full w-[180px] bg-gradient-to-r from-blue-500/20 to-transparent blur-2xl" />
-          <div className="absolute top-0 right-0 h-full w-[180px] bg-gradient-to-l from-blue-500/20 to-transparent blur-2xl" />
-        </div>
+      {/* 🖼️ Background Image */}
+      <div
+          className="fixed inset-0 -z-50 bg-cover bg-no-repeat"
+          style={{
+            backgroundImage: "url('/images/townhall-middlebury.png')",
+            backgroundPosition: "center",
+          }}
+      />
 
-        {/* Noise Overlay (Refined) */}
-        <div
-          className="fixed inset-0 -z-30 pointer-events-none bg-[url('/noise.png')] bg-repeat bg-[length:200px_200px]"
-          style={{ opacity: 0.01 }}
-        />
+      {/* 🎬 Vignette for Contrast */}
+      <div className="fixed inset-0 -z-40 pointer-events-none bg-gradient-to-b from-transparent via-black/20 to-black/30" />
 
-        {/* Subtle Vignette */}
-        <div className="fixed inset-0 -z-40 pointer-events-none bg-gradient-to-b from-transparent via-black/5 to-black/10" />
+      {/* ✨ Gold Accent Glow (Subtle) */}
+      <div className="fixed inset-0 -z-30 pointer-events-none">
+        <div className="absolute top-0 left-0 h-full w-[180px] bg-gradient-to-r from-yellow-500/10 to-transparent blur-2xl" />
+        <div className="absolute top-0 right-0 h-full w-[180px] bg-gradient-to-l from-yellow-500/10 to-transparent blur-2xl" />
+      </div>
 
-        <NavBar />
-        <main className="px-4 sm:px-6 md:px-8 py-10 border-t border-white/5">
-          {children}
-        </main>
-        <Footer />
+      {/* 🌐 Page Content */}
+      <NavBar />
+      <main className="px-4 sm:px-6 md:px-8 py-10 border-t border-white/5">
+        {children}
+      </main>
+      <Footer />
 
-        {/* ✅ Global Toast Notifications */}
-        <Toaster position="bottom-right" />
+      {/* 🔔 Toasts */}
+      <Toaster position="bottom-right" />
       </body>
-    </html>
+      </html>
   );
 }

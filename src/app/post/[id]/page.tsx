@@ -16,10 +16,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import PostDisplay from "@/app/components/Posts/PostDisplay";
 import PostEdit from "@/app/components/Posts/PostEdit";
-import {
-  editPostAction,
-  deletePostAction,
-} from "@/app/components/Posts/PostControls";
+import { deletePostAction } from "@/app/components/Posts/PostControls";
 
 import { CommentForm } from "@/app/components/Comments/CommentForm";
 import CommentList from "@/app/components/Comments/CommentList";
@@ -38,11 +35,41 @@ interface Comment {
   deleted?: boolean;
 }
 
+interface PostData {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  tags?: string[];
+  commentsDisabled?: boolean;
+}
+
+const fetchPost = async (postId: string): Promise<PostData | null> => {
+  const docRef = doc(db, "posts", postId);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() } as PostData;
+  }
+  return null;
+};
+
+const fetchComments = async (postId: string): Promise<Comment[]> => {
+  const q = query(
+      collection(db, "posts", postId, "comments"),
+      orderBy("timestamp", "asc")
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Comment[];
+};
+
 export default function PostDetail() {
   const params = useParams();
   const postId = params.id as string;
 
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<PostData | null>(null);
   const [editing, setEditing] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
@@ -52,51 +79,29 @@ export default function PostDetail() {
   const isAdmin = user?.email === "drubnation@gmail.com";
 
   useEffect(() => {
-    async function fetchPost() {
-      const docRef = doc(db, "posts", postId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setPost({ id: docSnap.id, ...docSnap.data() });
-      }
-    }
+    const fetchData = async () => {
+      const fetchedPost = await fetchPost(postId);
+      if (fetchedPost) setPost(fetchedPost);
 
-    async function fetchComments() {
-      const q = query(
-        collection(db, "posts", postId, "comments"),
-        orderBy("timestamp", "asc")
-      );
-      const snapshot = await getDocs(q);
-      const loadedComments = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Comment[];
-      setComments(loadedComments);
-    }
+      const fetchedComments = await fetchComments(postId);
+      setComments(fetchedComments);
+    };
 
-    fetchPost();
-    fetchComments();
+    void fetchData(); // ignore unhandled promise
   }, [postId]);
 
-  async function refreshComments() {
-    const q = query(
-      collection(db, "posts", postId, "comments"),
-      orderBy("timestamp", "asc")
-    );
-    const snapshot = await getDocs(q);
-    const updatedComments = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Comment[];
-    setComments(updatedComments);
-  }
+  const refreshComments = async () => {
+    const updated = await fetchComments(postId);
+    setComments(updated);
+  };
 
-  async function handleAddComment() {
+  const handleAddComment = async () => {
     if (!commentText || !user) return;
 
     const result = await createCommentAction(
-      postId,
-      commentText,
-      user.email || "Anonymous"
+        postId,
+        commentText,
+        user.email || "Anonymous"
     );
 
     if (!result.success) {
@@ -107,88 +112,89 @@ export default function PostDetail() {
     setCommentText("");
     setCommentError(null);
     await refreshComments();
-  }
+  };
 
-  async function handleDeleteComment(commentId: string) {
+  const handleDeleteComment = async (commentId: string) => {
     try {
       await softDeleteComment(postId, commentId);
       await refreshComments();
     } catch (err) {
       console.error("Failed to delete comment:", err);
     }
-  }
+  };
 
-  async function handleEditComment(commentId: string, newContent: string) {
+  const handleEditComment = async (commentId: string, newContent: string) => {
     try {
       await editCommentContent(postId, commentId, newContent);
       await refreshComments();
     } catch (err) {
       console.error("Failed to edit comment:", err);
     }
-  }
+  };
 
-  async function handleDeletePost() {
+  const handleDeletePost = async () => {
     if (!isAdmin) return;
     await deletePostAction(postId);
     window.location.href = "/";
-  }
+  };
 
-  async function handleUpdatePost(updatedPost: any) {
-    await updateDoc(doc(db, "posts", postId), updatedPost);
+  const handleUpdatePost = async (updatedPost: PostData) => {
+    const { id, ...rest } = updatedPost;
+    await updateDoc(doc(db, "posts", postId), rest);
     setPost(updatedPost);
     setEditing(false);
-  }
+  };
 
   if (!post)
     return (
-      <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
-        Loading post...
-      </div>
+        <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
+          Loading post...
+        </div>
     );
 
   return (
-    <div className="flex justify-center px-4">
-      <div className="w-full max-w-3xl space-y-8">
-        {editing ? (
-          <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
-        ) : (
-          <PostDisplay
-            title={post.title}
-            content={post.content}
-            imageUrl={post.imageUrl}
-            tags={post.tags}
-          />
-        )}
+      <div className="flex justify-center px-4">
+        <div className="w-full max-w-3xl space-y-8">
+          {editing ? (
+              <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
+          ) : (
+              <PostDisplay
+                  title={post.title}
+                  content={post.content}
+                  imageUrl={post.imageUrl}
+                  tags={post.tags}
+              />
+          )}
 
-        {!post.commentsDisabled ? (
-          <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
-            <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
+          {!post.commentsDisabled ? (
+              <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
+                <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
 
-            <CommentForm
-              commentText={commentText}
-              SetCommentText={setCommentText}
-              onSubmit={handleAddComment}
-              isAuthenticated={!!user}
-            />
+                <CommentForm
+                    commentText={commentText}
+                    SetCommentText={setCommentText}
+                    onSubmit={handleAddComment}
+                    isAuthenticated={!!user}
+                />
 
-            {commentError && (
-              <p className="text-red-400 text-sm mt-2">{commentError}</p>
-            )}
+                {commentError && (
+                    <p className="text-red-400 text-sm mt-2">{commentError}</p>
+                )}
 
-            <CommentList
-              comments={comments}
-              isAdmin={isAdmin}
-              currentUserId={user?.uid || ""}
-              onDeleteComment={handleDeleteComment}
-              onEditComment={handleEditComment}
-            />
-          </div>
-        ) : (
-          <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 mb-12 text-gray-400 italic text-center text-sm shadow-inner">
-            Comments are disabled for this post.
-          </div>
-        )}
+                <CommentList
+                    comments={comments}
+                    isAdmin={isAdmin}
+                    currentUserId={user?.uid || ""}
+                    onDeleteComment={handleDeleteComment}
+                    onEditComment={handleEditComment}
+                />
+              </div>
+          ) : (
+              <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 mb-12 text-gray-400 italic text-center text-sm shadow-inner">
+                Comments are disabled for this post.
+              </div>
+          )}
+        </div>
       </div>
-    </div>
   );
 }

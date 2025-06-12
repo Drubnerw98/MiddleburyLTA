@@ -1,15 +1,47 @@
 @import "tailwindcss";
 
-/* ✅ Optional: You can still define global font vars if you're using Google Fonts */
+/* 🌐 Custom Font Variables */
 :root {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* ✅ Optional markdown styling (unchanged and safe) */
+/* 🔤 Base Text Rendering */
+html {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply text-white bg-[#1e2633] min-h-screen;
+  background-image: url("/noise.png");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  background-blend-mode: overlay;
+  overflow-x: hidden;
+}
+
+/* ✅ Universal Reset Improvements */
+* {
+  box-sizing: border-box;
+}
+
+a {
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Markdown Styling */
 .markdown-content {
   line-height: 1.75;
   font-size: 1rem;
+  font-family: var(--font-sans);
 }
 
 .markdown-content h1,
@@ -17,17 +49,20 @@
 .markdown-content h3 {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 700;
+  color: #e5e7eb; /* neutral-200 */
 }
 
 .markdown-content p {
   margin: 1rem 0;
+  color: #d1d5db; /* neutral-300 */
 }
 
 .markdown-content ul,
 .markdown-content ol {
-  margin-left: 1.25rem;
+  margin-left: 1.5rem;
   margin-bottom: 1rem;
+  list-style-position: inside;
 }
 
 .markdown-content li {
@@ -35,27 +70,33 @@
 }
 
 .markdown-content a {
-  color: #3b82f6;
+  color: #facc15; /* yellow-400 */
+  font-weight: 500;
   text-decoration: underline;
 }
 
 .markdown-content code {
-  background: #1e1e1e;
-  padding: 0.2rem 0.4rem;
+  background-color: #1f2937; /* slate-800 */
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-family: var(--font-mono, monospace);
   font-size: 0.875rem;
+  color: #fcd34d; /* yellow-300 */
 }
 
 .markdown-content pre {
-  background: #1e1e1e;
+  background-color: #111827; /* slate-900 */
+  color: #f9fafb;
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
   margin: 1rem 0;
+  font-family: var(--font-mono);
 }
-body {
-  background-image: url("/noise.png");
-  background-repeat: repeat;
-  background-size: auto;
+
+/* 🧱 Utility Fix: Remove spin buttons on number inputs (if used later) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

@@ -39,37 +39,63 @@ export default function PostFeed() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p>Loading posts...</p>;
+  if (loading) {
+    return (
+        <div className="text-center text-gray-400 italic py-10">
+          Loading posts...
+        </div>
+    );
+  }
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Recent Posts</h2>
-      {posts.map((post) => (
-        <div key={post.id} style={{ marginBottom: "2rem" }}>
-          <h3>{post.title}</h3>
-          <ReactMarkdown>{post.content}</ReactMarkdown>
-          {post.imageUrl && (
-            <img
-              src={post.imageUrl}
-              alt={post.title}
-              style={{
-                maxWidth: "100%",
-                marginTop: "0.5rem",
-                borderRadius: "8px",
-              }}
-            />
-          )}
-          <small>by {post.author}</small>
+      <section className="max-w-3xl mx-auto px-4 space-y-10">
+        <h2 className="text-2xl font-semibold text-yellow-300 border-b border-yellow-400 pb-2">
+          Recent Posts
+        </h2>
 
-          <div style={{ marginTop: "0.5rem" }}>
-            <Link href={`/post/${post.id}`}>
-              <button>View Post</button>
-            </Link>
-          </div>
+        {posts.map((post) => (
+            <article
+                key={post.id}
+                className="bg-[#1f2937]/80 backdrop-blur-sm border border-white/10 rounded-xl shadow-xl hover:shadow-2xl transition-all p-6 space-y-4"
+            >
+              <header className="space-y-1">
+                <h3 className="text-xl font-bold text-yellow-300 tracking-tight">
+                  {post.title}
+                </h3>
+                <p className="text-sm text-gray-400">
+                  By {post.author}
+                  {post.timestamp && (
+                      <>
+                        {" "}
+                        •{" "}
+                        {new Date(post.timestamp.seconds * 1000).toLocaleDateString()}
+                      </>
+                  )}
+                </p>
+              </header>
 
-          <hr />
-        </div>
-      ))}
-    </div>
+              <div className="text-gray-300 text-sm line-clamp-4">
+                <ReactMarkdown>{post.content}</ReactMarkdown>
+              </div>
+
+              {post.imageUrl && (
+                  <img
+                      src={post.imageUrl}
+                      alt={post.title}
+                      className="w-full rounded-md border border-white/10 shadow-sm"
+                  />
+              )}
+
+              <div className="pt-2">
+                <Link
+                    href={`/post/${post.id}`}
+                    className="inline-block text-sm font-semibold text-yellow-300 hover:text-yellow-200 transition hover:underline"
+                >
+                  View Full Post →
+                </Link>
+              </div>
+            </article>
+        ))}
+      </section>
   );
 }
