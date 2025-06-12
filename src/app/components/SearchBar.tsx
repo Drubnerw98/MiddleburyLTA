@@ -10,7 +10,7 @@ export default function SearchBar() {
   const [input, setInput] = useState(queryParam);
 
   useEffect(() => {
-    setInput(queryParam); // Sync input if URL query changes
+    setInput(queryParam); // Sync with URL changes
   }, [queryParam]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,34 +29,34 @@ export default function SearchBar() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-stretch sm:items-center"
-    >
-      <input
-        type="text"
-        placeholder="Search posts..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="flex-1 px-4 py-2 rounded-md bg-[#2c3545] text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-      />
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md transition"
-        >
-          Search
-        </button>
-        {input && (
+      <form
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-stretch sm:items-center"
+      >
+        <input
+            type="text"
+            placeholder="Search posts..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-1 px-4 py-2 rounded-md bg-[#1e2633] text-white placeholder-gray-400 border border-yellow-500/20 focus:outline-none focus:ring-2 focus:ring-yellow-500/40 transition-all"
+        />
+        <div className="flex gap-2">
           <button
-            type="button"
-            onClick={handleClear}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition"
+              type="submit"
+              className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-md font-medium shadow-sm"
           >
-            ✕
+            Search
           </button>
-        )}
-      </div>
-    </form>
+          {input && (
+              <button
+                  type="button"
+                  onClick={handleClear}
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+              >
+                ✕
+              </button>
+          )}
+        </div>
+      </form>
   );
 }

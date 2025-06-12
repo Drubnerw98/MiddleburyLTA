@@ -11,55 +11,54 @@ interface PostDisplayProps {
 }
 
 export default function PostDisplay({
-  title,
-  content,
-  imageUrl,
-  tags,
-}: PostDisplayProps) {
+                                      title,
+                                      content,
+                                      imageUrl,
+                                      tags,
+                                    }: PostDisplayProps) {
   const router = useRouter();
 
   const handleTagClick = (tag: string) => {
-    const encoded = encodeURIComponent(tag);
-    router.push(`/?q=${encoded}`);
+    router.push(`/?q=${encodeURIComponent(tag)}`);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 pb-12 bg-[#2c3545]/90 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg text-white overflow-x-auto space-y-6">
-      {/* Title */}
-      <h1 className="text-4xl font-serif font-semibold text-blue-300 break-words leading-tight">
-        {title}
-      </h1>
+      <article className="max-w-3xl mx-auto px-6 py-8 bg-[#1e2633]/90 border border-yellow-400/20 rounded-xl shadow-md backdrop-blur-md space-y-8">
+        {/* Title */}
+        <h1 className="text-4xl font-serif font-bold text-yellow-300 break-words leading-tight tracking-tight">
+          {title}
+        </h1>
 
-      {/* Tags */}
-      {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
-              className="text-xs px-2 py-1 rounded-full bg-gradient-to-br from-blue-800 to-blue-600 text-white hover:brightness-110 transition-all duration-200"
-            >
-              #{tag}
-            </button>
-          ))}
+        {/* Tags */}
+        {(tags ?? []).length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {(tags ?? []).map((tag) => (
+                  <button
+                      key={tag}
+                      onClick={() => handleTagClick(tag)}
+                      className="text-xs px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 font-semibold hover:bg-yellow-500/20 transition"
+                  >
+                    #{tag}
+                  </button>
+              ))}
+            </div>
+        )}
+
+        {/* Image */}
+        {imageUrl && (
+            <div className="rounded-md overflow-hidden border border-white/10">
+              <img
+                  src={imageUrl}
+                  alt={title}
+                  className="w-full h-auto max-h-[500px] object-contain"
+              />
+            </div>
+        )}
+
+        {/* Content */}
+        <div className="prose prose-invert prose-base max-w-none text-gray-200 leading-relaxed break-words">
+          <ReactMarkdown>{content}</ReactMarkdown>
         </div>
-      )}
-
-      {/* Image */}
-      {imageUrl && (
-        <div className="w-full overflow-hidden rounded-lg">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-auto max-h-[500px] object-contain rounded-lg"
-          />
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="prose prose-invert prose-base max-w-none text-gray-200 break-words leading-relaxed">
-        <ReactMarkdown>{content}</ReactMarkdown>
-      </div>
-    </div>
+      </article>
   );
 }
