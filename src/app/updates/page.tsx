@@ -1,9 +1,10 @@
-// src/app/updates/page.tsx
-
-"use client";
-
-import HomePageClient from "../HomePageClient";
+import { Suspense } from "react";
+import HomePageClient from "../HomePageClient"; // or wherever you're using useSearchParams()
 
 export default function UpdatesPage() {
-    return <HomePageClient />;
+    return (
+        <Suspense fallback={<div className="text-gray-400 text-center mt-8">Loading updates...</div>}>
+            <HomePageClient />
+        </Suspense>
+    );
 }
