@@ -1,4 +1,3 @@
-// src/app/tax-impact/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -48,12 +47,12 @@ export default function TaxImpactPage() {
 
   return (
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
-        {/* Title */}
-        <section>
-          <h1 className="text-4xl font-bold font-serif text-blue-300 mb-3">
+        {/* Title block in box */}
+        <section className="bg-[#2c3545]/90 border border-white/10 rounded-lg p-6 shadow-md backdrop-blur space-y-3">
+          <h1 className="text-4xl font-bold font-serif text-blue-300">
             2024 Tax Impact Calculator
           </h1>
-          <p className="text-gray-300 text-base sm:text-lg max-w-xl">
+          <p className="text-gray-300 text-base sm:text-lg">
             Use this tool to estimate how the new commercial properties on Southford Road and Straits Turnpike would have impacted your 2024 property taxes.
           </p>
         </section>
@@ -74,7 +73,9 @@ export default function TaxImpactPage() {
                     type="text"
                     inputMode="numeric"
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value.replace(/[^\d]/g, ""))}
+                    onChange={(e) =>
+                        setInputValue(e.target.value.replace(/[^\d]/g, ""))
+                    }
                     onKeyDown={handleKeyDown}
                     className="w-full bg-gray-800 text-white border border-blue-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
                 />
@@ -134,11 +135,15 @@ export default function TaxImpactPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
             <div className="bg-blue-900/50 rounded-md p-4">
               <p className="text-sm text-blue-300">2024 Without Development</p>
-              <p className="text-2xl font-bold text-white">{formatMoney(taxWithoutDev)}</p>
+              <p className="text-2xl font-bold text-white">
+                {formatMoney(taxWithoutDev)}
+              </p>
             </div>
             <div className="bg-green-900/50 rounded-md p-4">
               <p className="text-sm text-green-300">2024 With Development</p>
-              <p className="text-2xl font-bold text-green-100">{formatMoney(taxWithDev)}</p>
+              <p className="text-2xl font-bold text-green-100">
+                {formatMoney(taxWithDev)}
+              </p>
             </div>
             <div className="bg-yellow-900/50 rounded-md p-4">
               <p className="text-sm text-yellow-300">Estimated Savings</p>
@@ -151,13 +156,29 @@ export default function TaxImpactPage() {
 
         {/* Explainer */}
         <section className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-4 text-gray-300">
-          <h2 className="text-xl font-semibold text-blue-200">About the Numbers</h2>
+          <h2 className="text-xl font-semibold text-blue-200">
+            About the Numbers
+          </h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li>Based on 2024 projections: $11,729 without development vs. $10,692 with development (on a $360,000 home).</li>
-            <li>This represents an 8.84% savings, scaled to your home's value.</li>
-            <li>The Southford and Straits projects are estimated to contribute $2.7 million annually in new tax revenue.</li>
-            <li>Residential properties are expected to rise in value by 35–50%, shifting more burden onto homeowners.</li>
-            <li>Commercial properties are more efficient, costing only $0.26 per $1.00 paid in taxes (2022 AFT study).</li>
+            <li>
+              Based on 2024 projections: $11,729 without development vs. $10,692
+              with development (on a $360,000 home).
+            </li>
+            <li>
+              This represents an 8.84% savings, scaled to your home&apos;s value.
+            </li>
+            <li>
+              The Southford and Straits projects are estimated to contribute $2.7
+              million annually in new tax revenue.
+            </li>
+            <li>
+              Residential properties are expected to rise in value by 35–50%,
+              shifting more burden onto homeowners.
+            </li>
+            <li>
+              Commercial properties are more efficient, costing only $0.26 per
+              $1.00 paid in taxes (2022 AFT study).
+            </li>
           </ul>
         </section>
 

@@ -1,3 +1,4 @@
+// src/app/components/NavBar.tsx
 "use client";
 
 import Link from "next/link";
@@ -43,7 +44,7 @@ export default function NavBar() {
       setPassword("");
       setError(null);
       setShowLoginForm(false);
-    } catch (err) {
+    } catch {
       setError("Login failed.");
     }
   };
@@ -86,6 +87,13 @@ export default function NavBar() {
                   className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
               >
                 Tax Impact
+              </Link>
+
+              <Link
+                  href="/updates"
+                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
+              >
+                Updates
               </Link>
 
               {isAdmin && (
