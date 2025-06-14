@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   doc,
   getDoc,
@@ -44,29 +44,9 @@ interface PostData {
   commentsDisabled?: boolean;
 }
 
-const fetchPost = async (postId: string): Promise<PostData | null> => {
-  const docRef = doc(db, "posts", postId);
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() } as PostData;
-  }
-  return null;
-};
-
-const fetchComments = async (postId: string): Promise<Comment[]> => {
-  const q = query(
-      collection(db, "posts", postId, "comments"),
-      orderBy("timestamp", "asc")
-  );
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Comment[];
-};
-
-export default function PostDetail() {
+export default function PostDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const postId = params.id as string;
 
   const [post, setPost] = useState<PostData | null>(null);
@@ -80,22 +60,33 @@ export default function PostDetail() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedPost = await fetchPost(postId);
-      if (fetchedPost) setPost(fetchedPost);
+      const docRef = doc(db, "posts", postId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setPost({ id: docSnap.id, ...docSnap.data() } as PostData);
+      }
 
-      const fetchedComments = await fetchComments(postId);
-      setComments(fetchedComments);
+      const q = query(
+          collection(db, "posts", postId, "comments"),
+          orderBy("timestamp", "asc")
+      );
+      const snapshot = await getDocs(q);
+      setComments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Comment[]);
     };
 
-    void fetchData(); // ignore unhandled promise
+    void fetchData();
   }, [postId]);
 
   const refreshComments = async () => {
-    const updated = await fetchComments(postId);
-    setComments(updated);
+    const q = query(
+        collection(db, "posts", postId, "comments"),
+        orderBy("timestamp", "asc")
+    );
+    const snapshot = await getDocs(q);
+    setComments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Comment[]);
   };
 
-  const handleAddComment = async () => {
+  const handleSubmitAction = async () => {
     if (!commentText || !user) return;
 
     const result = await createCommentAction(
@@ -114,49 +105,46 @@ export default function PostDetail() {
     await refreshComments();
   };
 
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      await softDeleteComment(postId, commentId);
-      await refreshComments();
-    } catch (err) {
-      console.error("Failed to delete comment:", err);
-    }
+  const handleDeleteCommentAction = async (commentId: string) => {
+    await softDeleteComment(postId, commentId);
+    await refreshComments();
   };
 
-  const handleEditComment = async (commentId: string, newContent: string) => {
-    try {
-      await editCommentContent(postId, commentId, newContent);
-      await refreshComments();
-    } catch (err) {
-      console.error("Failed to edit comment:", err);
-    }
+  const handleEditCommentAction = async (commentId: string, newContent: string) => {
+    await editCommentContent(postId, commentId, newContent);
+    await refreshComments();
   };
 
   const handleDeletePost = async () => {
     if (!isAdmin) return;
     await deletePostAction(postId);
-    window.location.href = "/";
+    router.push("/");
   };
 
-  const handleUpdatePost = async (updatedPost: PostData) => {
+  const handleSaveAction = async (updatedPost: PostData) => {
     const { id, ...rest } = updatedPost;
     await updateDoc(doc(db, "posts", postId), rest);
     setPost(updatedPost);
     setEditing(false);
   };
 
-  if (!post)
+  if (!post) {
     return (
         <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
           Loading post...
         </div>
     );
+  }
 
   return (
       <div className="flex justify-center px-4">
         <div className="w-full max-w-3xl space-y-8">
           {editing ? (
-              <PostEdit postId={postId} post={post} onSave={handleUpdatePost} />
+              <PostEdit
+                  postId={postId}
+                  post={post}
+                  onSaveAction={handleSaveAction}
+              />
           ) : (
               <PostDisplay
                   title={post.title}
@@ -172,8 +160,8 @@ export default function PostDetail() {
 
                 <CommentForm
                     commentText={commentText}
-                    SetCommentText={setCommentText}
-                    onSubmit={handleAddComment}
+                    setCommentTextAction={setCommentText}
+                    onSubmitAction={handleSubmitAction}
                     isAuthenticated={!!user}
                 />
 
@@ -185,8 +173,8 @@ export default function PostDetail() {
                     comments={comments}
                     isAdmin={isAdmin}
                     currentUserId={user?.uid || ""}
-                    onDeleteComment={handleDeleteComment}
-                    onEditComment={handleEditComment}
+                    onDeleteCommentAction={handleDeleteCommentAction}
+                    onEditCommentAction={handleEditCommentAction}
                 />
               </div>
           ) : (
