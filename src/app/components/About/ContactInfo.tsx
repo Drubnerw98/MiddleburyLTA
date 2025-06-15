@@ -11,10 +11,10 @@ export default function ContactInfo() {
                     <li>
                         <span className="font-semibold text-white">Email:</span>{" "}
                         <a
-                            href="mailto:press@middleburytaxpayers.org"
+                            href="mailto:hello@middleburytaxpayers.org"
                             className="text-blue-400 hover:underline"
                         >
-                            press@middleburytaxpayers.org
+                            hello@middleburytaxpayers.org
                         </a>
                     </li>
                     <li>
