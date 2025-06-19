@@ -1,4 +1,3 @@
-// src/app/components/Layout/Footer.tsx
 import Image from "next/image";
 
 export default function Footer() {
@@ -18,9 +17,24 @@ export default function Footer() {
                 </p>
 
                 <div className="flex gap-4 text-xs">
-                    <a href="/about" className="hover:text-blue-400 transition">About</a>
-                    <a href="/tax-impact" className="hover:text-blue-400 transition">Tax Impact</a>
-                    <a href="mailto:press@middleburytaxpayers.org" className="hover:text-blue-400 transition">Contact</a>
+                    <a href="/about" className="hover:text-blue-400 transition">
+                        About
+                    </a>
+                    <a href="/tax-impact" className="hover:text-blue-400 transition">
+                        Tax Impact
+                    </a>
+
+                    {/* 🔥 New link added here */}
+                    <a href="/articles" className="hover:text-blue-400 transition">
+                        Articles & Links
+                    </a>
+
+                    <a
+                        href="mailto:press@middleburytaxpayers.org"
+                        className="hover:text-blue-400 transition"
+                    >
+                        Contact
+                    </a>
                 </div>
             </div>
 

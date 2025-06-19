@@ -96,6 +96,14 @@ export default function NavBar() {
                 Updates
               </Link>
 
+              {/* 🔥 New Articles Link */}
+              <Link
+                  href="/articles"
+                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
+              >
+                Articles & Links
+              </Link>
+
               {isAdmin && (
                   <Link
                       href="/admin"
@@ -154,9 +162,7 @@ export default function NavBar() {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full mb-2 p-2 rounded bg-[#121821] text-white placeholder-gray-400 border border-gray-600"
                         />
-                        {error && (
-                            <p className="text-red-400 text-sm mb-2">{error}</p>
-                        )}
+                        {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
                         <button
                             onClick={handleLogin}
                             className="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-2 rounded font-semibold transition-all"
