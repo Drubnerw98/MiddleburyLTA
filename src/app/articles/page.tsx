@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // 🔥 Add this line
+
 import { db } from '../../../lib/firebase'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import ArticlesClient from './ArticlesClient'
@@ -23,7 +25,6 @@ export default async function ArticlesPage() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
-            {/* 🔥 New: Stylized header */}
             <div className="bg-black/40 backdrop-blur-sm rounded-xl px-6 py-5 text-center max-w-2xl mx-auto space-y-2">
                 <h1 className="text-4xl font-bold text-yellow-300">Articles & Links</h1>
                 <p className="text-sm text-gray-300 leading-relaxed">
@@ -31,7 +32,6 @@ export default async function ArticlesPage() {
                 </p>
             </div>
 
-            {/* Render links */}
             <ArticlesClient links={links} />
         </div>
     )
