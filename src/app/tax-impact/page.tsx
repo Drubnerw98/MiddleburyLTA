@@ -47,7 +47,6 @@ export default function TaxImpactPage() {
 
   return (
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
-        {/* Title */}
         <section className="bg-[#2c3545]/90 border border-white/10 rounded-lg p-6 shadow-md backdrop-blur space-y-3">
           <h1 className="text-4xl font-bold font-serif text-blue-300">
             2024 Tax Impact Calculator
@@ -57,7 +56,6 @@ export default function TaxImpactPage() {
           </p>
         </section>
 
-        {/* Calculator */}
         <section className="bg-[#2c3545]/90 border border-white/10 rounded-lg p-6 shadow-md backdrop-blur space-y-6">
           <div className="space-y-2">
             <label htmlFor="homeInput" className="block text-blue-200 text-lg">
@@ -72,9 +70,7 @@ export default function TaxImpactPage() {
                     type="text"
                     inputMode="numeric"
                     value={inputValue}
-                    onChange={(e) =>
-                        setInputValue(e.target.value.replace(/[^\d]/g, ""))
-                    }
+                    onChange={(e) => setInputValue(e.target.value.replace(/[^\d]/g, ""))}
                     onKeyDown={handleKeyDown}
                     className="w-full bg-gray-800 text-white border border-blue-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
                 />
@@ -97,7 +93,7 @@ export default function TaxImpactPage() {
             </div>
 
             <p className="text-sm text-gray-400 mt-2">
-              Don’t know your assessed value? Look it up on{" "}
+              Don’t know your assessed value? Look it up on{' '}
               <a
                   href="https://gis.vgsi.com/MiddleburyCT/"
                   target="_blank"
@@ -123,6 +119,7 @@ export default function TaxImpactPage() {
               }}
               className="w-full mt-4"
           />
+
           {confirmedValue > SLIDER_MAX && (
               <p className="text-sm text-yellow-300 mt-1 text-center italic">
                 Display capped at $10M — calculations still accurate.
@@ -132,15 +129,11 @@ export default function TaxImpactPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
             <div className="bg-blue-900/50 rounded-md p-4">
               <p className="text-sm text-blue-300">2024 Without Development</p>
-              <p className="text-2xl font-bold text-white">
-                {formatMoney(taxWithoutDev)}
-              </p>
+              <p className="text-2xl font-bold text-white">{formatMoney(taxWithoutDev)}</p>
             </div>
             <div className="bg-green-900/50 rounded-md p-4">
               <p className="text-sm text-green-300">2024 With Development</p>
-              <p className="text-2xl font-bold text-green-100">
-                {formatMoney(taxWithDev)}
-              </p>
+              <p className="text-2xl font-bold text-green-100">{formatMoney(taxWithDev)}</p>
             </div>
             <div className="bg-yellow-900/50 rounded-md p-4">
               <p className="text-sm text-yellow-300">Estimated Savings</p>
@@ -151,33 +144,36 @@ export default function TaxImpactPage() {
           </div>
         </section>
 
-        {/* Explainer */}
-        <section className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 shadow-inner space-y-4 text-gray-300">
-          <h2 className="text-xl font-semibold text-blue-200">
-            About the Numbers
-          </h2>
-          <ul className="list-disc pl-5 space-y-2 text-sm leading-relaxed">
-            <li>Based on 2024 projections: taxes of $11,729 without development vs. $10,692 with development (on a $360,000 home).</li>
-            <li>This represents an 8.84% savings, scaled to your home’s value.</li>
-            <li>Residential property values are expected to rise by 35–50% in the next revaluation, shifting more of the tax burden onto homeowners.</li>
-            <li>In 2004, 82.6% of the Grand List was residential real estate. By 2024, it had risen to 86.5%. Without development, that number is expected to approach 91% — and could reach 94% in the coming years.</li>
-            <li>Middlebury’s budget is projected to grow 5% annually, driven by school costs (6–7%) and other services (3%). Without new revenue, this means a 27% budget increase in five years funded mostly by residents.</li>
-            <li>Commercial development adds to the Grand List, reducing mill rate pressure and helping offset the homeowner burden.</li>
-            <li>The combined value of the Southford and Straits Turnpike projects is projected at $90MM — 7.5% of the 2024 Grand List.</li>
-            <li>They are expected to contribute $2.7MM in recurring annual tax revenue, plus $1.8MM in one-time fees for permits and site work.</li>
-            <li>Commercial properties are more efficient: they consume only $0.26 in services per $1.00 in taxes paid (2022 AFT study), compared to $1.11 for residential properties.</li>
-            <li>This means commercial properties create a 74% surplus, while residential properties create an 11% deficit per dollar paid.</li>
-            <li>According to the Lincoln Institute of Land Policy, cities with mostly residential tax bases like Detroit and Bridgeport have effective property tax rates over 2.2%, while commercial-heavy cities like Boston and Denver are under 1%.</li>
-            <li>A 2023 Iowa State study found that every $1 increase in property tax rate (per $1,000) reduces home value by 0.16%. Middlebury’s 32.6 mill rate — compared to Oxford’s 20 — could cause home values to diverge by 5–10% over time.</li>
-            <li>Pepperdine University researchers found that lower property tax burdens directly correlate to higher long-term appreciation and median home values, even when controlling for other variables.</li>
-            <li>Middlebury’s mill rate is significantly higher than nearby towns: 32.6 in Middlebury vs. 23.6 in Southbury and 20.0 in Oxford — up to 63% more despite similar home values and public service levels.</li>
-            <li>For example, a $400,000 assessed home pays ~$13,000/year in Middlebury vs. ~$8,000/year in Oxford — a $5,000 difference annually from mill rate alone.</li>
-          </ul>
+        <section className="bg-[#1d2736] border border-white/10 rounded-lg p-6 shadow-inner space-y-4 text-gray-100 text-sm leading-relaxed">
+          <h2 className="text-xl font-semibold text-blue-200 mb-4">About the Numbers</h2>
+          <div className="space-y-4">
+            {[
+              "• Based on 2024 projections: taxes of $11,729 without development vs. $10,692 with development (on a $360,000 home).",
+              "• Homeowner Savings With Development: This represents an 8.84% savings, scaled to your home's value.",
+              "• Without Development, Increasing Residential Tax Burden: Residential property values are expected to rise in value by 35–50% in the town’s next revaluation, far more than commercial real estate and shifting even more of the tax burden onto homeowners going forward.",
+              "• In 2004, only 82.6% of the real estate on the Grand List was residential, with the rest of the real estate tax being commercial property.",
+              "• By 2024, residential had grown to 86.5% of the Grand List’s real estate value.",
+              "• With the coming increase in residential values, residential will be close to 91% of the Grand List’s real estate value. With continued home appreciation and without commercial development, residential could reach 94% or higher of the Grand List’s real estate value in the next few years.",
+              "• Middlebury’s town budget is projected to see recurring 5%/year expense increases, driven by 6-7%/year school cost inflation and 3%/year increases in other costs. Over 5 years this will produce a 27% higher budget that, without offsetting taxes from commercial development, will require ever increasing homeowner taxes.",
+              "• Expanding commercial development = lower taxes for residents: Commercial development adds to the tax base and helps offset this impact on residents. Even a modest increase in commercial properties could add to the town’s taxable base and reduce mill rate pressure.",
+              "• The expected combined value of Southford Park and Straits Turnpike projects is $90MM, or 7.5% of the ’24 Grand List.",
+              "• Southford Park and Straits Turnpike are estimated to contribute $2.7 million annually in new tax revenue based on 2024 Grand List & budget. Additionally, they are projected to generate $1.8MM of one-time fees for the town for building & earthwork permits.",
+              "• Commercial properties are net payers to a town’s tax base, as they consume far fewer services than they fund in taxes. A study by the American Farmland Trust shows that residential property in CT consumes $1.11 for every $1.00 of tax paid, while farmland ($0.34) and commercial property ($0.26) pay in excess of their consumption and greatly subsidize services that benefit residents. This means that commercial property funds a 74% funding surplus, while residential property causes an 11% funding deficit for every dollar of tax paid.",
+              "• Homeowners in residential-only towns pay up to 2x more in property taxes: According to the Lincoln Institute of Land Policy, cities like Detroit and Bridgeport—where the tax base is mostly residential—have effective property tax rates over 2.2%, while cities with a stronger commercial base like Denver and Boston often stay below 1%.",
+              "• Homes in high-tax towns are worth less: A 2023 Iowa State study found that each additional $1 per $1,000 in property tax rate lowers home values by 0.16%. Compared to Oxford’s 20 mills, Middlebury’s 32.6 mill rate could mean diverging home values over time with Middlebury values falling 5–10% relative to what they would be under a more balanced tax structure.",
+              "• Tax burden impacts home appreciation: A Pepperdine University analysis (Valadez & Smith) found that states and towns with lower property tax burdens had higher median home values and stronger appreciation, even after controlling for other variables.",
+              "• Middlebury’s mill rate is significantly higher than nearby towns: For FY2024–25, Middlebury’s mill rate is 32.6 mills, compared to 23.6 in Southbury and just 20.0 in Oxford. That puts Middlebury up to 63% higher, despite similar home values and public service needs.",
+              "• Greater commercial development can add to the tax base, lowering the mill rate and offsetting this pressure on homeowners.",
+              "• Middlebury’s housing costs more in taxes for the same home: A $400,000 assessed home pays about ~$13,000/year in property taxes in Middlebury, versus $8,000 in Oxford — a $5,000 difference annually just based on mill rate.",
+            ].map((line, idx) => (
+                <p key={idx}>{line}</p>
+            ))}
+          </div>
         </section>
 
-        <p className="text-sm text-gray-400 italic text-center">
+        <section className="bg-[#2c3545]/90 border border-yellow-500/30 rounded-lg p-4 text-center text-sm text-yellow-200 font-medium shadow-md">
           Figures based on updated mill rate and Grand List estimates for 2024.
-        </p>
+        </section>
       </main>
   );
 }
