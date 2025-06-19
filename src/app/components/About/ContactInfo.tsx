@@ -19,7 +19,7 @@ export default function ContactInfo() {
                     </li>
                     <li>
                         <span className="font-semibold text-white">Phone:</span>{" "}
-                        (802) 555-1234
+                        
                     </li>
                     <li>
                         <span className="font-semibold text-white">Website:</span>{" "}
