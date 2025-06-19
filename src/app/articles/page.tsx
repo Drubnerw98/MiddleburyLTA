@@ -1,17 +1,21 @@
-export const dynamic = "force-dynamic"; // 🔥 Add this line
+export const dynamic = "force-dynamic";
 
-import { db } from '../../../lib/firebase'
-import { collection, getDocs, orderBy, query } from 'firebase/firestore'
-import ArticlesClient from './ArticlesClient'
-import { LinkItem } from '@/types/link'
+import { db } from '../../../lib/firebase';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import ArticlesClient from './ArticlesClient';
+import { LinkItem } from '@/types/link';
 
 export default async function ArticlesPage() {
     const snapshot = await getDocs(
-        query(collection(db, 'external_links'), orderBy('createdAt', 'desc'))
-    )
+        query(
+            collection(db, 'external_links'),
+            orderBy('priority', 'asc'),
+            orderBy('createdAt', 'desc')
+        )
+    );
 
     const links: LinkItem[] = snapshot.docs.map((doc) => {
-        const data = doc.data()
+        const data = doc.data();
         return {
             id: doc.id,
             title: data.title,
@@ -20,8 +24,8 @@ export default async function ArticlesPage() {
             source: data.source ?? '',
             datePublished: data.datePublished ?? '',
             createdAt: data.createdAt?.seconds ?? undefined,
-        }
-    })
+        };
+    });
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
@@ -34,5 +38,5 @@ export default async function ArticlesPage() {
 
             <ArticlesClient links={links} />
         </div>
-    )
+    );
 }
