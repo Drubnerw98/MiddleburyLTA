@@ -1,0 +1,110 @@
+// src/app/components/Auth/RegisterModal.tsx
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile,
+} from "firebase/auth";
+import { app } from "../../../../lib/firebase";
+
+interface RegisterModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const auth = getAuth(app);
+
+export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        if (isOpen) document.addEventListener("keydown", handleEsc);
+        return () => document.removeEventListener("keydown", handleEsc);
+    }, [isOpen, onClose]);
+
+    const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (modalRef.current && e.target === modalRef.current) {
+            onClose();
+        }
+    };
+
+    const handleRegister = async () => {
+        try {
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCred.user, { displayName: name });
+
+            setEmail("");
+            setPassword("");
+            setName("");
+            setError(null);
+            onClose();
+        } catch {
+            setError("Registration failed. Try a stronger password or different email.");
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            onClick={handleClickOutside}
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+        >
+            <div className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4">
+                <h2 className="text-xl font-bold text-white">Register</h2>
+
+                <input
+                    type="text"
+                    placeholder="Full Name"
+                    className="w-full p-2 rounded border border-[#D9D9D9] text-[#2E3D52] placeholder-[#99A1AF] bg-white"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full p-2 rounded border border-[#D9D9D9] text-[#2E3D52] placeholder-[#99A1AF] bg-white"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full p-2 rounded border border-[#D9D9D9] text-[#2E3D52] placeholder-[#99A1AF] bg-white"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                {error && <p className="text-sm text-red-400">{error}</p>}
+
+                <div className="flex justify-between gap-4">
+                    <button
+                        onClick={onClose}
+                        className="w-full text-sm py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleRegister}
+                        className="w-full text-sm py-2 rounded bg-[#2E3D52] hover:bg-[#516684] text-white font-semibold transition"
+                    >
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

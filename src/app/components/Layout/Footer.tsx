@@ -1,30 +1,26 @@
-import Logo from "../Logo/logo"; // ✅ Updated import
+import InverseLogo from "@/app/components/Logo/inverselogo";
 
 export default function Footer() {
     return (
-        <footer className="w-full border-t border-white/10 bg-[#1a1f2b]/80 backdrop-blur shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-            <div className="flex flex-col items-center py-8 px-4 space-y-4 text-sm text-gray-400">
-                <Logo className="w-16 h-16 opacity-80" /> {/* ✅ SVG Logo */}
-                <p className="text-xs tracking-wide text-center">
+        <footer className="w-full border-t border-white/10 bg-[#1a1f2b] shadow-inner">
+            <div className="flex flex-col items-center py-6 px-4 space-y-2 text-sm text-gray-300">
+                <InverseLogo className="w-12 h-12 opacity-90" />
+                <p className="text-xs tracking-wide text-center text-gray-400">
                     © {new Date().getFullYear()} Middlebury Taxpayers. All rights reserved.
                 </p>
 
                 <div className="flex gap-4 text-xs">
-                    <a href="/about" className="hover:text-blue-400 transition">
-                        About
-                    </a>
-                    <a href="/tax-impact" className="hover:text-blue-400 transition">
+                    <a href="/tax-impact" className="hover:text-sky-400 transition">
                         Tax Impact
                     </a>
-                    <a href="/articles" className="hover:text-blue-400 transition">
+                    <a href="/articles" className="hover:text-sky-400 transition">
                         Articles & Links
                     </a>
-                    <a href="mailto:press@middleburytaxpayers.org" className="hover:text-blue-400 transition">
+                    <a href="mailto:press@middleburytaxpayers.org" className="hover:text-sky-400 transition">
                         Contact
                     </a>
                 </div>
             </div>
-            <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black/10 to-transparent pointer-events-none z-[-1]" />
         </footer>
     );
 }
