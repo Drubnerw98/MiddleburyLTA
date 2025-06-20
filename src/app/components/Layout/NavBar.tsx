@@ -1,8 +1,6 @@
-// src/app/components/NavBar.tsx
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -13,6 +11,7 @@ import {
   User,
 } from "firebase/auth";
 import { app } from "../../../../lib/firebase";
+import Logo from "../Logo/logo"; // ✅ Updated import path
 
 const auth = getAuth(app);
 
@@ -59,89 +58,52 @@ export default function NavBar() {
   return (
       <nav className="w-full border-b border-yellow-400/20 backdrop-blur-md bg-[#1e2633]/80 z-50 relative shadow-md transition-all duration-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-6">
-          {/* Left Side: Logo + Links */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 w-full">
             <Link href="/" className="flex items-center space-x-2 hover:opacity-90 transition-all">
-              <Image
-                  src="/logo.png"
-                  alt="Middlebury Taxpayers logo"
-                  width={32}
-                  height={32}
-                  className="rounded-sm"
-              />
+              <Logo className="w-8 h-8" /> {/* ✅ Replaced Image with SVG */}
               <span className="font-serif font-bold text-lg tracking-tight text-yellow-300 hover:text-yellow-200 transition-all">
               Middlebury Taxpayers
             </span>
             </Link>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 sm:mt-0">
-              <Link
-                  href="/about"
-                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
-              >
+              <Link href="/about" className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150">
                 About
               </Link>
-
-              <Link
-                  href="/tax-impact"
-                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
-              >
+              <Link href="/tax-impact" className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150">
                 Tax Impact
               </Link>
-
-              <Link
-                  href="/updates"
-                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
-              >
+              <Link href="/updates" className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150">
                 Updates
               </Link>
-
-              {/* 🔥 New Articles Link */}
-              <Link
-                  href="/articles"
-                  className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
-              >
+              <Link href="/articles" className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150">
                 Articles & Links
               </Link>
-
               {isAdmin && (
-                  <Link
-                      href="/admin"
-                      className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150"
-                  >
+                  <Link href="/admin" className="text-gray-300 hover:text-yellow-300 text-sm transition-all duration-150">
                     Admin
                   </Link>
               )}
             </div>
           </div>
 
-          {/* Right Side: Auth */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
             {user ? (
                 <>
               <span className="text-gray-300 text-sm truncate max-w-[200px] sm:max-w-none">
                 Logged in{user.email ? ` as ${user.email}` : ""}
               </span>
-                  <button
-                      onClick={handleLogout}
-                      className="text-red-400 hover:text-red-300 underline transition text-sm whitespace-nowrap"
-                  >
+                  <button onClick={handleLogout} className="text-red-400 hover:text-red-300 underline transition text-sm whitespace-nowrap">
                     Log out
                   </button>
                 </>
             ) : (
                 <>
                   <div className="flex space-x-4">
-                    <Link
-                        href="/register"
-                        className="text-yellow-300 hover:text-yellow-200 underline text-sm transition-all"
-                    >
+                    <Link href="/register" className="text-yellow-300 hover:text-yellow-200 underline text-sm transition-all">
                       Register
                     </Link>
-                    <button
-                        onClick={() => setShowLoginForm(!showLoginForm)}
-                        className="text-yellow-300 hover:text-yellow-200 underline text-sm transition-all"
-                    >
+                    <button onClick={() => setShowLoginForm(!showLoginForm)} className="text-yellow-300 hover:text-yellow-200 underline text-sm transition-all">
                       Login
                     </button>
                   </div>
@@ -163,10 +125,7 @@ export default function NavBar() {
                             className="w-full mb-2 p-2 rounded bg-[#121821] text-white placeholder-gray-400 border border-gray-600"
                         />
                         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
-                        <button
-                            onClick={handleLogin}
-                            className="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-2 rounded font-semibold transition-all"
-                        >
+                        <button onClick={handleLogin} className="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-2 rounded font-semibold transition-all">
                           Sign In
                         </button>
                       </div>
