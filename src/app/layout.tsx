@@ -1,19 +1,15 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Inter } from "next/font/google";
 import NavBar from "./components/Layout/NavBar";
 import Footer from "./components/Layout/Footer";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const inter = Inter({
     subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+    variable: "--font-sans",
+    display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,36 +24,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-        <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased text-white bg-[#1e2633] min-h-screen flex flex-col`}
-        >
-        {/* 🖼️ Background Image */}
-        <div
-            className="fixed inset-0 -z-50 bg-cover bg-no-repeat"
-            style={{
-                backgroundImage: "url('/images/townhall-middlebury.png')",
-                backgroundPosition: "center",
-            }}
-        />
-
-        {/* 🎬 Vignette */}
-        <div className="fixed inset-0 -z-40 pointer-events-none bg-gradient-to-b from-transparent via-black/20 to-black/30" />
-
-        {/* ✨ Accent Glow */}
-        <div className="fixed inset-0 -z-30 pointer-events-none">
-            <div className="absolute top-0 left-0 h-full w-[180px] bg-gradient-to-r from-yellow-500/10 to-transparent blur-2xl" />
-            <div className="absolute top-0 right-0 h-full w-[180px] bg-gradient-to-l from-yellow-500/10 to-transparent blur-2xl" />
-        </div>
-
-        {/* Layout */}
+        <html lang="en" className={inter.variable}>
+        <body className="font-sans text-[#2E3D52] bg-white min-h-screen flex flex-col">
         <NavBar />
-        <main className="flex-grow px-4 sm:px-6 md:px-8 py-10 border-t border-white/5">
-            {children}
-        </main>
+        <main className="flex-grow">{children}</main>
         <Footer />
-
-        {/* Toasts */}
         <Toaster position="bottom-right" />
         </body>
         </html>
