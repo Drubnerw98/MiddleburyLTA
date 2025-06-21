@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ContactModal from "@/app/components/About/ContactModal";
+
 
 export default function Home() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,46 +61,10 @@ export default function Home() {
 
             {/* Contact Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg relative">
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl font-bold"
-                        >
-                            &times;
-                        </button>
-                        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Contact Us</h2>
-                        <form className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Email</label>
-                                <input
-                                    type="email"
-                                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Message</label>
-                                <textarea
-                                    rows={4}
-                                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-                                ></textarea>
-                            </div>
-                            <button
-                                type="submit"
-                                className="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-700 transition"
-                            >
-                                Send Message
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                <ContactModal
+                    isOpen={isModalOpen}
+                    onCloseAction={() => setIsModalOpen(false)}
+                />
             )}
         </>
     );

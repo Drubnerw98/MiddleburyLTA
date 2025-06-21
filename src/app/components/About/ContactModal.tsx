@@ -1,4 +1,3 @@
-// src/app/components/Contact/ContactModal.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -7,10 +6,10 @@ import { db } from "../../../../lib/firebase";
 
 interface ContactModalProps {
     isOpen: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 }
 
-export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export default function ContactModal({ isOpen, onCloseAction }: ContactModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
 
     const [name, setName] = useState("");
@@ -20,26 +19,28 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") onCloseAction();
         };
         if (isOpen) document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, [isOpen, onClose]);
+    }, [isOpen, onCloseAction]);
 
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (modalRef.current && e.target === modalRef.current) onClose();
+        if (modalRef.current && e.target === modalRef.current) {
+            onCloseAction();
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("🧪 Submitting feedback form");
 
         const feedback = { name, email, message };
 
         try {
             const settingsRef = doc(db, "admin", "settings");
             const settingsSnap = await getDoc(settingsRef);
-            const shouldNotify =
-                settingsSnap.exists() && settingsSnap.data().emailNotifications;
+            const shouldNotify = settingsSnap.exists() && settingsSnap.data().emailNotifications;
 
             if (shouldNotify) {
                 const res = await fetch("/api/send-feedback", {
