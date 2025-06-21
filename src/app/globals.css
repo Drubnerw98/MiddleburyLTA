@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-/* 🌐 Font Setup */
+/*  Font Setup */
 :root {
   --font-sans: 'Inter', sans-serif;
 
-  /* 🎨 Color Tokens from Figma */
+  /*  Color Tokens from Figma */
   --color-divider: #D9D9D9;
 
   --color-scrim: #1E2633;
@@ -29,7 +29,7 @@
   --color-progress-empty: rgba(161, 182, 212, 0.6);
 }
 
-/* 🔤 Base Styles */
+/*  Base Styles */
 html {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -42,7 +42,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ✅ Reset Improvements */
+
 * {
   box-sizing: border-box;
 }
@@ -57,7 +57,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ✅ Optional Markdown Content Styling */
 .markdown-content {
   line-height: 1.75;
   font-size: 1rem;
