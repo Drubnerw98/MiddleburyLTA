@@ -4,7 +4,7 @@ import React from "react";
 
 type TaxImpactSliderProps = {
     confirmedValue: number;
-    setConfirmedValue: (val: number) => void;
+    setConfirmedValueAction: (val: number) => void;
 };
 
 const SLIDER_MIN = 100000;
@@ -12,10 +12,10 @@ const SLIDER_MAX = 10000000;
 
 export default function TaxImpactSlider({
                                             confirmedValue,
-                                            setConfirmedValue,
+                                            setConfirmedValueAction,
                                         }: TaxImpactSliderProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmedValue(Number(e.target.value));
+        setConfirmedValueAction(Number(e.target.value));
     };
 
     const percentage =

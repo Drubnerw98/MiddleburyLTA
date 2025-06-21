@@ -11,7 +11,7 @@ const SLIDER_MAX = 10000000;
 export default function TaxImpactPage() {
   const [confirmedValue, setConfirmedValue] = useState(DEFAULT_HOME_VALUE);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputText, setInputText] = useState(confirmedValue.toString());
+  const [inputText, setInputText] = useState(confirmedValue.toLocaleString());
 
   const baseHomeValue = 360000;
   const baseTaxWithoutDev = 11729;
@@ -27,8 +27,16 @@ export default function TaxImpactPage() {
 
   const handleSubmit = () => {
     const parsed = parseInt(inputText.replace(/[^\d]/g, ""), 10);
-    const cleanValue = Math.max(SLIDER_MIN, Math.min(parsed, SLIDER_MAX));
-    setConfirmedValue(cleanValue);
+
+    if (!parsed || isNaN(parsed)) {
+      setConfirmedValue(DEFAULT_HOME_VALUE);
+      setInputText(DEFAULT_HOME_VALUE.toLocaleString());
+    } else {
+      const cleanValue = Math.max(SLIDER_MIN, Math.min(parsed, SLIDER_MAX));
+      setConfirmedValue(cleanValue);
+      setInputText(cleanValue.toLocaleString());
+    }
+
     setIsEditing(false);
   };
 
@@ -73,7 +81,7 @@ export default function TaxImpactPage() {
                       <button
                           onClick={() => {
                             setIsEditing(true);
-                            setInputText(confirmedValue.toString());
+                            setInputText(confirmedValue.toLocaleString());
                           }}
                           className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700"
                       >
@@ -81,19 +89,24 @@ export default function TaxImpactPage() {
                       </button>
                     </>
                 ) : (
-                    <input
-                        type="text"
-                        inputMode="numeric"
-                        value={inputText}
-                        onChange={(e) =>
-                            setInputText(e.target.value.replace(/[^\d]/g, ""))
-                        }
-                        onKeyDown={handleKeyDown}
-                        onBlur={handleSubmit}
-                        className="w-36 text-2xl font-semibold bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none text-center text-gray-900"
-                        placeholder="Enter Value"
-                        autoFocus
-                    />
+                    <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
+                    $
+                  </span>
+                      <input
+                          type="text"
+                          inputMode="numeric"
+                          value={inputText}
+                          onChange={(e) =>
+                              setInputText(e.target.value.replace(/[^\d]/g, ""))
+                          }
+                          onKeyDown={handleKeyDown}
+                          onBlur={handleSubmit}
+                          className="pl-7 w-40 text-2xl font-semibold bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none text-center text-gray-900"
+                          placeholder="Enter Value"
+                          autoFocus
+                      />
+                    </div>
                 )}
               </div>
             </div>
@@ -102,7 +115,10 @@ export default function TaxImpactPage() {
             <div className="px-4 sm:px-12">
               <TaxImpactSlider
                   confirmedValue={confirmedValue}
-                  setConfirmedValue={setConfirmedValue}
+                  setConfirmedValueAction={(val) => {
+                    setConfirmedValue(val);
+                    setInputText(val.toLocaleString());
+                  }}
               />
             </div>
 
@@ -137,7 +153,7 @@ export default function TaxImpactPage() {
             </div>
           </section>
 
-          {/* ✅ About the Numbers Component Here */}
+          {/* About the Numbers */}
           <AboutTheNumbers />
         </div>
       </main>

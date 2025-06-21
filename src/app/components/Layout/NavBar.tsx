@@ -202,11 +202,11 @@ export default function NavBar() {
         {/* Modals */}
         <LoginModal
             isOpen={showLoginModal}
-            onClose={() => setShowLoginModal(false)}
+            onCloseAction={() => setShowLoginModal(false)}
         />
         <RegisterModal
             isOpen={showRegisterModal}
-            onClose={() => setShowRegisterModal(false)}
+            onCloseAction={() => setShowRegisterModal(false)}
         />
       </nav>
   );
