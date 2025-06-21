@@ -1,4 +1,3 @@
-// src/app/components/Auth/RegisterModal.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -11,12 +10,12 @@ import { app } from "../../../../lib/firebase";
 
 interface RegisterModalProps {
     isOpen: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 }
 
 const auth = getAuth(app);
 
-export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
 
     const [email, setEmail] = useState("");
@@ -26,15 +25,15 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") onCloseAction();
         };
         if (isOpen) document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, [isOpen, onClose]);
+    }, [isOpen, onCloseAction]);
 
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
         if (modalRef.current && e.target === modalRef.current) {
-            onClose();
+            onCloseAction();
         }
     };
 
@@ -47,7 +46,7 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
             setPassword("");
             setName("");
             setError(null);
-            onClose();
+            onCloseAction();
         } catch {
             setError("Registration failed. Try a stronger password or different email.");
         }
@@ -92,7 +91,7 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
                 <div className="flex justify-between gap-4">
                     <button
-                        onClick={onClose}
+                        onClick={onCloseAction}
                         className="w-full text-sm py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
                     >
                         Cancel

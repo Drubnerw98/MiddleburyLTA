@@ -1,4 +1,3 @@
-// src/app/components/Auth/LoginModal.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -7,31 +6,29 @@ import { app } from "../../../../lib/firebase";
 
 interface LoginModalProps {
     isOpen: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 }
 
 const auth = getAuth(app);
 
-export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    // ESC close support
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") onCloseAction();
         };
         if (isOpen) document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, [isOpen, onClose]);
+    }, [isOpen, onCloseAction]);
 
-    // Background click closes modal
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
         if (modalRef.current && e.target === modalRef.current) {
-            onClose();
+            onCloseAction();
         }
     };
 
@@ -49,7 +46,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             setEmail("");
             setPassword("");
             setError(null);
-            onClose();
+            onCloseAction();
         } catch {
             setError("Login failed. Please check your credentials.");
         }
@@ -87,7 +84,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 <div className="flex justify-between gap-4">
                     <button
-                        onClick={onClose}
+                        onClick={onCloseAction}
                         className="w-full text-sm py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
                     >
                         Cancel

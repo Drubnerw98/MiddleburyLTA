@@ -15,7 +15,11 @@ const inter = Inter({
 export const metadata: Metadata = {
     title: "Middlebury Taxpayers",
     description: "A community-driven space for facts, updates, and civic discussion.",
-    icons: { icon: "/favicon.ico" },
+    icons: {
+        icon: "/favicon-v2.ico",
+        shortcut: "/favicon-v2.ico",
+        apple: "/favicon-v2.ico",
+    },
 };
 
 export default function RootLayout({
@@ -25,6 +29,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={inter.variable}>
+        <head>
+            <link rel="icon" href="/favicon-v2.ico" sizes="any" />
+            <link rel="apple-touch-icon" href="/favicon-v2.ico" />
+            <meta name="theme-color" content="#ffffff" />
+            <title>Middlebury Tax Payers</title>
+        </head>
         <body className="font-sans text-[#2E3D52] bg-white min-h-screen flex flex-col">
         <NavBar />
         <main className="flex-grow">{children}</main>
