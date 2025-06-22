@@ -1,3 +1,4 @@
+// src/app/components/TaxImpactPage.tsx
 "use client";
 
 import { useState } from "react";
@@ -97,12 +98,15 @@ export default function TaxImpactPage() {
                           type="text"
                           inputMode="numeric"
                           value={inputText}
-                          onChange={(e) =>
-                              setInputText(e.target.value.replace(/[^\d]/g, ""))
-                          }
+                          onChange={(e) => {
+                            const digitsOnly = e.target.value.replace(/[^\d]/g, "");
+                            if (digitsOnly.length <= 8) {
+                              setInputText(digitsOnly);
+                            }
+                          }}
                           onKeyDown={handleKeyDown}
                           onBlur={handleSubmit}
-                          className="pl-7 w-40 text-2xl font-semibold bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none text-center text-gray-900"
+                          className="pl-7 w-44 text-2xl font-semibold bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none text-center text-gray-900"
                           placeholder="Enter Value"
                           autoFocus
                       />
