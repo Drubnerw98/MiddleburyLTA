@@ -33,7 +33,6 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("🧪 Submitting feedback form");
 
         const feedback = { name, email, message };
 
@@ -120,12 +119,27 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            className="bg-[#2E3D52] hover:bg-[#516684] text-white px-4 py-2 rounded font-semibold transition"
+                            className="rounded-md bg-sky-600 px-6 py-2 text-white hover:bg-sky-700 transition font-semibold"
                         >
                             Submit
                         </button>
                     </div>
                 </form>
+
+                <hr className="border-white/30 my-4" />
+
+                <div className="text-sm">
+                    <p>You can also reach us directly at:</p>
+                    <p className="mt-1">
+                        Email:{" "}
+                        <a
+                            href="mailto:MTA.admn@gmail.com"
+                            className="underline hover:text-white cursor-pointer"
+                        >
+                            MTA.admn@gmail.com
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     );
