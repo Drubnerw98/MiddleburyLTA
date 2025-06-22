@@ -1,3 +1,4 @@
+// components/NavBar.tsx
 "use client";
 
 import Link from "next/link";
@@ -29,65 +30,40 @@ export default function NavBar() {
   };
 
   const isAdmin = user?.email === "drubnation@gmail.com";
-
   const username = user?.email?.split("@")[0];
 
   return (
-      <nav className="w-full bg-white z-50 relative border-b border-slate-200">
+      <nav className="w-full bg-white z-50 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link
-              href="/"
-              className="flex items-center space-x-2 hover:opacity-90 transition"
-          >
-            <Logo className="w-8 h-8 text-[#2E3D52]" />
-            <span className="text-[#2E3D52] font-bold text-lg tracking-tight">
-            Middlebury Taxpayers
-          </span>
-          </Link>
-
-          {/* Hamburger Button */}
-          <button
-              className="sm:hidden text-[#2E3D52] focus:outline-none"
-              onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
+          {/* Left Section */}
+          <div className="flex items-center gap-x-6">
+            <Link
+                href="/"
+                className="flex items-center space-x-2 hover:opacity-90 transition"
             >
-              {menuOpen ? (
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                  />
-              ) : (
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                  />
-              )}
-            </svg>
-          </button>
+              <Logo className="w-8 h-8 text-[#2E3D52]" />
+              <span className="text-[#2E3D52] font-bold text-lg tracking-tight">
+              Middlebury Taxpayers
+            </span>
+            </Link>
+            <div className="hidden sm:flex items-center gap-x-6">
+              <Link
+                  href="/tax-impact"
+                  className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
+              >
+                Tax Impact
+              </Link>
+              <Link
+                  href="/articles"
+                  className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
+              >
+                Articles & Links
+              </Link>
+            </div>
+          </div>
 
-          {/* Desktop Links */}
+          {/* Right Section */}
           <div className="hidden sm:flex items-center gap-x-6">
-            <Link
-                href="/tax-impact"
-                className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-            >
-              Tax Impact
-            </Link>
-            <Link
-                href="/articles"
-                className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-            >
-              Articles & Links
-            </Link>
             {isAdmin && (
                 <Link
                     href="/admin"
@@ -128,6 +104,34 @@ export default function NavBar() {
                 </>
             )}
           </div>
+
+          {/* Hamburger Button */}
+          <button
+              className="sm:hidden text-[#2E3D52] focus:outline-none"
+              onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+            >
+              {menuOpen ? (
+                  <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                  />
+              ) : (
+                  <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                  />
+              )}
+            </svg>
+          </button>
         </div>
 
         {/* Mobile Menu */}
