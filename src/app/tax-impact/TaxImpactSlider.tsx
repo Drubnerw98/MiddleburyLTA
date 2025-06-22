@@ -1,7 +1,7 @@
 // src/app/components/TaxImpactSlider.tsx
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 
 type TaxImpactSliderProps = {
     confirmedValue: number;
@@ -20,25 +20,28 @@ export default function TaxImpactSlider({
     const percentage =
         ((confirmedValue - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
 
-    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-        const clientX =
-            "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-        const bar = barRef.current;
-        if (!bar) return;
+    const handleInteraction = useCallback(
+        (e: MouseEvent | TouchEvent) => {
+            const clientX =
+                e instanceof TouchEvent ? e.touches[0].clientX : e.clientX;
+            const bar = barRef.current;
+            if (!bar) return;
 
-        const rect = bar.getBoundingClientRect();
-        const offsetX = clientX - rect.left;
-        const percent = Math.max(0, Math.min(offsetX / rect.width, 1));
-        const newValue =
-            Math.round((SLIDER_MIN + percent * (SLIDER_MAX - SLIDER_MIN)) / 1000) *
-            1000;
+            const rect = bar.getBoundingClientRect();
+            const offsetX = clientX - rect.left;
+            const percent = Math.max(0, Math.min(offsetX / rect.width, 1));
+            const newValue =
+                Math.round((SLIDER_MIN + percent * (SLIDER_MAX - SLIDER_MIN)) / 1000) *
+                1000;
 
-        setConfirmedValueAction(newValue);
-    };
+            setConfirmedValueAction(newValue);
+        },
+        [setConfirmedValueAction]
+    );
 
     useEffect(() => {
-        const handleTouchMove = (e: TouchEvent) => handleInteraction(e as any);
-        const handleMouseMove = (e: MouseEvent) => handleInteraction(e as any);
+        const handleTouchMove = (e: TouchEvent) => handleInteraction(e);
+        const handleMouseMove = (e: MouseEvent) => handleInteraction(e);
         const handleEnd = () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("touchmove", handleTouchMove);
@@ -47,7 +50,7 @@ export default function TaxImpactSlider({
         };
 
         const handleStart = (e: MouseEvent | TouchEvent) => {
-            handleInteraction(e as any);
+            handleInteraction(e);
             window.addEventListener("mousemove", handleMouseMove);
             window.addEventListener("touchmove", handleTouchMove);
             window.addEventListener("mouseup", handleEnd);
@@ -64,16 +67,16 @@ export default function TaxImpactSlider({
             bar.removeEventListener("mousedown", handleStart);
             bar.removeEventListener("touchstart", handleStart);
         };
-    }, []);
+    }, [handleInteraction]);
 
     return (
         <div className="w-full max-w-4xl mx-auto space-y-2">
             <div
                 ref={barRef}
-                className="relative h-12 rounded-full bg-slate-300 overflow-hidden touch-none"
+                className="relative h-12 bg-slate-300 rounded-full overflow-hidden touch-none"
             >
                 <div
-                    className="absolute h-full bg-slate-800 rounded-full left-0 top-0"
+                    className="absolute h-full bg-slate-800 left-0 top-0"
                     style={{ width: `${percentage}%` }}
                 />
             </div>

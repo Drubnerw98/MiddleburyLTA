@@ -68,30 +68,36 @@ export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
                 <input
                     type="email"
                     placeholder="Email"
-                    className="w-full p-2 rounded border border-[#D9D9D9] text-[#2E3D52] placeholder-[#99A1AF] bg-white"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
                 />
                 <input
                     type="password"
                     placeholder="Password"
-                    className="w-full p-2 rounded border border-[#D9D9D9] text-[#2E3D52] placeholder-[#99A1AF] bg-white"
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
                 />
 
-                {error && <p className="text-sm text-red-400">{error}</p>}
+                {error && (
+                    <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
+                        ❌ {error}
+                    </p>
+                )}
 
-                <div className="flex justify-between gap-4">
+                <div className="flex justify-end gap-4 pt-2">
                     <button
                         onClick={onCloseAction}
-                        className="w-full text-sm py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
+                        className="text-sm px-4 py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleLogin}
-                        className="w-full text-sm py-2 rounded bg-[#2E3D52] hover:bg-[#516684] text-white font-semibold transition"
+                        className="text-sm px-4 py-2 rounded bg-sky-600 hover:bg-sky-700 text-white font-semibold transition"
                     >
                         Sign In
                     </button>

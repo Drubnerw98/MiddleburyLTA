@@ -1,14 +1,14 @@
 // components/NavBar.tsx
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
-import { app } from "../../../../lib/firebase";
-import Logo from "../Logo/logo";
-import LoginModal from "../Auth/LoginModal";
-import RegisterModal from "../Auth/RegisterModal";
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { app } from '../../../../lib/firebase';
+import Logo from '../Logo/logo';
+import LoginModal from '../Auth/LoginModal';
+import RegisterModal from '../Auth/RegisterModal';
 
 const auth = getAuth(app);
 
@@ -26,15 +26,19 @@ export default function NavBar() {
 
   const handleLogout = () => {
     signOut(auth);
-    router.push("/");
+    router.push('/');
   };
 
-  const isAdmin = user?.email === "drubnation@gmail.com";
-  const username = user?.email?.split("@")[0];
+  const isAdmin = user?.email === 'drubnation@gmail.com';
+  const username = user?.email?.split('@')[0];
+
+  const navLinkClass =
+      'text-sm text-[#2E3D52] hover:text-[#516684] hover:underline transition cursor-pointer';
+
 
   return (
       <nav className="w-full bg-white z-50 relative">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="w-full px-4 sm:px-6 py-4 flex items-center justify-between max-w-[2440px] mx-auto">
           {/* Left Section */}
           <div className="flex items-center gap-x-6">
             <Link
@@ -47,16 +51,10 @@ export default function NavBar() {
             </span>
             </Link>
             <div className="hidden sm:flex items-center gap-x-6">
-              <Link
-                  href="/tax-impact"
-                  className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-              >
+              <Link href="/tax-impact" className={navLinkClass}>
                 Tax Impact
               </Link>
-              <Link
-                  href="/articles"
-                  className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-              >
+              <Link href="/articles" className={navLinkClass}>
                 Articles & Links
               </Link>
             </div>
@@ -65,25 +63,16 @@ export default function NavBar() {
           {/* Right Section */}
           <div className="hidden sm:flex items-center gap-x-6">
             {isAdmin && (
-                <Link
-                    href="/admin"
-                    className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-                >
+                <Link href="/admin" className={navLinkClass}>
                   Admin
                 </Link>
             )}
             {user ? (
                 <>
-              <span
-                  className="text-sm text-[#2E3D52]"
-                  title={user.email ?? ""}
-              >
+              <span className={navLinkClass} title={user.email ?? ''}>
                 Signed in as <span className="font-medium">{username}</span>
               </span>
-                  <button
-                      onClick={handleLogout}
-                      className="text-sm text-[#2E3D52] hover:text-[#516684] transition"
-                  >
+                  <button onClick={handleLogout} className={navLinkClass}>
                     Log out
                   </button>
                 </>
@@ -91,13 +80,13 @@ export default function NavBar() {
                 <>
                   <button
                       onClick={() => setShowRegisterModal(true)}
-                      className="text-sm text-[#2E3D52] hover:text-[#516684] underline transition"
+                      className={navLinkClass}
                   >
                     Register
                   </button>
                   <button
                       onClick={() => setShowLoginModal(true)}
-                      className="text-sm text-[#2E3D52] hover:text-[#516684] underline transition"
+                      className={navLinkClass}
                   >
                     Login
                   </button>
@@ -139,14 +128,14 @@ export default function NavBar() {
             <div className="sm:hidden px-4 pb-4 space-y-3">
               <Link
                   href="/tax-impact"
-                  className="block text-sm text-[#2E3D52] hover:text-[#516684] transition"
+                  className={navLinkClass}
                   onClick={() => setMenuOpen(false)}
               >
                 Tax Impact
               </Link>
               <Link
                   href="/articles"
-                  className="block text-sm text-[#2E3D52] hover:text-[#516684] transition"
+                  className={navLinkClass}
                   onClick={() => setMenuOpen(false)}
               >
                 Articles & Links
@@ -154,7 +143,7 @@ export default function NavBar() {
               {isAdmin && (
                   <Link
                       href="/admin"
-                      className="block text-sm text-[#2E3D52] hover:text-[#516684] transition"
+                      className={navLinkClass}
                       onClick={() => setMenuOpen(false)}
                   >
                     Admin
@@ -162,10 +151,7 @@ export default function NavBar() {
               )}
               {user ? (
                   <>
-              <span
-                  className="block text-sm text-[#2E3D52]"
-                  title={user.email ?? ""}
-              >
+              <span className={navLinkClass} title={user.email ?? ''}>
                 Signed in as <span className="font-medium">{username}</span>
               </span>
                     <button
@@ -173,7 +159,7 @@ export default function NavBar() {
                           handleLogout();
                           setMenuOpen(false);
                         }}
-                        className="block text-sm text-left text-[#2E3D52] hover:text-[#516684] transition"
+                        className={`${navLinkClass} text-left w-full`}
                     >
                       Log out
                     </button>
@@ -185,7 +171,7 @@ export default function NavBar() {
                           setShowRegisterModal(true);
                           setMenuOpen(false);
                         }}
-                        className="block text-sm text-left text-[#2E3D52] hover:text-[#516684] underline transition"
+                        className={`${navLinkClass} text-left w-full`}
                     >
                       Register
                     </button>
@@ -194,7 +180,7 @@ export default function NavBar() {
                           setShowLoginModal(true);
                           setMenuOpen(false);
                         }}
-                        className="block text-sm text-left text-[#2E3D52] hover:text-[#516684] underline transition"
+                        className={`${navLinkClass} text-left w-full`}
                     >
                       Login
                     </button>

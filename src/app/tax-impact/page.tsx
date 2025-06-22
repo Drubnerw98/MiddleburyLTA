@@ -71,14 +71,14 @@ export default function TaxImpactPage() {
           {/* Calculator */}
           <section className="bg-slate-100 border border-slate-300 rounded-xl p-6 sm:p-10 space-y-10">
             {/* Value Input */}
-            <div className="text-center space-y-1">
+            <div className="text-center space-y-1 min-h-[72px] sm:min-h-[80px]">
               <p className="text-gray-600 text-sm">Your Home’s Current Value</p>
-              <div className="flex justify-center items-center gap-2 flex-wrap">
+              <div className="flex justify-center items-center gap-2 flex-wrap min-h-[48px]">
                 {!isEditing ? (
                     <>
-                  <span className="text-3xl sm:text-4xl font-semibold tracking-wide text-gray-900">
-                    {formatMoney(confirmedValue)}
-                  </span>
+        <span className="text-3xl sm:text-4xl font-semibold tracking-wide text-gray-900">
+          {formatMoney(confirmedValue)}
+        </span>
                       <button
                           onClick={() => {
                             setIsEditing(true);
@@ -91,9 +91,9 @@ export default function TaxImpactPage() {
                     </>
                 ) : (
                     <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
-                    $
-                  </span>
+        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
+          $
+        </span>
                       <input
                           type="text"
                           inputMode="numeric"
@@ -164,7 +164,7 @@ export default function TaxImpactPage() {
                 href="https://gis.vgsi.com/middleburyct"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-700 underline hover:text-blue-900 font-medium transition-colors"
             >
               Use the Vision Appraisal website
             </a>
