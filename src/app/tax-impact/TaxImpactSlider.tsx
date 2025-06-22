@@ -1,7 +1,7 @@
 // src/app/components/TaxImpactSlider.tsx
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 type TaxImpactSliderProps = {
     confirmedValue: number;
@@ -15,39 +15,66 @@ export default function TaxImpactSlider({
                                             confirmedValue,
                                             setConfirmedValueAction,
                                         }: TaxImpactSliderProps) {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmedValueAction(Number(e.target.value));
-    };
+    const barRef = useRef<HTMLDivElement>(null);
 
     const percentage =
         ((confirmedValue - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
 
+    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+        const clientX =
+            "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+        const bar = barRef.current;
+        if (!bar) return;
+
+        const rect = bar.getBoundingClientRect();
+        const offsetX = clientX - rect.left;
+        const percent = Math.max(0, Math.min(offsetX / rect.width, 1));
+        const newValue =
+            Math.round((SLIDER_MIN + percent * (SLIDER_MAX - SLIDER_MIN)) / 1000) *
+            1000;
+
+        setConfirmedValueAction(newValue);
+    };
+
+    useEffect(() => {
+        const handleTouchMove = (e: TouchEvent) => handleInteraction(e as any);
+        const handleMouseMove = (e: MouseEvent) => handleInteraction(e as any);
+        const handleEnd = () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("touchmove", handleTouchMove);
+            window.removeEventListener("mouseup", handleEnd);
+            window.removeEventListener("touchend", handleEnd);
+        };
+
+        const handleStart = (e: MouseEvent | TouchEvent) => {
+            handleInteraction(e as any);
+            window.addEventListener("mousemove", handleMouseMove);
+            window.addEventListener("touchmove", handleTouchMove);
+            window.addEventListener("mouseup", handleEnd);
+            window.addEventListener("touchend", handleEnd);
+        };
+
+        const bar = barRef.current;
+        if (!bar) return;
+
+        bar.addEventListener("mousedown", handleStart);
+        bar.addEventListener("touchstart", handleStart, { passive: false });
+
+        return () => {
+            bar.removeEventListener("mousedown", handleStart);
+            bar.removeEventListener("touchstart", handleStart);
+        };
+    }, []);
+
     return (
         <div className="w-full max-w-4xl mx-auto space-y-2">
-            <div className="relative h-12 rounded-full bg-slate-300 overflow-hidden">
+            <div
+                ref={barRef}
+                className="relative h-12 rounded-full bg-slate-300 overflow-hidden touch-none"
+            >
                 <div
-                    className="absolute h-full rounded-full left-0 top-0 bg-slate-800"
+                    className="absolute h-full bg-slate-800 rounded-full left-0 top-0"
                     style={{ width: `${percentage}%` }}
-                />
-                <input
-                    type="range"
-                    min={SLIDER_MIN}
-                    max={SLIDER_MAX}
-                    step={1000}
-                    value={confirmedValue}
-                    onChange={handleChange}
-                    className="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer z-10"
-                />
-                {/* Invisible thumb touch zone */}
-                <div
-                    className="absolute z-0 rounded-full"
-                    style={{
-                        width: "3rem",
-                        height: "3rem",
-                        left: `calc(${percentage}% - 1.5rem)`,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                    }}
                 />
             </div>
             <div className="flex justify-between text-sm text-blue-950 mt-1 px-1">
