@@ -1,4 +1,3 @@
-// app/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -12,7 +11,7 @@ export default function Home() {
     return (
         <>
             <main className="flex items-center justify-center px-2 sm:px-4 pt-0 pb-2 sm:pb-4">
-                <div className="relative w-full h-[90vh]">
+                <div className="relative w-full min-h-[calc(100vh-80px)] rounded-lg overflow-hidden">
                     <Image
                         src="/images/townhall-middlebury.jpg"
                         alt="Middlebury Town Hall"
