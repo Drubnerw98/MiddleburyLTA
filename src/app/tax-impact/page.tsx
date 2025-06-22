@@ -157,6 +157,21 @@ export default function TaxImpactPage() {
             </div>
           </section>
 
+          {/* Lookup Link */}
+          <div className="text-center text-sm text-gray-600">
+            Want to look up your official assessment?&nbsp;
+            <a
+                href="https://gis.vgsi.com/middleburyct"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline hover:text-blue-800"
+            >
+              Use the Vision Appraisal website
+            </a>
+            .
+          </div>
+
+
           {/* About the Numbers */}
           <AboutTheNumbers />
         </div>
