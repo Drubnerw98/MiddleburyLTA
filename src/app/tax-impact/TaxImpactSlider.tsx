@@ -23,7 +23,10 @@ export default function TaxImpactSlider({
     const handleInteraction = useCallback(
         (e: MouseEvent | TouchEvent) => {
             const clientX =
-                e instanceof TouchEvent ? e.touches[0].clientX : e.clientX;
+                "touches" in e
+                    ? (e as TouchEvent).touches[0].clientX
+                    : (e as MouseEvent).clientX;
+
             const bar = barRef.current;
             if (!bar) return;
 
