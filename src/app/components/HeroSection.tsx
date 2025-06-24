@@ -60,7 +60,7 @@ export default function HeroSection() {
                             </motion.p>
                             <motion.p className="mx-auto max-w-2xl text-[14px] mb-6" variants={itemVariants}>
                                 One of the group’s most urgent concerns is the upcoming property revaluation
-                                scheduled for next year, which is expected to dramatically shift the town’s tax
+                                scheduled for October 2025, which is expected to dramatically shift the town’s tax
                                 burden from the business and industrial sectors to residential homeowners.
                             </motion.p>
                             <motion.div className="flex justify-center gap-4" variants={itemVariants}>
