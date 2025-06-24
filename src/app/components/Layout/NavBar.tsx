@@ -35,7 +35,6 @@ export default function NavBar() {
   const navLinkClass =
       'text-sm text-[#2E3D52] hover:text-[#516684] hover:underline transition cursor-pointer';
 
-
   return (
       <nav className="w-full bg-white z-50 relative">
         <div className="w-full px-4 sm:px-6 py-4 flex items-center justify-between max-w-[2440px] mx-auto">
@@ -128,14 +127,14 @@ export default function NavBar() {
             <div className="sm:hidden px-4 pb-4 space-y-3">
               <Link
                   href="/tax-impact"
-                  className={navLinkClass}
+                  className={`${navLinkClass} block`}
                   onClick={() => setMenuOpen(false)}
               >
                 Tax Impact
               </Link>
               <Link
                   href="/articles"
-                  className={navLinkClass}
+                  className={`${navLinkClass} block`}
                   onClick={() => setMenuOpen(false)}
               >
                 Articles & Links
@@ -143,7 +142,7 @@ export default function NavBar() {
               {isAdmin && (
                   <Link
                       href="/admin"
-                      className={navLinkClass}
+                      className={`${navLinkClass} block`}
                       onClick={() => setMenuOpen(false)}
                   >
                     Admin
@@ -151,7 +150,7 @@ export default function NavBar() {
               )}
               {user ? (
                   <>
-              <span className={navLinkClass} title={user.email ?? ''}>
+              <span className={`${navLinkClass} block`} title={user.email ?? ''}>
                 Signed in as <span className="font-medium">{username}</span>
               </span>
                     <button
@@ -159,7 +158,7 @@ export default function NavBar() {
                           handleLogout();
                           setMenuOpen(false);
                         }}
-                        className={`${navLinkClass} text-left w-full`}
+                        className={`${navLinkClass} text-left w-full block`}
                     >
                       Log out
                     </button>
@@ -171,7 +170,7 @@ export default function NavBar() {
                           setShowRegisterModal(true);
                           setMenuOpen(false);
                         }}
-                        className={`${navLinkClass} text-left w-full`}
+                        className={`${navLinkClass} text-left w-full block`}
                     >
                       Register
                     </button>
@@ -180,7 +179,7 @@ export default function NavBar() {
                           setShowLoginModal(true);
                           setMenuOpen(false);
                         }}
-                        className={`${navLinkClass} text-left w-full`}
+                        className={`${navLinkClass} text-left w-full block`}
                     >
                       Login
                     </button>
