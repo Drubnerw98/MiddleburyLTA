@@ -33,7 +33,6 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const feedback = { name, email, message };
 
         try {
@@ -97,7 +96,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
+                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm"
                     />
                     <input
                         type="email"
@@ -105,7 +104,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
+                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm"
                     />
                     <textarea
                         placeholder="Your Message"
@@ -113,7 +112,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                         rows={4}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF] resize-none"
+                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm resize-none"
                     />
 
                     <div className="flex justify-end">
