@@ -53,15 +53,23 @@ export default async function ArticlesPage() {
                         className="group transition duration-200 hover:bg-blue-50 w-full"
                     >
                         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6">
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                <div>
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                {/* Left column: content */}
+                                <div className="sm:max-w-3xl">
                                     <h2 className="text-lg font-semibold text-[#1A2E49] mb-1">{link.title}</h2>
                                     <p className="text-sm text-gray-600">
                                         {link.source}
                                         {link.datePublished ? ` - ${link.datePublished}` : ''}
                                     </p>
-                                    <p className="text-xs text-gray-500 mt-1">{formatDaysAgo(link.createdAt)}</p>
+                                    {link.description && (
+                                        <p className="text-sm text-gray-700 leading-relaxed mt-3 whitespace-normal">
+                                            {link.description}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-gray-500 mt-2">{formatDaysAgo(link.createdAt)}</p>
                                 </div>
+
+                                {/* Right column: button */}
                                 <div className="sm:flex-shrink-0">
                                     <a
                                         href={link.url}
