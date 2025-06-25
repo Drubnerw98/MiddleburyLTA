@@ -49,7 +49,7 @@ export default function HeroSection() {
                             initial="hidden"
                             animate="show"
                         >
-                            <motion.h1 className="text-[24px] font-bold mb-4" variants={itemVariants}>
+                            <motion.h1 className="text-[32px] font-bold mb-4" variants={itemVariants}>
                                 Middlebury Taxpayers
                             </motion.h1>
                             <motion.p className="mx-auto max-w-3xl text-[16px] mb-4" variants={itemVariants}>
