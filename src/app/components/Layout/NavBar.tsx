@@ -32,9 +32,11 @@ export default function NavBar() {
   const isAdmin = user?.email === 'drubnation@gmail.com';
   const username = user?.email?.split('@')[0];
 
-  const navLinkClass =
-      'text-sm text-[#2E3D52] hover:underline transition cursor-pointer';
+  const [navLinkClass, setNavLinkClass] = useState('text-sm text-[#2E3D52] hover:underline transition cursor-pointer');
 
+  useEffect(() => {
+    setNavLinkClass('text-sm text-[#2E3D52] hover:text-[#516684] hover:underline transition cursor-pointer');
+  }, []);
   return (
       <nav className="w-full bg-white z-50 relative">
         <div className="w-full px-4 sm:px-6 py-4 flex items-center justify-between max-w-[2440px] mx-auto">
