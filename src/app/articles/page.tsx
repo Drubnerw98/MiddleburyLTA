@@ -75,7 +75,7 @@ export default async function ArticlesPage() {
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-block bg-[#1A2E49] !text-white font-semibold text-center w-[120px] px-4 py-2 text-sm rounded hover:bg-[#2e4a6e] transition"
+                                        className="inline-block bg-[#1A2E49] no-underline !text-white font-semibold text-center w-[120px] px-4 py-2 text-sm rounded hover:bg-[#2e4a6e] transition"
                                     >
                                         View Article
                                     </a>
