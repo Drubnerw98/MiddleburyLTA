@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "../../../../lib/firebase";
+import { useState, useEffect, useRef } from 'react';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../../../../lib/firebase';
+import AnimatedModal from '@/app/components/AnimatedModal';
 
 interface ContactModalProps {
     isOpen: boolean;
@@ -12,17 +13,17 @@ interface ContactModalProps {
 export default function ContactModal({ isOpen, onCloseAction }: ContactModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onCloseAction();
+            if (e.key === 'Escape') onCloseAction();
         };
-        if (isOpen) document.addEventListener("keydown", handleEsc);
-        return () => document.removeEventListener("keydown", handleEsc);
+        if (isOpen) document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
     }, [isOpen, onCloseAction]);
 
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -36,54 +37,50 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
         const feedback = { name, email, message };
 
         try {
-            const settingsRef = doc(db, "admin", "settings");
+            const settingsRef = doc(db, 'admin', 'settings');
             const settingsSnap = await getDoc(settingsRef);
             const shouldNotify = settingsSnap.exists() && settingsSnap.data().emailNotifications;
 
             if (shouldNotify) {
-                const res = await fetch("/api/send-feedback", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const res = await fetch('/api/send-feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(feedback),
                 });
 
                 const result = await res.json();
                 if (!res.ok) {
-                    console.error("❌ Email failed:", result.error);
-                    setStatus("error");
+                    console.error('❌ Email failed:', result.error);
+                    setStatus('error');
                     return;
                 }
             }
 
-            setStatus("success");
-            setName("");
-            setEmail("");
-            setMessage("");
+            setStatus('success');
+            setName('');
+            setEmail('');
+            setMessage('');
         } catch (err) {
-            console.error("❌ Submission error:", err);
-            setStatus("error");
+            console.error('❌ Submission error:', err);
+            setStatus('error');
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            onClick={handleClickOutside}
-            ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-        >
-            <div className="bg-[#373F4D] text-white w-full max-w-lg p-6 rounded-xl shadow-xl space-y-4">
-                <h2 className="text-xl font-bold text-white">Contact Us</h2>
+        <AnimatedModal isOpen={isOpen} onClose={onCloseAction}>
+            <div
+                ref={modalRef}
+                onClick={handleClickOutside}
+                className="text-white bg-[#373F4D] w-full max-w-lg p-6 rounded-xl shadow-xl space-y-4"
+            >
+                <h2 className="text-xl font-bold">Contact Us</h2>
 
-                {status === "success" && (
+                {status === 'success' && (
                     <p className="text-green-400 bg-[#1e2633] border border-green-600 p-3 rounded-lg text-sm shadow-sm">
                         ✅ Thanks for reaching out! We&apos;ll be in touch.
                     </p>
                 )}
-                {status === "error" && (
+                {status === 'error' && (
                     <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
                         ❌ Something went wrong. Please try again later.
                     </p>
@@ -130,7 +127,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                 <div className="text-sm">
                     <p>You can also reach us directly at:</p>
                     <p className="mt-1">
-                        Email:{" "}
+                        Email:{' '}
                         <a
                             href="mailto:MTA.admn@gmail.com"
                             className="underline hover:text-white cursor-pointer"
@@ -140,6 +137,6 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                     </p>
                 </div>
             </div>
-        </div>
+        </AnimatedModal>
     );
 }

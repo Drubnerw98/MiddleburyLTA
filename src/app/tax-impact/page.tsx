@@ -1,9 +1,9 @@
-// src/app/components/TaxImpactPage.tsx
-"use client";
+'use client';
 
-import { useState } from "react";
-import TaxImpactSlider from "./TaxImpactSlider";
-import AboutTheNumbers from "@/app/components/AboutTheNumbers";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import TaxImpactSlider from './TaxImpactSlider';
+import AboutTheNumbers from '@/app/components/AboutTheNumbers';
 
 const DEFAULT_HOME_VALUE = 360000;
 const SLIDER_MIN = 100000;
@@ -20,15 +20,14 @@ export default function TaxImpactPage() {
   const savingsRate = 1 - baseTaxWithDev / baseTaxWithoutDev;
 
   const formatMoney = (value: number) =>
-      value.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
+      value.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
         maximumFractionDigits: 0,
       });
 
   const handleSubmit = () => {
-    const parsed = parseInt(inputText.replace(/[^\d]/g, ""), 10);
-
+    const parsed = parseInt(inputText.replace(/[^\d]/g, ''), 10);
     if (!parsed || isNaN(parsed)) {
       setConfirmedValue(DEFAULT_HOME_VALUE);
       setInputText(DEFAULT_HOME_VALUE.toLocaleString());
@@ -37,12 +36,11 @@ export default function TaxImpactPage() {
       setConfirmedValue(cleanValue);
       setInputText(cleanValue.toLocaleString());
     }
-
     setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleSubmit();
     }
@@ -57,7 +55,12 @@ export default function TaxImpactPage() {
       <main className="bg-white min-h-screen py-16 px-4">
         <div className="max-w-5xl mx-auto space-y-16">
           {/* Header */}
-          <section className="text-center space-y-2">
+          <motion.section
+              className="text-center space-y-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+          >
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800">
               2024 Tax Impact Calculator
             </h1>
@@ -66,19 +69,24 @@ export default function TaxImpactPage() {
               Southford Road and Straits Turnpike would have impacted your 2024
               property taxes.
             </p>
-          </section>
+          </motion.section>
 
           {/* Calculator */}
-          <section className="bg-slate-100 border border-slate-300 rounded-xl p-6 sm:p-10 space-y-10">
+          <motion.section
+              className="bg-slate-100 border border-slate-300 rounded-xl p-6 sm:p-10 space-y-10"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+          >
             {/* Value Input */}
             <div className="text-center space-y-1 min-h-[72px] sm:min-h-[80px]">
               <p className="text-gray-600 text-sm">Your Home’s Current Value</p>
               <div className="flex justify-center items-center gap-2 flex-wrap min-h-[48px]">
                 {!isEditing ? (
                     <>
-        <span className="text-3xl sm:text-4xl font-semibold tracking-wide text-gray-900">
-          {formatMoney(confirmedValue)}
-        </span>
+                  <span className="text-3xl sm:text-4xl font-semibold tracking-wide text-gray-900">
+                    {formatMoney(confirmedValue)}
+                  </span>
                       <button
                           onClick={() => {
                             setIsEditing(true);
@@ -91,15 +99,15 @@ export default function TaxImpactPage() {
                     </>
                 ) : (
                     <div className="relative">
-        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
-          $
-        </span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
+                    $
+                  </span>
                       <input
                           type="text"
                           inputMode="numeric"
                           value={inputText}
                           onChange={(e) => {
-                            const digitsOnly = e.target.value.replace(/[^\d]/g, "");
+                            const digitsOnly = e.target.value.replace(/[^\d]/g, '');
                             if (digitsOnly.length <= 8) {
                               setInputText(digitsOnly);
                             }
@@ -131,34 +139,55 @@ export default function TaxImpactPage() {
               Your 2024 Home Taxes
             </h2>
 
-            {/* Tax Results */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              <div className="bg-white border border-slate-300 rounded-md py-6">
-                <p className="text-sm text-gray-500">Without Development</p>
-                <p className="text-2xl font-bold text-gray-800">
-                  {formatMoney(taxWithoutDev)}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-300 rounded-md py-6">
-                <p className="text-sm text-gray-500">With Development</p>
-                <p className="text-2xl font-bold text-gray-800">
-                  {formatMoney(taxWithDev)}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-300 rounded-md py-6">
-                <p className="text-sm text-gray-500">Your Estimated Savings</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {formatMoney(taxSavings)}{" "}
-                  <span className="text-base text-gray-500">
-                  ({(savingsRate * 100).toFixed(2)}%)
-                </span>
-                </p>
-              </div>
-            </div>
-          </section>
+            {/* Tax Results with Stagger */}
+            <motion.div
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.15,
+                    },
+                  },
+                }}
+            >
+              {[{
+                label: 'Without Development',
+                value: formatMoney(taxWithoutDev),
+                color: 'text-gray-800',
+              }, {
+                label: 'With Development',
+                value: formatMoney(taxWithDev),
+                color: 'text-gray-800',
+              }, {
+                label: 'Your Estimated Savings',
+                value: `${formatMoney(taxSavings)} (${(savingsRate * 100).toFixed(2)}%)`,
+                color: 'text-green-600',
+              }].map(({ label, value, color }) => (
+                  <motion.div
+                      key={label}
+                      className="bg-white border border-slate-300 rounded-md py-6"
+                      variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                      }}
+                  >
+                    <p className="text-sm text-gray-500">{label}</p>
+                    <p className={`text-2xl font-bold ${color}`}>{value}</p>
+                  </motion.div>
+              ))}
+            </motion.div>
+          </motion.section>
 
           {/* Lookup Link */}
-          <div className="text-center text-sm text-gray-600">
+          <motion.div
+              className="text-center text-sm text-gray-600"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+          >
             Want to look up your official assessment?&nbsp;
             <a
                 href="https://gis.vgsi.com/middleburyct"
@@ -169,11 +198,16 @@ export default function TaxImpactPage() {
               Use the Vision Appraisal website
             </a>
             .
-          </div>
-
+          </motion.div>
 
           {/* About the Numbers */}
-          <AboutTheNumbers />
+          <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.4 }}
+          >
+            <AboutTheNumbers />
+          </motion.div>
         </div>
       </main>
   );

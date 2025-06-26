@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import {
     getAuth,
     createUserWithEmailAndPassword,
     updateProfile,
-} from "firebase/auth";
-import { app } from "../../../../lib/firebase";
+} from 'firebase/auth';
+import { app } from '../../../../lib/firebase';
+import AnimatedModal from '@/app/components/AnimatedModal';
 
 interface RegisterModalProps {
     isOpen: boolean;
@@ -18,17 +19,17 @@ const auth = getAuth(app);
 export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onCloseAction();
+            if (e.key === 'Escape') onCloseAction();
         };
-        if (isOpen) document.addEventListener("keydown", handleEsc);
-        return () => document.removeEventListener("keydown", handleEsc);
+        if (isOpen) document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
     }, [isOpen, onCloseAction]);
 
     const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -42,28 +43,24 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(userCred.user, { displayName: name });
 
-            setEmail("");
-            setPassword("");
-            setName("");
+            setEmail('');
+            setPassword('');
+            setName('');
             setError(null);
             onCloseAction();
         } catch {
-            setError("Registration failed. Try a stronger password or different email.");
+            setError('Registration failed. Try a stronger password or different email.');
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            onClick={handleClickOutside}
-            ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-        >
-            <div className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4">
-                <h2 className="text-xl font-bold text-white">Register</h2>
+        <AnimatedModal isOpen={isOpen} onClose={onCloseAction}>
+            <div
+                ref={modalRef}
+                onClick={handleClickOutside}
+                className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4"
+            >
+                <h2 className="text-xl font-bold">Register</h2>
 
                 <input
                     type="text"
@@ -111,6 +108,6 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
                     </button>
                 </div>
             </div>
-        </div>
+        </AnimatedModal>
     );
 }
