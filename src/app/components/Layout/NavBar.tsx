@@ -37,6 +37,7 @@ export default function NavBar() {
   useEffect(() => {
     setNavLinkClass('text-sm text-[#2E3D52] hover:text-[#516684] hover:underline transition cursor-pointer');
   }, []);
+
   return (
       <nav className="w-full bg-white z-50 relative">
         <div className="w-full px-4 sm:px-6 py-4 flex items-center justify-between max-w-[2440px] mx-auto">
@@ -51,12 +52,18 @@ export default function NavBar() {
               Middlebury Taxpayers
             </span>
             </Link>
+
+            {/* Desktop links */}
             <div className="hidden sm:flex items-center gap-x-6">
               <Link href="/tax-impact" className={navLinkClass}>
                 Tax Impact
               </Link>
               <Link href="/articles" className={navLinkClass}>
                 Articles & Links
+              </Link>
+              {/* NEW: Who We Are */}
+              <Link href="/who-we-are" className={navLinkClass}>
+                Who We Are
               </Link>
             </div>
           </div>
@@ -99,6 +106,7 @@ export default function NavBar() {
           <button
               className="sm:hidden text-[#2E3D52] focus:outline-none"
               onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
           >
             <svg
                 className="w-6 h-6"
@@ -108,17 +116,9 @@ export default function NavBar() {
                 viewBox="0 0 24 24"
             >
               {menuOpen ? (
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
@@ -141,6 +141,15 @@ export default function NavBar() {
               >
                 Articles & Links
               </Link>
+              {/* NEW: Who We Are (mobile) */}
+              <Link
+                  href="/who-we-are"
+                  className={`${navLinkClass} block`}
+                  onClick={() => setMenuOpen(false)}
+              >
+                Who We Are
+              </Link>
+
               {isAdmin && (
                   <Link
                       href="/admin"
@@ -150,6 +159,7 @@ export default function NavBar() {
                     Admin
                   </Link>
               )}
+
               {user ? (
                   <>
               <span className={`${navLinkClass} block`} title={user.email ?? ''}>
