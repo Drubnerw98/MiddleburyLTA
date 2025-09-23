@@ -16,6 +16,10 @@ export default function Footer() {
                     <a href="/articles" className="hover:text-sky-400 transition">
                         Articles & Links
                     </a>
+                    {/* NEW: Who We Are */}
+                    <a href="/who-we-are" className="hover:text-sky-400 transition">
+                        Who We Are
+                    </a>
                     <a href="mailto:press@middleburytaxpayers.org" className="hover:text-sky-400 transition">
                         Contact
                     </a>
