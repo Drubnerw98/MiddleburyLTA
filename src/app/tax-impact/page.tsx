@@ -183,22 +183,34 @@ export default function TaxImpactPage() {
 
           {/* Lookup Link */}
           <motion.div
-              className="text-center text-sm text-gray-600"
+              className="text-center text-sm text-gray-600 flex flex-col sm:flex-row items-center justify-center gap-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
           >
-            Want to look up your official assessment?&nbsp;
+  <span>
+    Want to look up your official assessment?&nbsp;
+    <a
+        href="https://gis.vgsi.com/middleburyct"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline underline-offset-2 hover:text-blue-800 font-medium transition-colors"
+    >
+      Use the Vision Appraisal website
+    </a>
+  </span>
+
+            {/* Ugly obvious button */}
             <a
                 href="https://gis.vgsi.com/middleburyct"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-700 underline hover:text-blue-900 font-medium transition-colors"
+                className="inline-block rounded-md bg-sky-600 px-4 py-2 text-white text-xs sm:text-sm font-semibold hover:bg-sky-700 transition"
             >
-              Use the Vision Appraisal website
+              Open Vision Appraisal
             </a>
-            .
           </motion.div>
+
 
           {/* About the Numbers */}
           <motion.div
