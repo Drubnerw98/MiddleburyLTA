@@ -75,9 +75,9 @@ export default function WhoWeArePage() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold">Martha Enterprises / Route 188 LLC</h2>
+                        <h2 className="text-xl font-semibold">Murtha Enterprises / Route 188 LLC</h2>
                         <p className="mt-2">
-                            Martha Enterprises own and manages industrial properties in Beacon
+                            Murtha Enterprises own and manages industrial properties in Beacon
                             Falls and their entity Route 188 LLC owns 671 Southford Road a
                             large LI-200 development site in Middlebury on Southford and
                             Christian Roads.

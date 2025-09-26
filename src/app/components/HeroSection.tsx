@@ -23,6 +23,10 @@ const itemVariants: Variants = {
 export default function HeroSection() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Single source of truth for PDF button styling
+    const pdfBtnClass =
+        'inline-flex w-max rounded-md bg-sky-600 px-3 py-1.5 text-xs sm:text-sm font-medium text-white no-underline hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 transition';
+
     return (
         <>
             <main className="flex items-center justify-center px-2 sm:px-4 pt-0 pb-2 sm:pb-4">
@@ -39,8 +43,10 @@ export default function HeroSection() {
                     {/* Dark gradient overlay (no blur) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/55 to-black/30" />
 
-                    {/* Content */}
-                    <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-8">
+                    {/* Content wrapper:
+              - Mobile: top-aligned & scrollable to prevent cropping (with extra bottom padding)
+              - ≥sm: vertically centered like before */}
+                    <div className="absolute inset-0 z-10 flex justify-center px-4 sm:px-8 overflow-y-auto items-start sm:items-center py-6 sm:py-0 pb-10">
                         <motion.div
                             className="w-full max-w-5xl text-white"
                             variants={containerVariants}
@@ -111,25 +117,40 @@ export default function HeroSection() {
                                         Why Commercial Development Matters
                                     </h2>
                                     <ul className="list-disc space-y-1.5 pl-5 text-sm sm:text-base leading-relaxed">
-                                        <li>Residential properties cost towns more than they pay in taxes. (CT Farm Bureau Chart)</li>
+                                        {/* Chart PDF button (now consistent with others) */}
+                                        <li className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span>
+                        Residential properties cost towns more than they pay in taxes. (CT Farm Bureau Chart)
+                      </span>
+                                            <Link
+                                                href="/docs/median-cost-public-services.pdf"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={pdfBtnClass}
+                                                aria-label="Open PDF: Median cost to provide public services chart"
+                                            >
+                                                View PDF
+                                            </Link>
+                                        </li>
+
                                         <li>Commercial properties generate a net surplus — helping keep taxes lower for everyone.</li>
+
                                         <li>
                                             Two recently blocked warehouse projects alone would have added:
                                             <ul className="list-disc space-y-1.5 pl-5 mt-2">
                                                 <li className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <span>
-                            $2 million in one-time fees (4x all permits collected last year).
-                          </span>
+                                                    <span>$2 million in one-time fees (4x all permits collected last year).</span>
                                                     <Link
                                                         href="/docs/fees-last-12-months.pdf"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex w-max rounded-md bg-sky-600 px-3 py-1.5 text-xs sm:text-sm font-medium text-white no-underline hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 transition"
+                                                        className={pdfBtnClass}
                                                         aria-label="Open PDF: All fees paid in the last 12 months"
                                                     >
                                                         View PDF
                                                     </Link>
                                                 </li>
+
                                                 <li className="flex flex-col sm:flex-row sm:items-center gap-2">
                           <span>
                             $2.2 million annually in new tax revenue — more than half of what all commercial
@@ -139,7 +160,7 @@ export default function HeroSection() {
                                                         href="/docs/commercial-taxpayers-assessments-taxes.pdf"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex w-max rounded-md bg-sky-600 px-3 py-1.5 text-xs sm:text-sm font-medium text-white no-underline hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 transition"
+                                                        className={pdfBtnClass}
                                                         aria-label="Open PDF: Commercial taxpayers, assessments and taxes owed"
                                                     >
                                                         View PDF
