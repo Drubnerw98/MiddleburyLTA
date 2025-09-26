@@ -191,6 +191,7 @@ export default function TaxImpactPage() {
   <span>
     Want to look up your official assessment?&nbsp;
     <a
+
         href="https://gis.vgsi.com/middleburyct"
         target="_blank"
         rel="noopener noreferrer"
