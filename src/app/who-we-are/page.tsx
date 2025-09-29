@@ -58,23 +58,6 @@ export default function WhoWeArePage() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold">Olymbec</h2>
-                        <p className="mt-2">
-                            Olymbec owns and manages a diverse portfolio of industrial,
-                            office, retail, and residential properties located throughout
-                            Canada and the United States. Headquartered in Montréal, Olymbec
-                            is now one of the largest private industrial real estate holders
-                            in Eastern Canada with branch offices located in key markets
-                            across Québec and the United States including; Trois-Rivières,
-                            Sherbrooke, Québec City, Dallas, Columbus, Atlanta, Las Vegas, St.
-                            Louis, Memphis, Hartford, Indianapolis, Philadelphia and West
-                            Virginia. Olymbec owns 199 Benson Road (the former Crompton &amp;
-                            Chemtura facility) and the former Pilots Mall Property which
-                            includes land in both Middlebury, Oxford and Southbury
-                        </p>
-                    </section>
-
-                    <section>
                         <h2 className="text-xl font-semibold">Murtha Enterprises / Route 188 LLC</h2>
                         <p className="mt-2">
                             Murtha Enterprises own and manages industrial properties in Beacon
