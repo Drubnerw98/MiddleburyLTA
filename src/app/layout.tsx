@@ -5,6 +5,9 @@ import { Inter } from "next/font/google";
 import NavBar from "./components/Layout/NavBar";
 import Footer from "./components/Layout/Footer";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/next";
+// Optional: Vercel Speed Insights (nice to have performance data)
+// import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -40,6 +43,8 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <Toaster position="bottom-right" />
+        <Analytics />
+        {/* <SpeedInsights /> */}
         </body>
         </html>
     );
