@@ -67,15 +67,6 @@ export default function WhoWeArePage() {
                         </p>
                     </section>
 
-                    <section>
-                        <h2 className="text-xl font-semibold">Middlebury Land Development LLC</h2>
-                        <p className="mt-2">
-                            Middlebury Land Development LLC owns numerous residential and
-                            commercial properties in Middlebury and has been a landowner in
-                            Middlebury since at least 1969.
-                        </p>
-                    </section>
-
                     <p className="font-semibold">
                         Collectively these groups are the biggest taxpayers in Middlebury,
                         CT
