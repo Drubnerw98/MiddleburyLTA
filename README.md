@@ -14,9 +14,9 @@ Built with Next.js and Firebase, it explains the group’s mission and includes 
 ## Tech Stack
 
 - **Frontend:** Next.js (React, TypeScript)
-- **Styling:** CSS / Tailwind (update this if different)
+- **Styling:** CSS / Tailwind
 - **Backend / Data:** Firebase (Firestore, Auth)
-- **Deployment:** Vercel (or your current host)
+- **Deployment:** Vercel
 
 ## Running Locally
 
