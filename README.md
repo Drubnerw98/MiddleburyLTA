@@ -179,5 +179,5 @@ firebase deploy --only firestore:rules,storage:rules
 
 ## Author
 
-Built and maintained by **David Drubner**. Source at
+Built and maintained by **Will Drubner**. Source at
 <https://github.com/Drubnerw98/MiddleburyLTA>.
