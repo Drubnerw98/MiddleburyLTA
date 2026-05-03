@@ -1,0 +1,14 @@
+# Normalize line endings on commit. Working tree gets CRLF on Windows-native
+# tools, LF everywhere else; the repo always stores LF. This stops files from
+# showing as "modified" the moment you open them in WSL on a Windows mount.
+* text=auto eol=lf
+
+# Binary files — never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
