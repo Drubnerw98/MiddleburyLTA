@@ -5,19 +5,23 @@ import { motion } from 'framer-motion';
 import TaxImpactSlider from './TaxImpactSlider';
 import AboutTheNumbers from '@/app/components/AboutTheNumbers';
 
-const DEFAULT_HOME_VALUE = 360000;
-const SLIDER_MIN = 100000;
-const SLIDER_MAX = 10000000;
+// Modeled 2024 tax bills for the Middlebury median-value home, with and without
+// the proposed Southford Road / Straits Turnpike commercial development. Linear
+// scaling against home value is correct so long as the mill rate and assessment
+// ratio are uniform across town — both are true in Middlebury.
+const BASE_HOME_VALUE = 360_000;
+const BASE_TAX_WITHOUT_DEV = 11_729;
+const BASE_TAX_WITH_DEV = 10_692;
+const SAVINGS_RATE = 1 - BASE_TAX_WITH_DEV / BASE_TAX_WITHOUT_DEV;
+
+const DEFAULT_HOME_VALUE = BASE_HOME_VALUE;
+const SLIDER_MIN = 100_000;
+const SLIDER_MAX = 10_000_000;
 
 export default function TaxImpactPage() {
   const [confirmedValue, setConfirmedValue] = useState(DEFAULT_HOME_VALUE);
   const [isEditing, setIsEditing] = useState(false);
   const [inputText, setInputText] = useState(confirmedValue.toLocaleString());
-
-  const baseHomeValue = 360000;
-  const baseTaxWithoutDev = 11729;
-  const baseTaxWithDev = 10692;
-  const savingsRate = 1 - baseTaxWithDev / baseTaxWithoutDev;
 
   const formatMoney = (value: number) =>
       value.toLocaleString('en-US', {
@@ -46,9 +50,9 @@ export default function TaxImpactPage() {
     }
   };
 
-  const multiplier = confirmedValue / baseHomeValue;
-  const taxWithDev = Math.round(baseTaxWithDev * multiplier);
-  const taxWithoutDev = Math.round(baseTaxWithoutDev * multiplier);
+  const multiplier = confirmedValue / BASE_HOME_VALUE;
+  const taxWithDev = Math.round(BASE_TAX_WITH_DEV * multiplier);
+  const taxWithoutDev = Math.round(BASE_TAX_WITHOUT_DEV * multiplier);
   const taxSavings = taxWithoutDev - taxWithDev;
 
   return (
@@ -127,7 +131,7 @@ export default function TaxImpactPage() {
             <div className="px-4 sm:px-12">
               <TaxImpactSlider
                   confirmedValue={confirmedValue}
-                  setConfirmedValueAction={(val) => {
+                  onConfirmedValueChange={(val) => {
                     setConfirmedValue(val);
                     setInputText(val.toLocaleString());
                   }}
@@ -163,7 +167,7 @@ export default function TaxImpactPage() {
                 color: 'text-gray-800',
               }, {
                 label: 'Your Estimated Savings',
-                value: `${formatMoney(taxSavings)} (${(savingsRate * 100).toFixed(2)}%)`,
+                value: `${formatMoney(taxSavings)} (${(SAVINGS_RATE * 100).toFixed(2)}%)`,
                 color: 'text-green-600',
               }].map(({ label, value, color }) => (
                   <motion.div
@@ -183,33 +187,22 @@ export default function TaxImpactPage() {
 
           {/* Lookup Link */}
           <motion.div
-              className="text-center text-sm text-gray-600 flex flex-col sm:flex-row items-center justify-center gap-3"
+              className="text-center text-sm text-gray-600"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
           >
-  <span>
-    Want to look up your official assessment?&nbsp;
-    <a
-
-        href="https://gis.vgsi.com/middleburyct"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 underline underline-offset-2 hover:text-blue-800 font-medium transition-colors"
-    >
-      Use the Vision Appraisal website
-    </a>
-  </span>
-
-            {/* Ugly obvious button */}
-            <a
-                href="https://gis.vgsi.com/middleburyct"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block rounded-md bg-sky-600 px-4 py-2 text-white text-xs sm:text-sm font-semibold hover:bg-sky-700 transition"
-            >
-              Open Vision Appraisal
-            </a>
+            <span>
+              Want to look up your official assessment?{' '}
+              <a
+                  href="https://gis.vgsi.com/middleburyct"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline underline-offset-2 hover:text-blue-800 font-medium transition-colors"
+              >
+                Use the Vision Appraisal website
+              </a>
+            </span>
           </motion.div>
 
 

@@ -4,32 +4,28 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { app } from '../../../../lib/firebase';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../../lib/firebase';
 import Logo from '../Logo/logo';
 import LoginModal from '../Auth/LoginModal';
 import RegisterModal from '../Auth/RegisterModal';
-
-const auth = getAuth(app);
+import { useIsAdmin } from '../Auth/useIsAdmin';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function NavBar() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user] = useAuthState(auth);
+  const { isAdmin } = useIsAdmin();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = () => {
-    signOut(auth);
+  const handleLogout = async () => {
+    await signOut(auth);
+    await fetch('/api/session', { method: 'DELETE' });
     router.push('/');
   };
 
-  const isAdmin = user?.email === 'drubnation@gmail.com';
   const username = user?.email?.split('@')[0];
 
   const [navLinkClass, setNavLinkClass] = useState('text-sm text-[#2E3D52] hover:underline transition cursor-pointer');

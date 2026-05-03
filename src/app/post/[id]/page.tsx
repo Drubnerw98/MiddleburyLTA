@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   doc,
   getDoc,
@@ -16,11 +16,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import PostDisplay from "@/app/components/Posts/PostDisplay";
 import PostEdit from "@/app/components/Posts/PostEdit";
-import { deletePostAction } from "@/app/components/Posts/PostControls";
 
 import { CommentForm } from "@/app/components/Comments/CommentForm";
 import CommentList from "@/app/components/Comments/CommentList";
 import { createCommentAction } from "@/app/actions/createCommentAction";
+import { useIsAdmin } from "@/app/components/Auth/useIsAdmin";
 
 import { softDeleteComment } from "../../../../lib/comments";
 import { editCommentContent } from "../../../../lib/editcomments";
@@ -46,7 +46,6 @@ interface PostData {
 
 export default function PostDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const postId = params.id as string;
 
   const [post, setPost] = useState<PostData | null>(null);
@@ -55,8 +54,7 @@ export default function PostDetailPage() {
   const [commentText, setCommentText] = useState("");
   const [commentError, setCommentError] = useState<string | null>(null);
   const [user] = useAuthState(auth);
-
-  const isAdmin = user?.email === "drubnation@gmail.com";
+  const { isAdmin } = useIsAdmin();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,14 +113,9 @@ export default function PostDetailPage() {
     await refreshComments();
   };
 
-  const handleDeletePost = async () => {
-    if (!isAdmin) return;
-    await deletePostAction(postId);
-    router.push("/");
-  };
-
   const handleSaveAction = async (updatedPost: PostData) => {
-    const { id, ...rest } = updatedPost;
+    const { id: _id, ...rest } = updatedPost;
+    void _id;
     await updateDoc(doc(db, "posts", postId), rest);
     setPost(updatedPost);
     setEditing(false);

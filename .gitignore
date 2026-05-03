@@ -43,10 +43,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# firebase secrets
+# firebase secrets — do NOT commit
 serviceAccountKey.json
 firebase-service-account.json
 *-firebase-adminsdk-*.json
+*-service-account*.json
 .firebase/
 firebase-debug.log
 firebase-debug.*.log

@@ -1,42 +1,56 @@
-// lib/firebase-admin.ts
+import { initializeApp, cert, getApps, getApp, type App } from "firebase-admin/app";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getStorage, type Storage } from "firebase-admin/storage";
 
-import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import { getStorage } from "firebase-admin/storage";
-
-// Prevent execution on the client
+// Defense in depth — the env var name (no NEXT_PUBLIC_ prefix) is what actually
+// keeps it out of the client bundle. This throw catches accidental imports.
 if (typeof window !== "undefined") {
-    throw new Error("firebase-admin should never be imported on the client");
+  throw new Error("firebase-admin should never be imported on the client");
 }
 
-const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+let cachedApp: App | undefined;
 
-if (!raw) {
+// Lazy init so `next build` doesn't blow up in CI environments that have no
+// service-account credentials. The first request that touches Firestore or
+// Storage will trigger initialization.
+function getAdminApp(): App {
+  if (cachedApp) return cachedApp;
+  if (getApps().length) {
+    cachedApp = getApp();
+    return cachedApp;
+  }
+
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (!raw) {
     throw new Error("FIREBASE_SERVICE_ACCOUNT_KEY is not set in the environment.");
+  }
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  if (!storageBucket) {
+    throw new Error("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET is not set in the environment.");
+  }
+
+  const serviceAccount = JSON.parse(raw);
+  if (typeof serviceAccount.private_key !== "string") {
+    throw new Error("Missing private_key in FIREBASE_SERVICE_ACCOUNT_KEY");
+  }
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+
+  cachedApp = initializeApp({ credential: cert(serviceAccount), storageBucket });
+  return cachedApp;
 }
 
-let serviceAccount;
-try {
-    serviceAccount = JSON.parse(raw);
-
-    if (typeof serviceAccount.private_key === "string") {
-        serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
-    } else {
-        throw new Error("Missing private_key in FIREBASE_SERVICE_ACCOUNT_KEY");
-    }
-} catch (err) {
-    console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:", err);
-    throw err;
+// Proxy so existing `adminDb.collection(...)` callsites keep working without
+// every caller needing a function call to obtain the handle.
+function lazy<T extends object>(getter: () => T): T {
+  return new Proxy({} as T, {
+    get(_t, prop, recv) {
+      const target = getter();
+      const value = Reflect.get(target, prop, recv);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
 }
 
-const adminApp =
-    getApps().length === 0
-        ? initializeApp({
-            credential: cert(serviceAccount),
-            storageBucket: "middlebury-low-tax.firebasestorage.app",
-        })
-        : getApp();
-
-export const adminDb = getFirestore(adminApp);
-export const adminStorage = getStorage(adminApp);
-export { adminApp };
+export const adminApp: App = lazy(getAdminApp);
+export const adminDb: Firestore = lazy(() => getFirestore(getAdminApp()));
+export const adminStorage: Storage = lazy(() => getStorage(getAdminApp()));

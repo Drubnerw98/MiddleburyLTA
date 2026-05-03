@@ -13,9 +13,6 @@ const nextConfig = {
       bodySizeLimit: "5mb",
     },
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 module.exports = nextConfig;

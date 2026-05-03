@@ -45,7 +45,7 @@ async function deleteImageByUrl(imageUrl: string) {
   const file = adminStorage.bucket().file(`post-images/${filename}`);
   try {
     await file.delete();
-  } catch (err) {
+  } catch {
     console.warn("Image deletion failed (may not exist):", filename);
   }
 }
@@ -116,7 +116,7 @@ export async function editPostAction(formData: FormData) {
   }
 
   const existingData = snapshot.data() as { imageUrl?: string };
-  const updateData: Record<string, any> = {
+  const updateData: Record<string, unknown> = {
     title,
     content,
     tags,

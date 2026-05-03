@@ -38,11 +38,12 @@ export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
             const userCred = await signInWithEmailAndPassword(auth, email, password);
             const token = await userCred.user.getIdToken();
 
-            await fetch('/api/session', {
+            const res = await fetch('/api/session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token }),
             });
+            if (!res.ok) throw new Error('Session creation failed');
 
             setEmail('');
             setPassword('');

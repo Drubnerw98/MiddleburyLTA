@@ -20,7 +20,7 @@ export default function Footer() {
                     <a href="/who-we-are" className="hover:text-sky-400 transition">
                         Who We Are
                     </a>
-                    <a href="mailto:press@middleburytaxpayers.org" className="hover:text-sky-400 transition">
+                    <a href="mailto:mta.admn@gmail.com" className="hover:text-sky-400 transition">
                         Contact
                     </a>
                 </div>

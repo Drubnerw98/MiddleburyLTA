@@ -3,9 +3,8 @@
 import { getCurrentUser } from "./auth";
 import { adminDb } from "./firebase-admin";
 
-/**
- * Edits a comment if the current user is its owner or admin.
- */
+const MAX_COMMENT_LENGTH = 2000;
+
 export async function editCommentContent(
   postId: string,
   commentId: string,
@@ -13,6 +12,10 @@ export async function editCommentContent(
 ) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const trimmed = newContent.trim();
+  if (!trimmed) throw new Error("Comment is empty");
+  if (trimmed.length > MAX_COMMENT_LENGTH) throw new Error("Comment is too long");
 
   const docRef = adminDb
     .collection("posts")
@@ -26,13 +29,10 @@ export async function editCommentContent(
   const comment = docSnap.data();
   if (!comment) throw new Error("Comment data missing");
 
-  const isAdmin = user.email === "drubnation@gmail.com";
-  const isOwner = comment.uid === user.uid;
-
-  if (!isAdmin && !isOwner) throw new Error("Unauthorized");
+  if (!user.admin && comment.uid !== user.uid) throw new Error("Unauthorized");
 
   await docRef.update({
-    content: newContent,
+    content: trimmed,
     edited: true,
   });
 }

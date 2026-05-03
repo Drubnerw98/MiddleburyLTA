@@ -1,0 +1,55 @@
+rules_version = '2';
+
+// Defense in depth — every privileged write is also enforced by server actions
+// behind the admin custom claim. These rules are the secondary layer in case
+// any path slips past the server-side check.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // Public-facing posts: anyone can read; only admins can mutate.
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      // Comments on a post:
+      //  - anyone can read
+      //  - signed-in users can create their own comment (must own the uid field)
+      //  - the comment owner OR an admin can edit/delete
+      match /comments/{commentId} {
+        allow read: if true;
+
+        allow create: if isSignedIn()
+          && request.resource.data.uid == request.auth.uid;
+
+        allow update, delete: if isAdmin()
+          || (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
+    }
+
+    // Curated external links (Articles & Links page).
+    match /external_links/{linkId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Editable About copy + admin settings.
+    match /admin/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Default deny — anything not explicitly matched above is locked down.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,29 +1,35 @@
-// src/lib/auth.ts
-import { auth } from "firebase-admin";
 import { getAuth } from "firebase-admin/auth";
 import { cookies } from "next/headers";
+import { adminApp } from "./firebase-admin";
 
-export async function getCurrentUser() {
+export const SESSION_COOKIE_NAME = "__session";
+export const SESSION_COOKIE_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000;
+
+export interface AuthedUser {
+  uid: string;
+  email: string | null;
+  admin: boolean;
+}
+
+export async function getCurrentUser(): Promise<AuthedUser | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get("__session")?.value;
-
-  if (!token) return null;
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!sessionCookie) return null;
 
   try {
-    const decodedToken = await getAuth().verifyIdToken(token);
-    return decodedToken;
-  } catch (error) {
-    console.error("Error verifying Firebase ID token:", error);
+    const decoded = await getAuth(adminApp).verifySessionCookie(sessionCookie, true);
+    return {
+      uid: decoded.uid,
+      email: decoded.email ?? null,
+      admin: decoded.admin === true,
+    };
+  } catch {
     return null;
   }
 }
 
-export async function getUserIfAdmin() {
+export async function getUserIfAdmin(): Promise<AuthedUser | null> {
   const user = await getCurrentUser();
-  if (!user) return null;
-
-  // ✅ Secure hardcoded check
-  if (user.email?.toLowerCase() !== "drubnation@gmail.com") return null;
-
-  return { uid: user.uid, email: user.email };
+  if (!user || !user.admin) return null;
+  return user;
 }
