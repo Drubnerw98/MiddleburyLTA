@@ -75,7 +75,7 @@ export default function CommentManager() {
   }
 
   if (error) {
-    return <p className="text-red-600 italic">❌ Error loading comments</p>;
+    return <p className="text-red-600 italic">Error loading comments.</p>;
   }
 
   return (

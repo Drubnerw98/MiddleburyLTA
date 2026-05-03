@@ -2,8 +2,8 @@ import { initializeApp, cert, getApps, getApp, type App } from "firebase-admin/a
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getStorage, type Storage } from "firebase-admin/storage";
 
-// Defense in depth — the env var name (no NEXT_PUBLIC_ prefix) is what actually
-// keeps it out of the client bundle. This throw catches accidental imports.
+// Defense in depth. The env var name (no NEXT_PUBLIC_ prefix) is what actually
+// keeps it out of the client bundle; this throw catches accidental imports.
 if (typeof window !== "undefined") {
   throw new Error("firebase-admin should never be imported on the client");
 }
@@ -11,8 +11,8 @@ if (typeof window !== "undefined") {
 let cachedApp: App | undefined;
 
 // Lazy init so `next build` doesn't blow up in CI environments that have no
-// service-account credentials. The first request that touches Firestore or
-// Storage will trigger initialization.
+// service-account credentials. The first request that touches Firestore
+// or Storage will trigger initialization.
 function getAdminApp(): App {
   if (cachedApp) return cachedApp;
   if (getApps().length) {

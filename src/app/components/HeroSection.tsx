@@ -80,7 +80,7 @@ export default function HeroSection() {
                                     </h2>
                                     <ul className="list-disc space-y-1.5 pl-5 text-sm sm:text-base leading-relaxed">
                                         <li>Residential property values are up 40–50% since 2020 Revaluation.</li>
-                                        <li>Commercial property values are falling — many worth less than five years ago.</li>
+                                        <li>Commercial property values are falling, with many worth less than five years ago.</li>
                                         <li>
                                             After the 2025 revaluation, in the years ahead, close to 95% of Middlebury’s tax base could
                                             come from homeowners. That means the tax burden shifts directly onto you.
@@ -99,9 +99,9 @@ export default function HeroSection() {
                                     </h2>
                                     <ul className="list-disc space-y-1.5 pl-5 text-sm sm:text-base leading-relaxed">
                                         <li>Town expenses grow 5% every year, mostly school costs.</li>
-                                        <li>A new or refurbished school will cost $80–100 million — Middlebury must cover about 30%.</li>
+                                        <li>A new or refurbished school will cost $80 to $100 million, of which Middlebury must cover about 30%.</li>
                                         <li>
-                                            With no remaining surpluses or savings, taxes will climb at least 5% annually — likely more after
+                                            With no remaining surpluses or savings, taxes will climb at least 5% annually, and likely more after
                                             2025.
                                         </li>
                                     </ul>
@@ -133,7 +133,7 @@ export default function HeroSection() {
                                             </Link>
                                         </li>
 
-                                        <li>Commercial properties generate a net surplus — helping keep taxes lower for everyone.</li>
+                                        <li>Commercial properties generate a net surplus, helping keep taxes lower for everyone.</li>
 
                                         <li>
                                             Two recently blocked warehouse projects alone would have added:
@@ -153,7 +153,7 @@ export default function HeroSection() {
 
                                                 <li className="flex flex-col sm:flex-row sm:items-center gap-2">
                           <span>
-                            $2.2 million annually in new tax revenue — more than half of what all commercial
+                            $2.2 million annually in new tax revenue, more than half of what all commercial
                             properties now pay.
                           </span>
                                                     <Link
@@ -177,8 +177,8 @@ export default function HeroSection() {
                                     variants={itemVariants}
                                 >
                   <span className="block">
-                    Without responsible new development, homeowners will carry nearly the entire tax load — and property
-                    taxes will rise year after year.
+                    Without responsible new development, homeowners will carry nearly the entire tax load,
+                    and property taxes will rise year after year.
                   </span>
                                     <span className="block">
                     Middlebury needs commercial growth now to protect its residents and secure its future.

@@ -8,7 +8,7 @@ import AboutTheNumbers from '@/app/components/AboutTheNumbers';
 // Modeled 2024 tax bills for the Middlebury median-value home, with and without
 // the proposed Southford Road / Straits Turnpike commercial development. Linear
 // scaling against home value is correct so long as the mill rate and assessment
-// ratio are uniform across town — both are true in Middlebury.
+// ratio are uniform across town, which is true in Middlebury.
 const BASE_HOME_VALUE = 360_000;
 const BASE_TAX_WITHOUT_DEV = 11_729;
 const BASE_TAX_WITH_DEV = 10_692;
@@ -56,39 +56,44 @@ export default function TaxImpactPage() {
   const taxSavings = taxWithoutDev - taxWithDev;
 
   return (
-      <main className="bg-white min-h-screen py-16 px-4">
+      <main className="bg-gradient-to-b from-slate-50 to-white min-h-screen py-16 px-4">
         <div className="max-w-5xl mx-auto space-y-16">
           {/* Header */}
           <motion.section
-              className="text-center space-y-2"
+              className="text-center space-y-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
           >
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800">
+            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-sky-700 bg-sky-50 px-3 py-1 rounded-full">
+              Calculator
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
               2024 Tax Impact Calculator
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-              Use this tool to estimate how the new commercial properties on
-              Southford Road and Straits Turnpike would have impacted your 2024
-              property taxes.
+            <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              Estimate how the new commercial properties on Southford Road
+              and Straits Turnpike would have impacted your 2024 property
+              taxes.
             </p>
           </motion.section>
 
           {/* Calculator */}
           <motion.section
-              className="bg-slate-100 border border-slate-300 rounded-xl p-6 sm:p-10 space-y-10"
+              className="bg-white border border-slate-200 rounded-2xl shadow-lg shadow-slate-200/60 p-6 sm:p-10 space-y-10"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.4 }}
           >
             {/* Value Input */}
-            <div className="text-center space-y-1 min-h-[72px] sm:min-h-[80px]">
-              <p className="text-gray-600 text-sm">Your Home’s Current Value</p>
-              <div className="flex justify-center items-center gap-2 flex-wrap min-h-[48px]">
+            <div className="text-center space-y-2 min-h-[72px] sm:min-h-[80px]">
+              <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                Your Home’s Current Value
+              </p>
+              <div className="flex justify-center items-center gap-3 flex-wrap min-h-[48px]">
                 {!isEditing ? (
                     <>
-                  <span className="text-3xl sm:text-4xl font-semibold tracking-wide text-gray-900">
+                  <span className="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900 tabular-nums">
                     {formatMoney(confirmedValue)}
                   </span>
                       <button
@@ -96,14 +101,14 @@ export default function TaxImpactPage() {
                             setIsEditing(true);
                             setInputText(confirmedValue.toLocaleString());
                           }}
-                          className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700"
+                          className="text-sm bg-sky-600 text-white px-3 py-1.5 rounded-md hover:bg-sky-700 transition shadow-sm"
                       >
                         Edit
                       </button>
                     </>
                 ) : (
                     <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-xl">
                     $
                   </span>
                       <input
@@ -118,7 +123,7 @@ export default function TaxImpactPage() {
                           }}
                           onKeyDown={handleKeyDown}
                           onBlur={handleSubmit}
-                          className="pl-7 w-44 text-2xl font-semibold bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none text-center text-gray-900"
+                          className="pl-7 w-48 text-2xl font-semibold bg-white border-2 border-sky-300 rounded-md px-3 py-2 focus:outline-none focus:border-sky-500 text-center text-slate-900"
                           placeholder="Enter Value"
                           autoFocus
                       />
@@ -139,9 +144,11 @@ export default function TaxImpactPage() {
             </div>
 
             {/* Tax Label */}
-            <h2 className="text-center text-xl font-semibold text-gray-800">
-              Your 2024 Home Taxes
-            </h2>
+            <div className="text-center pt-4 border-t border-slate-100">
+              <h2 className="text-xl font-semibold text-slate-800">
+                Your 2024 Home Taxes
+              </h2>
+            </div>
 
             {/* Tax Results with Stagger */}
             <motion.div
@@ -160,29 +167,37 @@ export default function TaxImpactPage() {
               {[{
                 label: 'Without Development',
                 value: formatMoney(taxWithoutDev),
-                color: 'text-gray-800',
+                cardClass: 'bg-slate-50 border border-slate-200',
+                textClass: 'text-slate-800',
               }, {
                 label: 'With Development',
                 value: formatMoney(taxWithDev),
-                color: 'text-gray-800',
+                cardClass: 'bg-slate-50 border border-slate-200',
+                textClass: 'text-slate-800',
               }, {
                 label: 'Your Estimated Savings',
                 value: `${formatMoney(taxSavings)} (${(SAVINGS_RATE * 100).toFixed(2)}%)`,
-                color: 'text-green-600',
-              }].map(({ label, value, color }) => (
+                cardClass: 'bg-emerald-50 border border-emerald-200 shadow-sm',
+                textClass: 'text-emerald-700',
+              }].map(({ label, value, cardClass, textClass }) => (
                   <motion.div
                       key={label}
-                      className="bg-white border border-slate-300 rounded-md py-6"
+                      className={`${cardClass} rounded-lg py-6 px-4 transition`}
                       variants={{
                         hidden: { opacity: 0, y: 10 },
                         visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                       }}
                   >
-                    <p className="text-sm text-gray-500">{label}</p>
-                    <p className={`text-2xl font-bold ${color}`}>{value}</p>
+                    <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">{label}</p>
+                    <p className={`text-2xl font-bold tabular-nums ${textClass}`}>{value}</p>
                   </motion.div>
               ))}
             </motion.div>
+
+            <p className="text-xs text-slate-500 text-center pt-2 max-w-xl mx-auto leading-relaxed">
+              Every household sees the same percentage savings ({(SAVINGS_RATE * 100).toFixed(2)}%);
+              the dollar amount scales with home value.
+            </p>
           </motion.section>
 
           {/* Lookup Link */}

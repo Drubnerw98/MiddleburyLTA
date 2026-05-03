@@ -20,7 +20,7 @@ jobs:
       - run: npm run lint
       - run: npm run build
         env:
-          # CI build only needs the public Firebase identifiers — no secrets.
+          # CI build only needs the public Firebase identifiers, no secrets.
           # Real secrets are injected at deploy time by Vercel.
           NEXT_PUBLIC_FIREBASE_API_KEY: ci-placeholder
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ci-placeholder

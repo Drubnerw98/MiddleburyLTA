@@ -25,10 +25,10 @@ export default function SettingsPanel() {
         startTransition(() => {
             const docRef = doc(db, 'admin', 'settings');
             setDoc(docRef, { emailNotifications })
-                .then(() => setStatus('✅ Saved'))
+                .then(() => setStatus('Saved.'))
                 .catch((err) => {
                     console.error(err);
-                    setStatus('❌ Error saving');
+                    setStatus('Error saving.');
                 });
         });
     };

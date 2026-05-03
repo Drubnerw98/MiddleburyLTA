@@ -7,10 +7,10 @@ import {
   query,
   startAfter,
   limit,
-  QueryDocumentSnapshot,
-  DocumentData,
+  type QueryDocumentSnapshot,
+  type DocumentData,
 } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { db } from "../../lib/firebase";
 import PostPreview from "@/app/components/Posts/PostPreview";
 import SearchBar from "@/app/components/SearchBar";
@@ -32,83 +32,90 @@ export default function HomePageClient() {
   const searchQuery = searchParams.get("q")?.toLowerCase() || "";
 
   const [posts, setPosts] = useState<Post[]>([]);
-  const [lastDoc, setLastDoc] =
-      useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchPosts = async (reset = false) => {
-    if (loading || (!hasMore && !reset)) return;
-    setLoading(true);
+  // Refs avoid the stale-closure trap: fetchPosts is memoized only by
+  // searchQuery, but it needs the latest values of these on every call.
+  const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const hasMoreRef = useRef(true);
+  const loadingRef = useRef(false);
 
-    try {
-      let q = query(
+  const fetchPosts = useCallback(
+    async (reset = false) => {
+      if (loadingRef.current || (!hasMoreRef.current && !reset)) return;
+      loadingRef.current = true;
+      setLoading(true);
+
+      try {
+        let q = query(
           collection(db, "posts"),
           orderBy("createdAt", "desc"),
           limit(10)
-      );
+        );
 
-      if (lastDoc && !reset) {
-        q = query(q, startAfter(lastDoc));
-      }
+        if (lastDocRef.current && !reset) {
+          q = query(q, startAfter(lastDocRef.current));
+        }
 
-      const snapshot = await getDocs(q);
-      const fetched = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Post[];
+        const snapshot = await getDocs(q);
+        const fetched = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[];
 
-      const filtered = searchQuery
+        const filtered = searchQuery
           ? fetched.filter((p) => {
-            const matchTitle = p.title.toLowerCase().includes(searchQuery);
-            const matchContent = p.content.toLowerCase().includes(searchQuery);
-            const matchTags = p.tags?.some((tag) =>
+              const matchTitle = p.title.toLowerCase().includes(searchQuery);
+              const matchContent = p.content.toLowerCase().includes(searchQuery);
+              const matchTags = p.tags?.some((tag) =>
                 tag.toLowerCase().includes(searchQuery)
-            );
-            return matchTitle || matchContent || matchTags;
-          })
+              );
+              return matchTitle || matchContent || matchTags;
+            })
           : fetched;
 
-      setPosts((prev) => {
-        const combined = reset ? filtered : [...prev, ...filtered];
-        const unique = Array.from(
-            new Map(combined.map((p) => [p.id, p])).values()
-        );
-        return unique;
-      });
+        setPosts((prev) => {
+          const combined = reset ? filtered : [...prev, ...filtered];
+          return Array.from(new Map(combined.map((p) => [p.id, p])).values());
+        });
 
-      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-      setLastDoc(lastVisible);
+        lastDocRef.current = snapshot.docs[snapshot.docs.length - 1] ?? null;
 
-      if (snapshot.empty || snapshot.docs.length < 10) {
-        setHasMore(false);
+        if (snapshot.empty || snapshot.docs.length < 10) {
+          hasMoreRef.current = false;
+          setHasMore(false);
+        }
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error fetching posts:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [searchQuery]
+  );
 
   useEffect(() => {
     setPosts([]);
-    setLastDoc(null);
     setHasMore(true);
+    lastDocRef.current = null;
+    hasMoreRef.current = true;
     fetchPosts(true);
-  }, [searchQuery]);
+  }, [searchQuery, fetchPosts]);
 
   useEffect(() => {
     if (searchQuery || !hasMore || loading) return;
 
     const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            fetchPosts();
-          }
-        },
-        { threshold: 1.0 }
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchPosts();
+        }
+      },
+      { threshold: 1.0 }
     );
 
     const el = loadMoreRef.current;
@@ -117,7 +124,7 @@ export default function HomePageClient() {
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [searchQuery, hasMore, loading]);
+  }, [searchQuery, hasMore, loading, fetchPosts]);
 
   return (
       <main className="max-w-5xl mx-auto px-6 sm:px-8 pt-2 pb-6 space-y-10">

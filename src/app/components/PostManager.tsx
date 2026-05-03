@@ -73,7 +73,7 @@ export default function PostManager() {
 
     startTransition(() => {
       action(formData).then((res) => {
-        setStatus(res.success ? '✅ Success!' : res.message || '❌ Something went wrong.');
+        setStatus(res.success ? 'Saved.' : res.message || 'Something went wrong.');
         if (res.success) {
           resetForm();
           getDocs(collection(db, 'posts')).then((snapshot) => {
@@ -102,7 +102,7 @@ export default function PostManager() {
   const handleDelete = (id: string) => {
     startTransition(() => {
       deletePostAction(id).then((res) => {
-        setStatus(res.success ? '🗑️ Deleted!' : res.message || 'Error deleting post.');
+        setStatus(res.success ? 'Deleted.' : res.message || 'Error deleting post.');
         if (res.success) {
           setPosts((prev) => prev.filter((p) => p.id !== id));
         }

@@ -6,9 +6,9 @@ import PostManager from '../PostManager'
 import CommentManager from '../CommentManager'
 import AboutEditor from '../AboutEditor'
 import SettingsPanel from '../SettingsPanel'
-import LinkManager from '../LinkManager' // ✅ NEW IMPORT
+import LinkManager from '../LinkManager'
 
-const tabs = ['Posts', 'Comments', 'About Page', 'Settings', 'Articles & Links'] // ✅ NEW TAB
+const tabs = ['Posts', 'Comments', 'About Page', 'Settings', 'Articles & Links']
 
 export default function AdminDashboardLayout() {
     const [activeTab, setActiveTab] = useState('Posts')

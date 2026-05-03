@@ -82,7 +82,7 @@ export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
 
                 {error && (
                     <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
-                        ❌ {error}
+                        {error}
                     </p>
                 )}
 

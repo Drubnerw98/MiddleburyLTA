@@ -16,7 +16,7 @@ export default function AboutEditor() {
             if (docSnap.exists()) {
                 setContent(docSnap.data().content || '');
             } else {
-                setStatus('⚠️ About page not found.');
+                setStatus('About page not found.');
             }
         };
         fetchAbout();
@@ -27,10 +27,10 @@ export default function AboutEditor() {
         startTransition(() => {
             const docRef = doc(db, 'pages', 'about');
             setDoc(docRef, { content })
-                .then(() => setStatus('✅ Saved successfully.'))
+                .then(() => setStatus('Saved.'))
                 .catch((err) => {
                     console.error(err);
-                    setStatus('❌ Error saving.');
+                    setStatus('Error saving.');
                 });
         });
     };

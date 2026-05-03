@@ -91,7 +91,7 @@ export default function PostEdit({ postId, post, onSaveAction }: PostEditProps) 
           onSubmit={handleSubmit}
           className="mb-6 border p-6 rounded bg-gray-900 max-w-xl mx-auto"
       >
-        <h2 className="text-xl font-bold mb-4">✏️ Edit Post</h2>
+        <h2 className="text-xl font-bold mb-4">Edit Post</h2>
 
         <label className="block mb-3">
           <span className="text-sm">Title</span>

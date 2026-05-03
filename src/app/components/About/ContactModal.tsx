@@ -50,7 +50,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
 
                 const result = await res.json();
                 if (!res.ok) {
-                    console.error('❌ Email failed:', result.error);
+                    console.error('Email failed:', result.error);
                     setStatus('error');
                     return;
                 }
@@ -61,7 +61,7 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
             setEmail('');
             setMessage('');
         } catch (err) {
-            console.error('❌ Submission error:', err);
+            console.error('Submission error:', err);
             setStatus('error');
         }
     };
@@ -77,12 +77,12 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
 
                 {status === 'success' && (
                     <p className="text-green-400 bg-[#1e2633] border border-green-600 p-3 rounded-lg text-sm shadow-sm">
-                        ✅ Thanks for reaching out! We&apos;ll be in touch.
+                        Thanks for reaching out. We&apos;ll be in touch.
                     </p>
                 )}
                 {status === 'error' && (
                     <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
-                        ❌ Something went wrong. Please try again later.
+                        Something went wrong. Please try again later.
                     </p>
                 )}
 
