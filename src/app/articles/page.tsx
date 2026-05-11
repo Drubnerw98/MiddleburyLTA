@@ -15,29 +15,64 @@ export const dynamic = "force-dynamic";
 // adminDb is a one-line change once auth is resolved.
 
 export default async function ArticlesPage() {
-    // Sort by createdAt desc only. The previous query also ordered by a
-    // `priority` field, but nothing in the codebase has ever set it, so
-    // Firestore was silently excluding every document from the result
-    // (orderBy on a missing field drops the doc).
-    const snapshot = await getDocs(
-        query(
-            collection(db, "external_links"),
-            orderBy("createdAt", "desc"),
-        ),
-    );
+    // TEMP DIAGNOSTIC: production query returns 0 docs despite Firestore
+    // having 13 docs in external_links with createdAt set. Logging both
+    // ordered and unordered counts plus a sample to disambiguate
+    // (missing index? wrong project at runtime? rules read-deny?).
+    let orderedCount = -1;
+    let unorderedCount = -1;
+    let firstDocSample: Record<string, unknown> | null = null;
+    let queryError: string | null = null;
 
-    const links: LinkItem[] = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            title: data.title,
-            url: data.url,
-            description: data.description ?? "",
-            source: data.source ?? "",
-            datePublished: data.datePublished ?? "",
-            createdAt: data.createdAt?.seconds ?? undefined,
-        };
-    });
+    try {
+        const unordered = await getDocs(collection(db, "external_links"));
+        unorderedCount = unordered.size;
+        if (unordered.docs[0]) {
+            const d = unordered.docs[0].data();
+            firstDocSample = {
+                id: unordered.docs[0].id,
+                hasCreatedAt: !!d.createdAt,
+                createdAtType: typeof d.createdAt,
+                createdAtSeconds: d.createdAt?.seconds ?? null,
+                keys: Object.keys(d),
+            };
+        }
+    } catch (e) {
+        queryError = `unordered: ${e instanceof Error ? e.message : String(e)}`;
+    }
+
+    let links: LinkItem[] = [];
+    try {
+        const snapshot = await getDocs(
+            query(
+                collection(db, "external_links"),
+                orderBy("createdAt", "desc"),
+            ),
+        );
+        orderedCount = snapshot.size;
+        links = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                title: data.title,
+                url: data.url,
+                description: data.description ?? "",
+                source: data.source ?? "",
+                datePublished: data.datePublished ?? "",
+                createdAt: data.createdAt?.seconds ?? undefined,
+            };
+        });
+    } catch (e) {
+        queryError = `${queryError ?? ""} | ordered: ${e instanceof Error ? e.message : String(e)}`;
+    }
+
+    console.log("[articles-diag]", JSON.stringify({
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? null,
+        unorderedCount,
+        orderedCount,
+        firstDocSample,
+        queryError,
+    }));
 
     return <AnimatedArticles links={links} />;
 }
