@@ -8,10 +8,10 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 - [Active](#active)
   - [2026-05-11 — Confirm AdsSection placeholder copy against the real ads](#2026-05-11--confirm-adssection-placeholder-copy-against-the-real-ads)
-  - [2026-05-11 — Decide who is listed in "Who we are" beyond the Drubners and Murtha](#2026-05-11--decide-who-is-listed-in-who-we-are-beyond-the-drubners-and-murtha)
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
+  - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
 - [Abandoned](#abandoned)
 
 ## Active
@@ -25,16 +25,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **Anchors:** `src/app/components/AdsSection.tsx` (the `ads` array).
 
 **Open questions:** Final ad titles. Approved one-line summaries.
-
-### 2026-05-11 — Decide who is listed in "Who we are" beyond the Drubners and Murtha
-
-**What:** `src/app/who-we-are/page.tsx` lists David & Norman Drubner and Murtha Enterprises / Route 188 LLC. The May 11, 2026 conversation mentioned Dan Hare and Dan Norton as collaborators. The page may need additional people, or the framing of the existing names may need to evolve from "biggest taxpayers" to "core organizers" depending on the public posture.
-
-**Why noticed:** Refreshing the lead paragraph for 2026 surfaced that the named-members section hasn't been re-examined since the post-revaluation organizing posture.
-
-**Anchors:** `src/app/who-we-are/page.tsx` (sections starting at line 42).
-
-**Open questions:** Who else (if anyone) should be named? Should the existing framing of "Collectively these groups are the biggest taxpayers in Middlebury" stay, or shift toward "organizers / spokespeople"?
 
 ### 2026-05-11 — Bond-impact explainer page (Work item E, deferred)
 
@@ -55,6 +45,12 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **What:** `src/app/components/AdsSection.tsx` was built but unmounted on May 11 because the two ad PDFs were not yet in `public/docs/`. Same-session resolution: the PDFs were dropped into `public/docs/harsh-reality-may-2026.pdf` and `public/docs/closed-for-business-may-2026.pdf`, the component's `href` values were updated to match, and `<AdsSection />` was mounted in `src/app/page.tsx` below `<HeroSection />`.
 
 **Anchors:** `src/app/components/AdsSection.tsx`, `src/app/page.tsx`, `public/docs/harsh-reality-may-2026.pdf`, `public/docs/closed-for-business-may-2026.pdf`.
+
+### 2026-05-11 — Restructure "Who we are" around the underlying entities (resolved)
+
+**What:** David and Norman Drubner were removed as a named individuals section on `/who-we-are`. In their place, two corporate sections were added: Drubner Equities (David's firm) and Atlantic Management (their industrial development partner), each with a logo and a corporate bio supplied by David. The Murtha Enterprises / Route 188 LLC section was preserved unchanged.
+
+**Anchors:** `src/app/who-we-are/page.tsx`, `public/images/drubner-equities-logo.png`, `public/images/atlantic-management-logo.png`.
 
 ## Abandoned
 
