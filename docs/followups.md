@@ -10,7 +10,7 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Confirm AdsSection placeholder copy against the real ads](#2026-05-11--confirm-adssection-placeholder-copy-against-the-real-ads)
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
   - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
-  - [2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)](#2026-05-11--resolve-29-npm-audit-vulnerabilities-3-critical-9-high)
+  - [2026-05-11 — Remaining 11 low/moderate npm audit advisories](#2026-05-11--remaining-11-lowmoderate-npm-audit-advisories)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
@@ -23,6 +23,7 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Convert home, /articles, /post pages to RSC](#2026-05-11--convert-home-articles-post-pages-to-rsc-resolved)
   - [2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store](#2026-05-11--cleanup-dead-components-scaffold-svgs-dsstore-resolved)
   - [2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive](#2026-05-11--modal-accessibility-focus-trap-aria-dialog-primitive-resolved)
+  - [2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)](#2026-05-11--resolve-29-npm-audit-vulnerabilities-3-critical-9-high-resolved-down-to-11-lowmoderate)
 - [Abandoned](#abandoned)
 
 ## Active
@@ -61,15 +62,15 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Open questions:** Do tagged posts need their own listing/filter UI, or is the search bar enough? Are comments going to stay or be reconsidered? (Comment styling lives in the same neglected pocket.)
 
-### 2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)
+### 2026-05-11 — Remaining 11 low/moderate npm audit advisories
 
-**What:** `npm audit` reports 29 vulnerabilities. Critical: `fast-xml-parser` (entity-encoding bypass), `form-data` (unsafe random for boundary), `protobufjs` (arbitrary code execution). High includes `next` (DoS via server components, XSS in App Router) — the most concerning since it's the framework. Plus `jws`, `node-forge`, `minimatch`, `picomatch`, `tar`, `path-to-regexp`, `@modelcontextprotocol/sdk`, `flatted`.
+**What:** After `npm update` + `npm audit fix` cleared the original 29 → 11. Remaining: 8 low, 3 moderate. All transitive through `firebase-admin` → `@google-cloud/firestore` → `google-gax` → `grpc-js` / `teeny-request` / `tar` / `node-forge` / `jws` / `flatted`. Fixing them via `npm audit fix --force` would downgrade `firebase-admin` to 12.x (breaking) or `next` to 9.x (worse), so left as-is.
 
-**Why noticed:** May 11, 2026 security audit.
+**Why noticed:** Remainder of the May 11 dependency audit. Critical/high vulns are all cleared; what's left is the long tail.
 
-**Anchors:** `package.json`, `package-lock.json`.
+**Anchors:** `package.json`, `package-lock.json`. Specifically: `@tootallnate/once`, `node-forge`, `flatted`, `tar`, `jws`, `picomatch`, `postcss` (transitive from next).
 
-**Shape of work:** (1) Bump `next` to `15.5.16+` to clear the Next.js advisories. (2) Run `npm audit fix` for non-breaking transitive fixes. (3) For remaining: identify which are reachable from the actual app (most criticals are likely transitive from `firebase-admin` or build tooling). (4) Run typecheck + build + smoke-test before pushing. Hold the more aggressive `--force` updates until each can be validated individually.
+**Shape of work:** Watch for upstream releases (firebase-admin 13.10+ would likely pull in fresher transitives). When firebase-admin ships a patch that bumps google-gax, re-run `npm update && npm audit` and most of these should drop. The postcss moderate is gated on a Next.js minor bump (15.6+ when it ships).
 
 
 ## Resolved
@@ -141,6 +142,12 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 Bonus: `ContactModal` no longer reads `admin/settings.emailNotifications` from the client — that check was misleading anyway (server doesn't honor it, and "off" silently swallowed the message as a fake success). The form just POSTs to `/api/send-feedback`, which has its own server-side gating.
 
 **Anchors:** `src/app/components/AnimatedModal.tsx`, `src/app/components/Auth/LoginModal.tsx`, `src/app/components/Auth/RegisterModal.tsx`, `src/app/components/About/ContactModal.tsx`. New dep: `@radix-ui/react-dialog`.
+
+### 2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high) (resolved, down to 11 low/moderate)
+
+**What:** `npm update` + `npm audit fix` cleared the entire critical/high tier. From 29 vulnerabilities (3 critical, 9 high, 8 moderate, 9 low) down to 11 (0 critical, 0 high, 3 moderate, 8 low). The killed vulns include `next` (DoS + XSS), `fast-xml-parser`, `form-data`, `protobufjs`, `jws`, `node-forge` (high tier), `minimatch`, `picomatch`, `path-to-regexp`, `@modelcontextprotocol/sdk`. The remaining 11 are all transitive through `firebase-admin → @google-cloud/firestore → google-gax`; left as a separate followup since `--force` would mean a firebase-admin major downgrade.
+
+**Anchors:** `package.json`, `package-lock.json` (diff is in the same commit as this entry).
 
 ## Abandoned
 
