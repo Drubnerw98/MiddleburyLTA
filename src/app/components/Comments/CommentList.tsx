@@ -22,12 +22,12 @@ interface CommentListProps {
 }
 
 export default function CommentList({
-                                        comments,
-                                        currentUserId,
-                                        isAdmin,
-                                        onDeleteCommentAction,
-                                        onEditCommentAction,
-                                    }: CommentListProps) {
+    comments,
+    currentUserId,
+    isAdmin,
+    onDeleteCommentAction,
+    onEditCommentAction,
+}: CommentListProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editText, setEditText] = useState("");
 
@@ -60,36 +60,44 @@ export default function CommentList({
         return date.toLocaleDateString();
     };
 
+    if (comments.length === 0) return null;
+
     return (
-        <div className="mt-6 space-y-4">
+        <ul className="mt-8 space-y-6">
             {comments.map((comment) => {
                 const isOwner = comment.uid === currentUserId;
                 const canEdit = isOwner || isAdmin;
 
                 return (
-                    <div
+                    <li
                         key={comment.id}
-                        className="bg-[#1e2633] p-4 rounded-md border border-white/10 space-y-1 text-sm"
+                        className="border-t border-rule pt-5 space-y-2"
                     >
-                        <div className="flex justify-between items-center text-gray-300">
-                            <span className="font-medium text-white">{comment.author}</span>
-                            <span className="text-xs italic">{formatTime(comment.timestamp?.seconds)}</span>
+                        <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1">
+                            <span className="font-sans text-sm font-semibold text-ink">
+                                {comment.author}
+                            </span>
+                            <span className="font-sans text-xs uppercase tracking-[0.12em] text-muted">
+                                {formatTime(comment.timestamp?.seconds)}
+                            </span>
                         </div>
 
                         {comment.deleted ? (
-                            <p className="italic text-gray-500">[deleted]</p>
+                            <p className="font-sans text-sm italic text-muted">
+                                [deleted]
+                            </p>
                         ) : editingId === comment.id ? (
                             <>
-                <textarea
-                    className="w-full mt-2 bg-gray-800 text-white p-2 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    rows={3}
-                />
-                                <div className="flex gap-3 mt-2">
+                                <textarea
+                                    className="w-full font-sans text-base bg-bone border border-ink/30 p-3 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors resize-none"
+                                    value={editText}
+                                    onChange={(e) => setEditText(e.target.value)}
+                                    rows={3}
+                                />
+                                <div className="flex gap-4 mt-2">
                                     <button
                                         onClick={handleSaveEdit}
-                                        className="text-sm text-blue-400 hover:text-blue-300 font-medium"
+                                        className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-ink hover:text-oxblood underline underline-offset-4 transition-colors"
                                     >
                                         Save
                                     </button>
@@ -98,43 +106,45 @@ export default function CommentList({
                                             setEditingId(null);
                                             setEditText("");
                                         }}
-                                        className="text-sm text-gray-400 hover:text-gray-300"
+                                        className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink transition-colors"
                                     >
                                         Cancel
                                     </button>
                                 </div>
                             </>
                         ) : (
-                            <p className="text-gray-200 whitespace-pre-wrap">
+                            <p className="font-sans text-base text-ink-soft leading-relaxed whitespace-pre-wrap">
                                 {comment.content}
                                 {comment.edited && (
-                                    <span className="ml-2 italic text-xs text-gray-400">(edited)</span>
+                                    <span className="ml-2 font-sans text-xs italic text-muted">
+                                        (edited)
+                                    </span>
                                 )}
                             </p>
                         )}
 
                         {canEdit && editingId !== comment.id && !comment.deleted && (
-                            <div className="flex gap-4 text-xs mt-2 text-gray-400">
+                            <div className="flex gap-5 pt-1">
                                 <button
                                     onClick={() => {
                                         setEditingId(comment.id);
                                         setEditText(comment.content);
                                     }}
-                                    className="hover:text-blue-400"
+                                    className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     onClick={() => handleDelete(comment.id)}
-                                    className="hover:text-red-400"
+                                    className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
                                 >
                                     Delete
                                 </button>
                             </div>
                         )}
-                    </div>
+                    </li>
                 );
             })}
-        </div>
+        </ul>
     );
 }

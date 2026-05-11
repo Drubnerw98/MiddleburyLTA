@@ -18,16 +18,22 @@ interface PostEditProps {
   onSaveAction: (updatedPost: Post) => void;
 }
 
+const inputClass =
+  "w-full font-sans text-base bg-paper border border-ink/30 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors";
+
+const labelClass =
+  "block font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5";
+
 export default function PostEdit({ postId, post, onSaveAction }: PostEditProps) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
   const [tags, setTags] = useState(post.tags?.join(", ") || "");
   const [commentsDisabled, setCommentsDisabled] = useState(
-      post.commentsDisabled || false
+    post.commentsDisabled || false,
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-      post.imageUrl || null
+    post.imageUrl || null,
   );
   const [removeImage, setRemoveImage] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,15 +67,15 @@ export default function PostEdit({ postId, post, onSaveAction }: PostEditProps) 
         title,
         content,
         tags: tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean),
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
         imageUrl:
-            "imageUrl" in result && typeof result.imageUrl === "string"
-                ? result.imageUrl
-                : removeImage
-                    ? ""
-                    : post.imageUrl,
+          "imageUrl" in result && typeof result.imageUrl === "string"
+            ? result.imageUrl
+            : removeImage
+              ? ""
+              : post.imageUrl,
         commentsDisabled,
       });
     } else {
@@ -87,103 +93,108 @@ export default function PostEdit({ postId, post, onSaveAction }: PostEditProps) 
   };
 
   return (
-      <form
-          onSubmit={handleSubmit}
-          className="mb-6 border p-6 rounded bg-gray-900 max-w-xl mx-auto"
-      >
-        <h2 className="text-xl font-bold mb-4">Edit Post</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl mx-auto bg-bone border border-rule-strong p-6 sm:p-8 space-y-5"
+    >
+      <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+        Edit post
+      </h2>
 
-        <label className="block mb-3">
-          <span className="text-sm">Title</span>
-          <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="block w-full mt-1 text-black p-2 rounded"
+      <div>
+        <label className={labelClass}>Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>Content</label>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          rows={8}
+          className={`${inputClass} resize-y`}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>Tags (comma separated)</label>
+        <input
+          type="text"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          className={inputClass}
+        />
+      </div>
+
+      <label className="inline-flex items-center gap-2.5 font-sans text-sm text-ink-soft cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={commentsDisabled}
+          onChange={(e) => setCommentsDisabled(e.target.checked)}
+          className="h-4 w-4 accent-ink"
+        />
+        Disable comments
+      </label>
+
+      <div>
+        <label className={labelClass}>Image (optional)</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
+          className="block w-full font-sans text-sm text-ink-soft file:mr-4 file:py-2 file:px-4 file:border file:border-ink file:bg-bone file:text-ink file:font-sans file:text-xs file:font-semibold file:uppercase file:tracking-[0.12em] hover:file:bg-ink hover:file:text-bone file:transition-colors"
+        />
+      </div>
+
+      {previewUrl && !removeImage && (
+        <div>
+          <p className="font-sans text-xs text-muted mb-2 uppercase tracking-[0.14em]">
+            Preview
+          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={previewUrl}
+            alt="Current post"
+            className="w-full max-w-xs border border-rule mb-3"
           />
-        </label>
+          <button
+            type="button"
+            onClick={() => {
+              setRemoveImage(true);
+              setImageFile(null);
+              setPreviewUrl(null);
+            }}
+            className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
+          >
+            Remove image
+          </button>
+        </div>
+      )}
 
-        <label className="block mb-3">
-          <span className="text-sm">Content</span>
-          <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={6}
-              className="block w-full mt-1 text-black p-2 rounded"
-          />
-        </label>
-
-        <label className="block mb-3">
-          <span className="text-sm">Tags (comma separated)</span>
-          <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="block w-full mt-1 text-black p-2 rounded"
-          />
-        </label>
-
-        <label className="block mb-3">
-          <input
-              type="checkbox"
-              checked={commentsDisabled}
-              onChange={(e) => setCommentsDisabled(e.target.checked)}
-              className="mr-2"
-          />
-          <span className="text-sm">Disable Comments</span>
-        </label>
-
-        <label className="block mb-4">
-          <span className="text-sm">Image (optional)</span>
-          <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-              className="block mt-1"
-          />
-        </label>
-
-        {previewUrl && !removeImage && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-400 mb-1">Image Preview:</p>
-              <img
-                  src={previewUrl}
-                  alt="Current post"
-                  className="w-full max-w-xs rounded border mb-2"
-              />
-              <button
-                  type="button"
-                  onClick={() => {
-                    setRemoveImage(true);
-                    setImageFile(null);
-                    setPreviewUrl(null);
-                  }}
-                  className="text-sm text-red-400 hover:underline"
-              >
-                Remove Image
-              </button>
-            </div>
-        )}
-
+      <div className="flex items-center gap-4 pt-2">
         <button
-            type="submit"
-            disabled={loading}
-            className={`bg-blue-600 text-white px-4 py-2 rounded ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-            }`}
+          type="submit"
+          disabled={loading}
+          className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors disabled:opacity-60"
         >
-          {loading ? "Updating..." : "Update Post"}
+          {loading ? "Updating…" : "Update post"}
         </button>
 
         {message && (
-            <p
-                className={`mt-2 text-sm ${
-                    message.type === "success" ? "text-green-400" : "text-red-400"
-                }`}
-            >
-              {message.text}
-            </p>
+          <p
+            className={`font-sans text-sm ${
+              message.type === "success" ? "text-moss" : "text-oxblood"
+            }`}
+          >
+            {message.text}
+          </p>
         )}
-      </form>
+      </div>
+    </form>
   );
 }

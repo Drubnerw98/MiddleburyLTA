@@ -6,12 +6,12 @@ export default function BackToTopButton() {
     };
 
     return (
-        <div className="text-center py-8">
+        <div className="text-center py-10 border-t border-rule">
             <button
                 onClick={handleClick}
-                className="border border-gray-400 text-sm text-gray-700 px-4 py-2 rounded hover:bg-gray-100 transition"
+                className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
             >
-                Back to Top
+                Back to top
             </button>
         </div>
     );

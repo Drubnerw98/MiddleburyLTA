@@ -18,6 +18,12 @@ interface Post {
   commentsDisabled?: boolean;
 }
 
+const inputClass =
+  'w-full font-sans text-base bg-paper border border-ink/30 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors';
+
+const labelClass =
+  'block font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5';
+
 export default function PostManager() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -56,7 +62,7 @@ export default function PostManager() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus(editingId ? 'Updating...' : 'Submitting...');
+    setStatus(editingId ? 'Updating…' : 'Submitting…');
 
     const formData = new FormData();
     formData.append('title', title);
@@ -117,135 +123,168 @@ export default function PostManager() {
   };
 
   return (
-      <div className="max-w-4xl mx-auto px-4 py-10 text-black">
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow-md border border-gray-200 rounded-xl p-6">
-          <h2 className="text-2xl font-bold text-[#1A2E49] mb-2">
-            {editingId ? 'Edit Post' : 'Create New Post'}
-          </h2>
+    <div className="space-y-12">
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5 bg-bone border border-rule-strong p-6 sm:p-8"
+      >
+        <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+          {editingId ? 'Edit post' : 'Create new post'}
+        </h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Title</label>
-              <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Content</label>
-              <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  rows={6}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Tags (comma separated)
-              </label>
-              <input
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                <input
-                    type="checkbox"
-                    checked={commentsDisabled}
-                    onChange={(e) => setCommentsDisabled(e.target.checked)}
-                    className="form-checkbox text-blue-600"
-                />
-                Disable comments for this post
-              </label>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Image (optional)</label>
-              <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-                  className="w-full text-sm text-gray-600"
-              />
-            </div>
-
-            {previewUrl && !removeImage && (
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Image Preview:</p>
-                  <img src={previewUrl} alt="Preview" className="w-full max-w-xs rounded border border-gray-300 mb-2" />
-                  {editingId && (
-                      <button
-                          type="button"
-                          onClick={() => {
-                            setRemoveImage(true);
-                            setPreviewUrl(null);
-                            setImage(null);
-                          }}
-                          className="text-sm text-red-600 hover:underline"
-                      >
-                        Remove Current Image
-                      </button>
-                  )}
-                </div>
-            )}
+        <div className="space-y-5">
+          <div>
+            <label className={labelClass}>Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className={inputClass}
+            />
           </div>
 
+          <div>
+            <label className={labelClass}>Content</label>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={8}
+              required
+              className={`${inputClass} resize-y`}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass}>Tags (comma separated)</label>
+            <input
+              type="text"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              className={inputClass}
+            />
+          </div>
+
+          <label className="inline-flex items-center gap-2.5 font-sans text-sm text-ink-soft cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={commentsDisabled}
+              onChange={(e) => setCommentsDisabled(e.target.checked)}
+              className="h-4 w-4 accent-ink"
+            />
+            Disable comments for this post
+          </label>
+
+          <div>
+            <label className={labelClass}>Image (optional)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
+              className="block w-full font-sans text-sm text-ink-soft file:mr-4 file:py-2 file:px-4 file:border file:border-ink file:bg-bone file:text-ink file:font-sans file:text-xs file:font-semibold file:uppercase file:tracking-[0.12em] hover:file:bg-ink hover:file:text-bone file:transition-colors"
+            />
+          </div>
+
+          {previewUrl && !removeImage && (
+            <div>
+              <p className="font-sans text-xs text-muted mb-2 uppercase tracking-[0.14em]">
+                Preview
+              </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="w-full max-w-xs border border-rule mb-3"
+              />
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRemoveImage(true);
+                    setPreviewUrl(null);
+                    setImage(null);
+                  }}
+                  className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
+                >
+                  Remove current image
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-4 pt-2">
           <button
-              type="submit"
-              disabled={isPending}
-              className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 rounded"
+            type="submit"
+            disabled={isPending}
+            className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors disabled:opacity-60"
           >
-            {editingId ? 'Update Post' : 'Submit Post'}
+            {editingId ? 'Update post' : 'Submit post'}
           </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink transition-colors"
+            >
+              Cancel edit
+            </button>
+          )}
+          {status && (
+            <p className="font-sans text-sm text-muted">{status}</p>
+          )}
+        </div>
+      </form>
 
-          {status && <p className="text-sm mt-2 text-gray-600">{status}</p>}
-        </form>
+      {/* Post List */}
+      <section>
+        <h2 className="font-serif text-xl font-semibold text-ink border-b border-rule pb-3">
+          Your posts
+        </h2>
 
-        {/* Post List */}
-        <div className="mt-12 space-y-6">
-          <h2 className="text-xl font-bold text-[#1A2E49] border-b border-gray-300 pb-2">Your Posts</h2>
-
-          {posts.map((post) => (
-              <div key={post.id} className="bg-white border border-gray-200 p-5 rounded-md shadow hover:shadow-md transition">
-                <h3 className="text-lg font-bold text-[#1A2E49] mb-1">
+        {posts.length === 0 ? (
+          <p className="font-sans text-sm text-muted italic mt-6">
+            No posts yet.
+          </p>
+        ) : (
+          <ul className="mt-6 space-y-6">
+            {posts.map((post) => (
+              <li
+                key={post.id}
+                className="bg-bone border border-rule p-5 sm:p-6 space-y-3"
+              >
+                <h3 className="font-serif text-lg font-semibold text-ink">
                   {post.title || '(Untitled Post)'}
                 </h3>
                 {Array.isArray(post.tags) && post.tags.length > 0 && (
-                    <p className="text-sm text-blue-600 mb-1">Tags: {post.tags.join(', ')}</p>
+                  <p className="font-sans text-xs uppercase tracking-[0.12em] text-oxblood">
+                    {post.tags.map((t) => `#${t}`).join('  ')}
+                  </p>
                 )}
-                <p className="text-sm text-gray-700 mb-3">
-                  {post.content?.slice(0, 200)}...
+                <p className="font-sans text-sm text-ink-soft leading-relaxed">
+                  {post.content?.slice(0, 200)}…
                 </p>
 
-                <div className="space-x-2">
+                <div className="flex gap-3 pt-1">
                   <button
-                      onClick={() => handleEdit(post)}
-                      className="px-3 py-1 text-sm bg-yellow-400 text-black rounded hover:bg-yellow-300"
+                    onClick={() => handleEdit(post)}
+                    className="inline-flex items-center justify-center px-4 py-1.5 font-sans text-xs font-semibold uppercase tracking-[0.12em] text-ink border border-ink hover:bg-ink hover:text-bone transition-colors"
                   >
                     Edit
                   </button>
                   <button
-                      onClick={() => handleDelete(post.id)}
-                      className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-500"
+                    onClick={() => handleDelete(post.id)}
+                    className="inline-flex items-center justify-center px-4 py-1.5 font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood border border-oxblood hover:bg-oxblood hover:text-bone transition-colors"
                   >
                     Delete
                   </button>
                 </div>
-              </div>
-          ))}
-        </div>
-      </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
   );
 }

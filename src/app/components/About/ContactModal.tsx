@@ -44,16 +44,23 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
 
     return (
         <AnimatedModal isOpen={isOpen} onClose={onCloseAction} title="Contact Us">
-            <div className="text-white bg-[#373F4D] w-full max-w-lg p-6 rounded-xl shadow-xl space-y-4">
-                <h2 className="text-xl font-bold">Contact Us</h2>
+            <div className="bg-bone text-ink w-full max-w-lg p-7 sm:p-8 border border-rule-strong space-y-5">
+                <div>
+                    <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.18em] text-oxblood">
+                        Get in touch
+                    </p>
+                    <h2 className="font-serif text-2xl font-semibold text-ink mt-1.5">
+                        Contact us
+                    </h2>
+                </div>
 
                 {status === 'success' && (
-                    <p className="text-green-400 bg-[#1e2633] border border-green-600 p-3 rounded-lg text-sm shadow-sm">
-                        Thanks for reaching out. We&apos;ll be in touch.
+                    <p className="font-sans text-sm text-moss bg-moss/[0.06] border-l-2 border-moss px-4 py-3">
+                        Thanks for reaching out. We&rsquo;ll be in touch.
                     </p>
                 )}
                 {status === 'error' && (
-                    <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
+                    <p className="font-sans text-sm text-oxblood bg-oxblood/[0.06] border-l-2 border-oxblood px-4 py-3">
                         Something went wrong. Please try again later.
                     </p>
                 )}
@@ -61,48 +68,48 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
-                        placeholder="Your Name"
+                        placeholder="Your name"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm"
+                        className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors"
                     />
                     <input
                         type="email"
-                        placeholder="Your Email"
+                        placeholder="Your email"
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm"
+                        className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors"
                     />
                     <textarea
-                        placeholder="Your Message"
+                        placeholder="Your message"
                         required
                         rows={4}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full px-3 py-2 rounded-md bg-[#f9fafb] text-[#1A2E49] placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition shadow-sm resize-none"
+                        className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors resize-none"
                     />
 
-                    <div className="flex justify-end">
+                    <div className="flex justify-end pt-1">
                         <button
                             type="submit"
-                            className="rounded-md bg-sky-600 px-6 py-2 text-white hover:bg-sky-700 transition font-semibold"
+                            className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors"
                         >
-                            Submit
+                            Send message
                         </button>
                     </div>
                 </form>
 
-                <hr className="border-white/30 my-4" />
+                <hr className="border-rule" />
 
-                <div className="text-sm">
+                <div className="font-sans text-sm text-ink-soft">
                     <p>You can also reach us directly at:</p>
                     <p className="mt-1">
                         Email:{' '}
                         <a
                             href="mailto:MTA.admn@gmail.com"
-                            className="underline hover:text-white cursor-pointer"
+                            className="text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
                         >
                             MTA.admn@gmail.com
                         </a>

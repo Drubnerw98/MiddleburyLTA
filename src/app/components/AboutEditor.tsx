@@ -27,7 +27,7 @@ export default function AboutEditor() {
     }, []);
 
     const handleSave = () => {
-        setStatus('Saving...');
+        setStatus('Saving…');
         startTransition(async () => {
             const result = await saveAboutAction(content);
             if (result.success) {
@@ -39,28 +39,35 @@ export default function AboutEditor() {
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow p-6 space-y-6 text-black max-w-2xl mx-auto">
-            <h2 className="text-xl font-bold text-[#1A2E49] border-b border-gray-300 pb-2">
-                Edit About Page
+        <div className="max-w-3xl mx-auto bg-bone border border-rule-strong p-6 sm:p-8 space-y-5">
+            <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+                Edit About page
             </h2>
+
+            <p className="font-sans text-xs uppercase tracking-[0.14em] text-muted">
+                Markdown supported.
+            </p>
 
             <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={12}
-                className="w-full p-4 rounded bg-gray-100 text-black border border-gray-300"
-                placeholder="Write the About page content here in markdown..."
+                rows={14}
+                className="w-full font-sans text-base bg-paper border border-ink/30 p-4 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors resize-y"
+                placeholder="Write the About page content here in markdown…"
             />
 
-            <button
-                onClick={handleSave}
-                disabled={isPending}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
-            >
-                Save
-            </button>
-
-            {status && <p className="text-sm mt-2 text-gray-600 italic">{status}</p>}
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={handleSave}
+                    disabled={isPending}
+                    className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors disabled:opacity-60"
+                >
+                    Save
+                </button>
+                {status && (
+                    <p className="font-sans text-sm text-muted">{status}</p>
+                )}
+            </div>
         </div>
     );
 }

@@ -25,7 +25,7 @@ export default function SettingsPanel() {
     }, []);
 
     const handleSave = () => {
-        setStatus('Saving...');
+        setStatus('Saving…');
         startTransition(async () => {
             const result = await saveSettingsAction({ emailNotifications });
             if (result.success) {
@@ -37,30 +37,33 @@ export default function SettingsPanel() {
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow p-6 space-y-6 text-black max-w-xl mx-auto">
-            <h2 className="text-xl font-bold text-[#1A2E49] border-b border-gray-300 pb-2">
-                Site Settings
+        <div className="max-w-xl mx-auto bg-bone border border-rule-strong p-6 sm:p-8 space-y-5">
+            <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+                Site settings
             </h2>
 
-            <label className="flex items-center gap-3 text-gray-800">
+            <label className="flex items-center gap-3 font-sans text-base text-ink-soft cursor-pointer select-none">
                 <input
                     type="checkbox"
                     checked={emailNotifications}
                     onChange={(e) => setEmailNotifications(e.target.checked)}
-                    className="form-checkbox h-5 w-5 text-blue-600"
+                    className="h-4 w-4 accent-ink"
                 />
                 Enable email notifications
             </label>
 
-            <button
-                onClick={handleSave}
-                disabled={isPending}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
-            >
-                Save Settings
-            </button>
-
-            {status && <p className="text-sm text-gray-600 italic">{status}</p>}
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={handleSave}
+                    disabled={isPending}
+                    className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors disabled:opacity-60"
+                >
+                    Save settings
+                </button>
+                {status && (
+                    <p className="font-sans text-sm text-muted">{status}</p>
+                )}
+            </div>
         </div>
     );
 }

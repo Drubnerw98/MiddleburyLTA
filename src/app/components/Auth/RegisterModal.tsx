@@ -39,16 +39,23 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
 
     return (
         <AnimatedModal isOpen={isOpen} onClose={onCloseAction} title="Register">
-            <div className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4">
-                <h2 className="text-xl font-bold">Register</h2>
+            <div className="bg-bone text-ink w-full max-w-sm p-7 sm:p-8 border border-rule-strong space-y-5">
+                <div>
+                    <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.18em] text-oxblood">
+                        Account
+                    </p>
+                    <h2 className="font-serif text-2xl font-semibold text-ink mt-1.5">
+                        Create an account
+                    </h2>
+                </div>
 
                 <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Full name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
+                    className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors"
                 />
                 <input
                     type="email"
@@ -56,7 +63,7 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
+                    className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors"
                 />
                 <input
                     type="password"
@@ -64,27 +71,27 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-2 rounded border border-[#D9D9D9] bg-white text-[#2E3D52] placeholder-[#99A1AF]"
+                    className="w-full font-sans text-base bg-paper border border-ink/40 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors"
                 />
 
                 {error && (
-                    <p className="text-red-400 bg-[#1e2633] border border-red-600 p-3 rounded-lg text-sm shadow-sm">
+                    <p className="font-sans text-sm text-oxblood bg-oxblood/[0.06] border-l-2 border-oxblood px-4 py-3">
                         {error}
                     </p>
                 )}
 
-                <div className="flex justify-end gap-4 pt-2">
+                <div className="flex justify-end gap-3 pt-1">
                     <button
                         onClick={onCloseAction}
-                        className="text-sm px-4 py-2 rounded border border-[#D9D9D9] hover:bg-[#4C5B70] hover:text-white transition"
+                        className="inline-flex items-center justify-center px-5 py-2.5 font-sans text-sm font-semibold text-ink border border-ink hover:bg-ink hover:text-bone transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleRegister}
-                        className="text-sm px-4 py-2 rounded bg-sky-600 hover:bg-sky-700 text-white font-semibold transition"
+                        className="inline-flex items-center justify-center px-5 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors"
                     >
-                        Sign Up
+                        Sign up
                     </button>
                 </div>
             </div>

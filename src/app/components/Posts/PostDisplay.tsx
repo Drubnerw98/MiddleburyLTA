@@ -25,11 +25,11 @@ interface PostDisplayProps {
 }
 
 export default function PostDisplay({
-                                      title,
-                                      content,
-                                      imageUrl,
-                                      tags,
-                                    }: PostDisplayProps) {
+  title,
+  content,
+  imageUrl,
+  tags,
+}: PostDisplayProps) {
   const router = useRouter();
 
   const handleTagClick = (tag: string) => {
@@ -37,42 +37,41 @@ export default function PostDisplay({
   };
 
   return (
-      <article className="max-w-3xl mx-auto px-6 py-8 bg-[#1e2633]/90 border border-yellow-400/20 rounded-xl shadow-md backdrop-blur-md space-y-8">
-        {/* Title */}
-        <h1 className="text-4xl font-serif font-bold text-yellow-300 break-words leading-tight tracking-tight">
+    <article className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
+      <header>
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold text-ink leading-[1.1] tracking-[-0.015em] break-words">
           {title}
         </h1>
 
-        {/* Tags */}
         {(tags ?? []).length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {(tags ?? []).map((tag) => (
-                  <button
-                      key={tag}
-                      onClick={() => handleTagClick(tag)}
-                      className="text-xs px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 font-semibold hover:bg-yellow-500/20 transition"
-                  >
-                    #{tag}
-                  </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-5">
+            {(tags ?? []).map((tag) => (
+              <button
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink transition-colors"
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
         )}
+      </header>
 
-        {/* Image */}
-        {imageUrl && (
-            <div className="rounded-md overflow-hidden border border-white/10">
-              <img
-                  src={imageUrl}
-                  alt={title}
-                  className="w-full h-auto max-h-[500px] object-contain"
-              />
-            </div>
-        )}
-
-        {/* Content */}
-        <div className="prose prose-invert prose-base max-w-none text-gray-200 leading-relaxed break-words">
-          <ReactMarkdown urlTransform={safeUrl}>{content}</ReactMarkdown>
+      {imageUrl && (
+        <div className="overflow-hidden border border-rule">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt={title}
+            className="w-full h-auto max-h-[500px] object-contain"
+          />
         </div>
-      </article>
+      )}
+
+      <div className="markdown-content font-sans text-base text-ink-soft max-w-[68ch] leading-relaxed break-words">
+        <ReactMarkdown urlTransform={safeUrl}>{content}</ReactMarkdown>
+      </div>
+    </article>
   );
 }

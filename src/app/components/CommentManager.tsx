@@ -33,7 +33,7 @@ export default function CommentManager() {
           titleMap[postId] = postTitle;
 
           const commentsSnapshot = await getDocs(
-              collection(db, 'posts', postId, 'comments')
+            collection(db, 'posts', postId, 'comments'),
           );
 
           commentsSnapshot.forEach((docSnap) => {
@@ -71,7 +71,7 @@ export default function CommentManager() {
         return;
       }
       setComments((prev) =>
-          prev.filter((c) => !(c.id === commentId && c.postId === postId))
+        prev.filter((c) => !(c.id === commentId && c.postId === postId)),
       );
     } finally {
       setPendingDelete(null);
@@ -79,55 +79,70 @@ export default function CommentManager() {
   };
 
   if (loading) {
-    return <p className="text-gray-500 italic">Loading comments...</p>;
+    return (
+      <p className="font-sans text-sm text-muted italic">Loading comments…</p>
+    );
   }
 
   if (error) {
-    return <p className="text-red-600 italic">Error loading comments.</p>;
+    return (
+      <p className="font-sans text-sm text-oxblood italic">
+        Error loading comments.
+      </p>
+    );
   }
 
   return (
-      <div className="max-w-4xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold text-[#1A2E49] mb-6">
-          Manage Comments
-        </h2>
+    <div className="max-w-3xl mx-auto">
+      <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+        Manage comments
+      </h2>
 
-        {comments.length === 0 && (
-            <p className="text-gray-500 italic">No comments to display.</p>
-        )}
-
-        <div className="space-y-6">
+      {comments.length === 0 ? (
+        <p className="font-sans text-sm text-muted italic mt-6">
+          No comments to display.
+        </p>
+      ) : (
+        <ul className="mt-6 space-y-5">
           {comments.map((comment) => {
             const key = `${comment.postId}-${comment.id}`;
             const isDeleting = pendingDelete === key;
             return (
-              <div
-                  key={key}
-                  className="border border-gray-300 p-5 rounded-md shadow-sm hover:shadow transition bg-gray-50"
+              <li
+                key={key}
+                className="bg-bone border border-rule p-5 sm:p-6 space-y-3"
               >
-                <p className="text-sm text-gray-800 italic mb-2">“{comment.text}”</p>
+                <p className="font-serif text-base italic text-ink leading-relaxed">
+                  &ldquo;{comment.text}&rdquo;
+                </p>
 
-                <div className="text-sm text-gray-600 mb-1">
-                  <span className="font-medium text-blue-700">By:</span>{' '}
-                  {comment.author}
-                </div>
-
-                <div className="text-xs text-gray-500">
-                  <span className="font-medium text-yellow-600">Post:</span>{' '}
-                  {postTitles[comment.postId] || comment.postId}
+                <div className="flex flex-wrap gap-x-5 gap-y-1 font-sans text-xs uppercase tracking-[0.12em] text-muted">
+                  <span>
+                    <span className="text-oxblood font-semibold">By</span>{' '}
+                    <span className="text-ink-soft normal-case tracking-normal">
+                      {comment.author}
+                    </span>
+                  </span>
+                  <span>
+                    <span className="text-oxblood font-semibold">Post</span>{' '}
+                    <span className="text-ink-soft normal-case tracking-normal">
+                      {postTitles[comment.postId] || comment.postId}
+                    </span>
+                  </span>
                 </div>
 
                 <button
-                    onClick={() => handleDelete(comment.postId, comment.id)}
-                    disabled={isDeleting}
-                    className="mt-3 px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-500 transition disabled:opacity-60"
+                  onClick={() => handleDelete(comment.postId, comment.id)}
+                  disabled={isDeleting}
+                  className="inline-flex items-center justify-center px-4 py-1.5 font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood border border-oxblood hover:bg-oxblood hover:text-bone transition-colors disabled:opacity-60"
                 >
                   {isDeleting ? 'Deleting…' : 'Delete'}
                 </button>
-              </div>
+              </li>
             );
           })}
-        </div>
-      </div>
+        </ul>
+      )}
+    </div>
   );
 }

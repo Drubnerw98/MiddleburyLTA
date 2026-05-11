@@ -114,8 +114,8 @@ export default function PostPageClient({ postId, initialPost, initialComments }:
   };
 
   return (
-      <div className="flex justify-center px-4">
-        <div className="w-full max-w-3xl space-y-8">
+      <main className="bg-paper">
+        <div className="mx-auto max-w-3xl px-5 sm:px-8 pb-16">
           {editing ? (
               <PostEdit
                   postId={postId}
@@ -131,45 +131,48 @@ export default function PostPageClient({ postId, initialPost, initialComments }:
               />
           )}
 
-          {!post.commentsDisabled ? (
-              <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
-                <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
+          <section className="mt-4">
+            {!post.commentsDisabled ? (
+                <>
+                  <CommentForm
+                      commentText={commentText}
+                      setCommentTextAction={setCommentText}
+                      onSubmitAction={handleSubmitAction}
+                      isAuthenticated={!!user}
+                  />
 
-                <CommentForm
-                    commentText={commentText}
-                    setCommentTextAction={setCommentText}
-                    onSubmitAction={handleSubmitAction}
-                    isAuthenticated={!!user}
-                />
+                  {commentError && (
+                      <p className="font-sans text-sm text-oxblood mt-3">
+                        {commentError}
+                      </p>
+                  )}
 
-                {commentError && (
-                    <p className="text-red-400 text-sm mt-2">{commentError}</p>
-                )}
+                  <CommentList
+                      comments={comments}
+                      isAdmin={isAdmin}
+                      currentUserId={user?.uid || ""}
+                      onDeleteCommentAction={handleDeleteCommentAction}
+                      onEditCommentAction={handleEditCommentAction}
+                  />
+                </>
+            ) : (
+                <p className="font-sans text-sm italic text-muted text-center mt-10 border-t border-rule pt-8">
+                  Comments are disabled for this post.
+                </p>
+            )}
+          </section>
 
-                <CommentList
-                    comments={comments}
-                    isAdmin={isAdmin}
-                    currentUserId={user?.uid || ""}
-                    onDeleteCommentAction={handleDeleteCommentAction}
-                    onEditCommentAction={handleEditCommentAction}
-                />
-              </div>
-          ) : (
-              <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 mb-12 text-gray-400 italic text-center text-sm shadow-inner">
-                Comments are disabled for this post.
-              </div>
-          )}
           {isAdmin && !editing && (
-              <div className="text-center">
+              <div className="text-center mt-10">
                 <button
                     onClick={() => setEditing(true)}
-                    className="text-sm text-gray-400 hover:text-white underline-offset-4 hover:underline"
+                    className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
                 >
                     Edit post
                 </button>
               </div>
           )}
         </div>
-      </div>
+      </main>
   );
 }

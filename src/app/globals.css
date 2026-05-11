@@ -94,56 +94,83 @@
 /*
  * Markdown content styles for the posts feature. Lives at top level
  * intentionally so authored content gets a consistent look regardless
- * of which page it's rendered on.
+ * of which page it's rendered on. Uses the editorial palette — ink for
+ * body, oxblood for links, paper-deep for code blocks.
  */
 .markdown-content {
-  line-height: 1.75;
+  line-height: 1.7;
   font-size: 1rem;
+  color: var(--color-ink-soft);
 }
 
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  color: #2E3D52;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
+
+.markdown-content h1 { font-size: 1.875rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
 
 .markdown-content p {
   margin: 1rem 0;
-  color: #2E3D52;
 }
 
 .markdown-content ul,
 .markdown-content ol {
-  margin-left: 1.5rem;
+  margin-left: 1.25rem;
   margin-bottom: 1rem;
-  list-style-position: inside;
+  list-style-position: outside;
 }
 
 .markdown-content li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .markdown-content a {
-  color: #2E3D52;
+  color: var(--color-oxblood);
   font-weight: 500;
   text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.markdown-content a:hover {
+  color: var(--color-ink);
+}
+
+.markdown-content blockquote {
+  border-left: 2px solid var(--color-rule-strong);
+  padding-left: 1rem;
+  margin: 1.25rem 0;
+  color: var(--color-muted);
+  font-style: italic;
 }
 
 .markdown-content code {
-  background-color: #F5F5F5;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-family: monospace;
+  background-color: var(--color-paper-deep);
+  padding: 0.15rem 0.4rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875rem;
+  color: var(--color-ink);
 }
 
 .markdown-content pre {
-  background-color: #EDEDED;
-  color: #2E3D52;
+  background-color: var(--color-paper-deep);
+  color: var(--color-ink);
   padding: 1rem;
-  border-radius: 6px;
   overflow-x: auto;
+  border: 1px solid var(--color-rule);
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
 }

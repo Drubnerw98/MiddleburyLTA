@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { createLinkAction } from '@/app/actions/adminLinkActions'
 
+const inputClass =
+    'w-full font-sans text-base bg-paper border border-ink/30 px-3 py-2.5 text-ink placeholder-muted focus:outline-none focus:border-ink transition-colors'
+
 export default function LinkManager() {
     const [title, setTitle] = useState('')
     const [url, setUrl] = useState('')
@@ -51,25 +54,27 @@ export default function LinkManager() {
     }
 
     return (
-        <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-2xl font-semibold text-[#1A2E49] mb-6">Add New Article or Link</h2>
+        <div className="max-w-2xl mx-auto bg-bone border border-rule-strong p-6 sm:p-8">
+            <h2 className="font-serif text-2xl font-semibold text-ink border-b border-rule pb-3">
+                Add a new article or link
+            </h2>
 
             {status.kind === 'success' && (
-                <p className="text-green-600 mb-4 transition-opacity duration-300">
-                    Link added successfully!
+                <p className="font-sans text-sm text-moss bg-moss/[0.06] border-l-2 border-moss px-4 py-3 mt-5">
+                    Link added successfully.
                 </p>
             )}
             {status.kind === 'error' && (
-                <p className="text-red-600 mb-4 text-sm">
+                <p className="font-sans text-sm text-oxblood bg-oxblood/[0.06] border-l-2 border-oxblood px-4 py-3 mt-5">
                     {status.message}
                 </p>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 mt-6">
                 <input
                     type="text"
                     placeholder="Title"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={inputClass}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
@@ -77,14 +82,15 @@ export default function LinkManager() {
                 <input
                     type="url"
                     placeholder="URL"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={inputClass}
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     required
                 />
                 <textarea
                     placeholder="Description"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    rows={3}
+                    className={`${inputClass} resize-none`}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
@@ -92,7 +98,7 @@ export default function LinkManager() {
                     type="text"
                     list="source-suggestions"
                     placeholder="Source (e.g. CT Insider)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={inputClass}
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
                 />
@@ -107,8 +113,8 @@ export default function LinkManager() {
                 </datalist>
                 <input
                     type="text"
-                    placeholder="Date Published (e.g. 2026-05-12)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="Date published (e.g. 2026-05-12)"
+                    className={inputClass}
                     value={datePublished}
                     onChange={(e) => setDatePublished(e.target.value)}
                 />
@@ -116,7 +122,7 @@ export default function LinkManager() {
                 <button
                     type="submit"
                     disabled={status.kind === 'saving'}
-                    className="bg-[#1A2E49] text-white px-6 py-2 rounded-md hover:bg-[#2e4a6e] transition disabled:opacity-60"
+                    className="inline-flex items-center justify-center px-6 py-2.5 font-sans text-sm font-semibold text-bone bg-ink hover:bg-ink-soft transition-colors disabled:opacity-60"
                 >
                     {status.kind === 'saving' ? 'Saving…' : 'Submit'}
                 </button>
