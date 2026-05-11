@@ -13,10 +13,13 @@ Live at <https://middleburytaxpayers.com>.
 - **Landing page** opens with the post-revaluation reality, the FY 2026–27
   town budget, and the $224M Region 15 school bond, then explains why the
   commercial tax base matters with linked source documents.
-- **Tax Impact Calculator** lets a homeowner enter their prior and new
-  assessments (or use the town-average increase to estimate the prior
-  value), then shows the FY 2026–27 revaluation impact and the FY 2027–28
-  bond impact layered on top.
+- **Tax Impact Calculator** asks for a homeowner's prior and new
+  assessments (both required) and shows the FY 2026–27 revaluation
+  impact plus the FY 2027–28 bond impact layered on top. A demoted
+  opt-in checkbox below the inputs can estimate the prior assessment
+  from the town-average +35.4% increase when the actual figure isn't
+  handy; results in that mode carry a visible warning pointing back to
+  Vision for the exact number.
 - **About the Numbers** is a flat facts list that admins can update
   through the dashboard. Anchored on FY 2026–27 figures.
 - **Articles & Links** is a curated set of external coverage and source
@@ -55,9 +58,14 @@ bondY1        = (newAssessment / 100_000) × 240     // FY 2027–28 onward
 totalFY27_28  = newTax + bondY1
 ```
 
-If the user does not have their pre-reval tax bill handy, a "use the town
-average" checkbox derives the prior assessment as
-`newAssessment / (1 + 0.354)`.
+Both inputs are required; the results section is gated until both
+fields hold valid numbers. An opt-in checkbox below the inputs (off
+by default) can derive the prior assessment as
+`newAssessment / (1 + 0.354)` when the homeowner can't find their
+prior figure. When that path is used, the results show a warning
+callout pointing back to Vision for the exact number — see the
+`10 Yale St` checkpoint in `src/app/tax-impact/constants.ts` for the
+reason the auto-estimate is no longer the default.
 
 Linear scaling is correct for Connecticut property tax math: a single
 mill rate is applied to a uniform-ratio assessment, so doubling the
@@ -78,40 +86,87 @@ To update for a future revaluation or rate change, edit
 ## Tech
 
 - **Next.js 15** (App Router, Turbopack, server actions)
-- **React 19**, **TypeScript**, **Tailwind v4**
+- **React 19**, **TypeScript**, **Tailwind v4** with CSS-based `@theme`
+  tokens
+- **Source Serif 4** + **Inter** loaded via `next/font/google` as the
+  display + body type pairing
 - **Firebase** (Auth + Firestore + Storage), with `firebase-admin` for
   server-side privileged ops
 - **Upstash Redis** for rate limiting (`@upstash/ratelimit`)
 - **Resend** for the contact-form email
 - **Radix UI** for the accessible slider
-- **Framer Motion** for entrance animations
+- **Framer Motion** for entrance animations on posts surfaces
 - Deployed on **Vercel**
+
+## Design system
+
+Editorial-civic. Serif display typography, restrained four-color
+palette, primitive components composed at the page level instead of
+raw Tailwind utilities scattered across surfaces. The system is
+defined in two places:
+
+- `src/app/globals.css` registers the design tokens in a Tailwind v4
+  `@theme` block: `--color-ink`, `--color-paper`, `--color-bone`,
+  `--color-oxblood`, `--color-moss`, `--color-rule`, `--color-muted`
+  plus `--font-sans` / `--font-serif` mapped to the loaded fonts.
+  Base rules (html, body, *, a) live inside `@layer base` so utility
+  classes can override them.
+- `src/app/components/ui/` exports the primitives: `Eyebrow`,
+  `DisplayHeading`, `Lead`, `StatCard`, `Pullquote`, `Callout`,
+  `SourceLine`, `BarCompare`. Each owns its own type + spacing so
+  pages stay declarative.
+
+The site is intentionally photography-light: typography and data
+visualizations carry the pages. Image attributions live in
+`public/images/ATTRIBUTION.md`.
 
 ## Project layout
 
 ```
 src/app/
-  page.tsx              landing page (server) -> HomePageClient (post feed)
-  tax-impact/           calculator page + slider component
-  articles/             external links page (RSC fetch)
-  who-we-are/           static About page
+  page.tsx              landing page -> HeroSection + AdsSection
+  HomePageClient.tsx    posts feed renderer (used by /updates)
+  layout.tsx            root layout: fonts, NavBar, Footer, metadata
+  globals.css           @theme tokens, @layer base rules
+  tax-impact/
+    page.tsx            calculator page
+    constants.ts        all tax math: mill rates, bond rates, pure fns,
+                        cited sources, numeric checkpoints
+    AssessmentInput.tsx slider + numeric-edit input (number | null)
+    TaxImpactSlider.tsx Radix-based assessment slider
+  articles/             external links page (Firestore-backed)
+  who-we-are/           About page with Drubner / Atlantic / Murtha bios
+  updates/              posts feed (HomePageClient)
   post/[id]/            single post with comments
   admin/                admin dashboard (claim-gated)
   api/
     session/            login/logout: mints + clears the session cookie
-    send-feedback/      contact form -> Resend, with rate limit + escape
+    send-feedback/      contact form -> Resend, lazy-instantiated
   actions/              server actions (createCommentAction, etc.)
-  components/           UI: Auth/, Comments/, Posts/, Layout/, Admin/
+  components/
+    ui/                 editorial-civic primitives (Eyebrow,
+                        DisplayHeading, Lead, StatCard, Pullquote,
+                        Callout, SourceLine, BarCompare)
+    HeroSection.tsx     landing-page hero (typography-led)
+    AdsSection.tsx      "Our 2026 ads" landing-page block
+    AboutTheNumbers.tsx editorial blocks of 2026 facts
+    Layout/             NavBar + Footer
+    Auth/, Comments/, Posts/, Admin/  feature-scoped UI
 lib/
   firebase.ts           web SDK init (client)
   firebase-admin.ts     admin SDK init (server, lazy)
   auth.ts               session-cookie helpers + admin claim check
-  comments.ts           softDeleteComment server action
-  editcomments.ts       editCommentContent server action
   rateLimiter.ts        general 5 req / 10s slider
   commentRateLimiter.ts 1 comment / 15s per user
   feedbackRateLimiter.ts 3 emails / hour per IP
   searchPosts.ts        Firestore query for the search bar
+docs/
+  followups.md          deferred / open project-scoped work
+public/
+  favicon.svg           wordmark "MT" favicon (serif on paper)
+  images/
+    ATTRIBUTION.md      image licensing record
+  docs/                 publicly linked PDFs (ads, source docs)
 firestore.rules         versioned Firestore security rules
 storage.rules           Firebase Storage rules (admin-only writes)
 scripts/setAdmin.js     grant or revoke the `admin` custom claim on a user

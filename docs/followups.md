@@ -9,6 +9,7 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 - [Active](#active)
   - [2026-05-11 — Confirm AdsSection placeholder copy against the real ads](#2026-05-11--confirm-adssection-placeholder-copy-against-the-real-ads)
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
+  - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
@@ -37,6 +38,18 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **Shape of work:** New route `src/app/bond-impact/page.tsx`. Static read-only content with a peak-year table. Phoenix Advisors PDF dropped into `public/docs/` and embedded. A `TaxImpactCTA`-shaped card added to the landing page that links to it.
 
 **Open questions:** Does Phoenix Advisors' amortization PDF exist in a shareable form? Do we want a year-by-year chart or just a Year-1 / peak summary?
+
+### 2026-05-11 — Reskin posts and admin UI for editorial-civic
+
+**What:** Most posts- and admin-scoped components were not touched in the May 11 redesign because there are no live posts yet and the admin dashboard is claim-gated. They still use the pre-redesign dark navy + yellow-300 palette (`bg-[#1e2633]/90`, `border-yellow-400/20`, `text-yellow-300`, `bg-yellow-500`, etc.) and will look visually disconnected the moment a post is published.
+
+**Why noticed:** Surfaced during the editorial-civic propagation when grepping for residual `bg-yellow` / `text-yellow-300` references. Deferred so the public-facing surfaces could ship coherent without blocking on a non-visible feature.
+
+**Anchors:** `src/app/components/PostFeed.tsx`, `src/app/components/PostManager.tsx`, `src/app/components/PostPreview.tsx`, `src/app/components/Posts/PostDisplay.tsx`, `src/app/components/Posts/PostEdit.tsx`, `src/app/components/LinkPreview.tsx`, `src/app/components/CommentManager.tsx`, `src/app/components/Comments/*`, `src/app/admin/page.tsx`.
+
+**Shape of work:** Two passes. (1) Public-facing post components (PostFeed, PostPreview, PostDisplay, LinkPreview) — apply paper / bone / ink / oxblood, lift typography to serif headlines + sans body to match Articles. Tag pills become small oxblood text links instead of yellow-tinted chips. (2) Admin/editor surfaces (PostManager, PostEdit, CommentManager, admin dashboard) — less aesthetic load, but should at least drop the yellow buttons in favor of bg-ink.
+
+**Open questions:** Do tagged posts need their own listing/filter UI, or is the search bar enough? Are comments going to stay or be reconsidered? (Comment styling lives in the same neglected pocket.)
 
 ## Resolved
 
