@@ -11,6 +11,8 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
   - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
   - [2026-05-11 — Remaining 11 low/moderate npm audit advisories](#2026-05-11--remaining-11-lowmoderate-npm-audit-advisories)
+  - [2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session)](#2026-05-11--security-rotate-firebase-service-account-key-leaked-in-debug-session)
+  - [2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles](#2026-05-11--investigate-admin-sdk-firestore-auth-failure-on-articles)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
@@ -71,6 +73,28 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **Anchors:** `package.json`, `package-lock.json`. Specifically: `@tootallnate/once`, `node-forge`, `flatted`, `tar`, `jws`, `picomatch`, `postcss` (transitive from next).
 
 **Shape of work:** Watch for upstream releases (firebase-admin 13.10+ would likely pull in fresher transitives). When firebase-admin ships a patch that bumps google-gax, re-run `npm update && npm audit` and most of these should drop. The postcss moderate is gated on a Next.js minor bump (15.6+ when it ships).
+
+### 2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session)
+
+**What:** While debugging the `/articles` admin-SDK auth failure, a `bash source` of `.env.local` echoed the full `FIREBASE_SERVICE_ACCOUNT_KEY` JSON (including the private key) into the conversation transcript. The key needs to be rotated and the old one invalidated.
+
+**Why noticed:** Self-inflicted during the May 11 debug session, immediately flagged.
+
+**Anchors:** Firebase Console → Project Settings → Service Accounts (project `middlebury-low-tax`). The leaked key id starts with `88f474ea...`. The compromised service account email is `firebase-adminsdk-fbsvc@middlebury-low-tax.iam.gserviceaccount.com`.
+
+**Shape of work:** (1) Generate a new private key in the Firebase Console. (2) Update `FIREBASE_SERVICE_ACCOUNT_KEY` in Vercel's project env vars; redeploy. (3) Update `.env.local` with the new value. (4) Delete the old key in the Service Accounts → Manage permissions panel so anything scraped from the leak is dead. (5) Confirm prod is serving normally after the deploy. The leaked key only grants admin to `middlebury-low-tax` Firebase resources; no other accounts are exposed.
+
+### 2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles
+
+**What:** The May 11 RSC conversion of `/articles` switched from the client web SDK to `adminDb` (firebase-admin SDK). On both Vercel and local prod builds, the resulting Firestore query throws `16 UNAUTHENTICATED — Request had invalid authentication credentials`. The same `FIREBASE_SERVICE_ACCOUNT_KEY` env var is used by every other admin-SDK path (server actions for posts, session minting, logout revocation) and those continue to work. Workaround in place: `/articles` reverted to the client SDK (commit `63c9fb9`).
+
+**Why noticed:** Prod `/articles` returned a server-side exception after the RSC conversion.
+
+**Anchors:** `src/app/articles/page.tsx` (currently on client SDK), `lib/firebase-admin.ts` (lazy proxy + init), `package.json` (`firebase-admin` 13.9.0 since the May 11 update from 13.3.0).
+
+**What's been considered:** Possible causes — (1) firebase-admin 13.3 → 13.9 introduced a gRPC credential-handling regression for the Firestore client specifically (Auth still works); (2) the lazy Proxy in `firebase-admin.ts` has an edge case for chained `.collection().orderBy().get()` access patterns we didn't see in server actions; (3) Vercel's env-var injection produces a subtly different JSON shape vs `.env.local`; (4) the service account had a permissions change that affected Firestore-via-gRPC but not Auth-via-REST. After the key rotation followup above lands, redeploying with the fresh key may also fix this — if not, the next step is to bisect firebase-admin between 13.3 and 13.9.
+
+**Shape of work:** (1) After key rotation, re-attempt the RSC conversion on `/articles` (one-line change back to `adminDb`) and verify. (2) If still broken, instrument `firebase-admin.ts` to log the credential shape (without echoing the private key) and compare against a working path (e.g. a server action that's recently fired). (3) If isolated to the Firestore client, try `npm install firebase-admin@13.3.0` to confirm regression; file upstream if so. (4) Long-term: once resolved, re-do the RSC switch and revisit whether the lazy Proxy adds value or should be replaced with direct exports.
 
 
 ## Resolved
