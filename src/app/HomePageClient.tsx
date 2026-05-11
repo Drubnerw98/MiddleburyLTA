@@ -10,12 +10,13 @@ import {
   type QueryDocumentSnapshot,
   type DocumentData,
 } from "firebase/firestore";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { db } from "../../lib/firebase";
 import PostPreview from "@/app/components/Posts/PostPreview";
 import SearchBar from "@/app/components/SearchBar";
-import TaxImpactCTA from "@/app/components/TaxImpactCTA";
 import { useSearchParams, useRouter } from "next/navigation";
+import { DisplayHeading, Eyebrow, Lead } from "@/app/components/ui";
 
 interface Post {
   id: string;
@@ -127,44 +128,54 @@ export default function HomePageClient() {
   }, [searchQuery, hasMore, loading, fetchPosts]);
 
   return (
-      <main className="max-w-5xl mx-auto px-6 sm:px-8 pt-2 pb-6 space-y-10">
-        {/* Hero + Search */}
-        <div className="relative z-10 rounded-xl border border-white/10 bg-gradient-to-br from-blue-900/30 via-blue-800/10 to-transparent backdrop-blur-md p-6 shadow-md space-y-4">
-          <div>
-            <h1 className="text-4xl font-serif font-semibold text-yellow-300 tracking-tight mb-2">
-              Tax Impact Center
-            </h1>
-            <p className="text-gray-300 text-base leading-relaxed">
-              A community-powered space for facts, updates, and civic discussion.
-            </p>
-          </div>
+    <main className="bg-paper min-h-screen">
+      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-12 sm:py-20">
+        {/* Header */}
+        <header>
+          <Eyebrow tone="oxblood">Updates</Eyebrow>
+          <DisplayHeading level={1} className="mt-3">
+            What we&rsquo;re posting.
+          </DisplayHeading>
+          <Lead className="mt-5">
+            Short notes, meeting recaps, and links from the group. For the
+            tax calculator, see{" "}
+            <Link
+              href="/tax-impact"
+              className="text-oxblood underline underline-offset-4 hover:text-ink transition-colors"
+            >
+              Tax Impact
+            </Link>
+            .
+          </Lead>
+        </header>
+
+        {/* Search */}
+        <div className="mt-10">
           <SearchBar />
         </div>
 
-        {/* Call to Action */}
-        <TaxImpactCTA />
-
         {/* Posts Feed */}
-        <div className="space-y-6">
+        <div className="mt-12 space-y-8">
           {posts.length === 0 && !loading ? (
-              <p className="text-center text-gray-500 mt-8">
-                No posts found. Try a different search.
-              </p>
+            <p className="font-sans text-sm text-muted italic">
+              No posts yet. Check back soon.
+            </p>
           ) : (
-              posts.map((post) => (
-                  <PostPreview
-                      key={post.id}
-                      post={post}
-                      onTagClick={(tag) => {
-                        router.push(`/?q=${encodeURIComponent(tag)}`);
-                      }}
-                  />
-              ))
+            posts.map((post) => (
+              <PostPreview
+                key={post.id}
+                post={post}
+                onTagClick={(tag) => {
+                  router.push(`/updates?q=${encodeURIComponent(tag)}`);
+                }}
+              />
+            ))
           )}
         </div>
 
         {/* Infinite Scroll Marker */}
         {!searchQuery && hasMore && <div ref={loadMoreRef} className="h-12" />}
-      </main>
+      </div>
+    </main>
   );
 }

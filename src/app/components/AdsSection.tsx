@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DisplayHeading, Eyebrow } from "@/app/components/ui";
 
 // "Our 2026 Ads" landing-page section.
 //
@@ -29,37 +30,31 @@ const ads: Ad[] = [
 
 export default function AdsSection() {
     return (
-        <section className="bg-slate-50 border-y border-slate-200 px-4 py-12 sm:py-16">
-            <div className="max-w-5xl mx-auto">
-                <div className="text-center mb-8 sm:mb-10">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-                        Our 2026 Ads
-                    </p>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
-                        What we’re telling Middlebury
-                    </h2>
-                    <p className="text-sm text-slate-600 mt-2 max-w-2xl mx-auto">
-                        Printed and digital ads running in spring 2026 alongside the May 6 referendum and the post-revaluation tax bill cycle.
-                    </p>
-                </div>
+        <section className="bg-paper-deep border-t border-rule">
+            <div className="mx-auto max-w-3xl px-5 sm:px-8 py-14 sm:py-20">
+                <Eyebrow tone="oxblood">Our 2026 ads</Eyebrow>
+                <DisplayHeading level={2} as="h2" className="mt-3">
+                    What we&rsquo;re telling Middlebury.
+                </DisplayHeading>
+                <p className="font-sans text-base text-ink-soft mt-4 max-w-[60ch] leading-relaxed">
+                    Printed and digital ads running alongside the May 6 referendum
+                    and the post-revaluation tax bill cycle.
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {ads.map((ad) => (
-                        <article
-                            key={ad.href}
-                            className="rounded-xl bg-white border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col"
-                        >
-                            <h3 className="text-lg font-semibold text-slate-900">
+                        <article key={ad.href} className="bg-bone border border-rule p-6 sm:p-7 flex flex-col">
+                            <h3 className="font-serif text-xl sm:text-2xl font-semibold text-ink">
                                 {ad.title}
                             </h3>
-                            <p className="text-sm text-slate-600 leading-relaxed mt-2 flex-1">
+                            <p className="font-sans text-sm text-ink-soft leading-relaxed mt-3 flex-1">
                                 {ad.summary}
                             </p>
                             <Link
                                 href={ad.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-sky-700 hover:text-sky-900 no-underline w-max"
+                                className="inline-flex items-center gap-1.5 mt-5 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors w-max"
                             >
                                 Read the ad (PDF)
                                 <span aria-hidden>↗</span>

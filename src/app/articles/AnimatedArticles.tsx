@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import BackToTopButton from "@/app/components/BackToTopButton";
 import { LinkItem } from "@/types/link";
+import { DisplayHeading, Eyebrow, Lead, SourceLine } from "@/app/components/ui";
 
 interface Props {
     links: LinkItem[];
@@ -19,8 +19,7 @@ const SOURCE_GROUPS = [
 
 type SourceGroup = (typeof SOURCE_GROUPS)[number];
 
-const normalize = (s: string) =>
-    s.toLowerCase().replace(/[^a-z0-9]/g, "");
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 function bucketSource(raw: string | undefined): SourceGroup {
     const n = normalize(raw ?? "");
@@ -40,9 +39,6 @@ function formatDaysAgo(seconds: number | undefined): string {
 }
 
 export default function AnimatedArticles({ links }: Props) {
-    // Bucket links by source group. Each group preserves the input order,
-    // which the page-level Firestore query has already sorted by
-    // `priority asc, createdAt desc`.
     const grouped: Record<SourceGroup, LinkItem[]> = {
         "CT Insider": [],
         "Hartford Courant": [],
@@ -52,81 +48,82 @@ export default function AnimatedArticles({ links }: Props) {
     for (const link of links) {
         grouped[bucketSource(link.source)].push(link);
     }
-
     const nonEmptyGroups = SOURCE_GROUPS.filter((g) => grouped[g].length > 0);
 
     return (
-        <motion.div
-            className="min-h-screen flex flex-col bg-white"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-        >
-            <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-12">
-                <div className="text-center mb-12">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2E49]">Articles & Links</h1>
-                    <p className="text-sm text-gray-600 mt-2">
-                        Press coverage and source documents relevant to Middlebury&rsquo;s tax debate, grouped by publication.
+        <main className="bg-paper min-h-screen">
+            <div className="mx-auto max-w-3xl px-5 sm:px-8 py-12 sm:py-20">
+                {/* Header */}
+                <header>
+                    <Eyebrow tone="oxblood">Coverage</Eyebrow>
+                    <DisplayHeading level={1} className="mt-3">
+                        Articles &amp; links.
+                    </DisplayHeading>
+                    <Lead className="mt-5">
+                        Press coverage and source documents relevant to
+                        Middlebury&rsquo;s tax debate, grouped by publication.
+                    </Lead>
+                </header>
+
+                {nonEmptyGroups.length === 0 ? (
+                    <p className="font-sans text-sm text-muted mt-16 italic">
+                        No articles have been added yet.
                     </p>
-                </div>
-            </div>
-
-            {nonEmptyGroups.length === 0 ? (
-                <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 pb-16 text-center text-sm text-gray-500">
-                    No articles have been added yet.
-                </div>
-            ) : (
-                nonEmptyGroups.map((group) => (
-                    <section key={group} className="w-full">
-                        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2">
-                            <h2 className="text-xl sm:text-2xl font-semibold text-[#1A2E49]">
-                                {group}
-                            </h2>
-                            <div className="h-px bg-gray-200 mt-3" />
-                        </div>
-
-                        <div className="divide-y divide-gray-200">
-                            {grouped[group].map((link) => (
-                                <div
-                                    key={link.id}
-                                    className="group transition duration-200 hover:bg-blue-50 w-full"
-                                >
-                                    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6">
-                                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                                            <div className="sm:max-w-3xl">
-                                                <h3 className="text-lg font-semibold text-[#1A2E49] mb-1">{link.title}</h3>
-                                                <p className="text-sm text-gray-600">
-                                                    {link.source}
-                                                    {link.datePublished ? ` - ${link.datePublished}` : ""}
-                                                </p>
-                                                {link.description && (
-                                                    <p className="text-sm text-gray-700 leading-relaxed mt-3 whitespace-normal">
-                                                        {link.description}
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-gray-500 mt-2">{formatDaysAgo(link.createdAt)}</p>
-                                            </div>
-
-                                            <div className="sm:flex-shrink-0">
+                ) : (
+                    <div className="mt-14 sm:mt-20 space-y-14 sm:space-y-20">
+                        {nonEmptyGroups.map((group) => (
+                            <section key={group}>
+                                <Eyebrow tone="oxblood" className="mb-6">
+                                    {group}
+                                </Eyebrow>
+                                <ul className="space-y-10">
+                                    {grouped[group].map((link) => (
+                                        <li
+                                            key={link.id}
+                                            className="border-t border-rule pt-7"
+                                        >
+                                            <h2 className="font-serif text-xl sm:text-2xl font-semibold leading-[1.25] text-ink">
                                                 <a
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-block bg-[#1A2E49] no-underline !text-white font-semibold text-center w-[120px] px-4 py-2 text-sm rounded hover:bg-[#2e4a6e] transition"
+                                                    className="hover:text-oxblood transition-colors"
                                                 >
-                                                    View Article
+                                                    {link.title}
                                                 </a>
+                                            </h2>
+                                            <p className="font-sans text-xs uppercase tracking-[0.14em] text-muted mt-2">
+                                                {link.source}
+                                                {link.datePublished ? ` · ${link.datePublished}` : ""}
+                                            </p>
+                                            {link.description && (
+                                                <p className="font-sans text-base text-ink-soft leading-relaxed mt-3 max-w-[60ch]">
+                                                    {link.description}
+                                                </p>
+                                            )}
+                                            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 mt-4">
+                                                <a
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
+                                                >
+                                                    Read the article ↗
+                                                </a>
+                                                <SourceLine className="not-italic">
+                                                    {formatDaysAgo(link.createdAt)}
+                                                </SourceLine>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                ))
-            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             <BackToTopButton />
-        </motion.div>
+        </main>
     );
 }
