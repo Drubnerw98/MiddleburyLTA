@@ -1,18 +1,15 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
+import { adminDb } from "../../../lib/firebase-admin";
 import { LinkItem } from "@/types/link";
 import AnimatedArticles from "./AnimatedArticles";
 
 export const dynamic = "force-dynamic";
 
 export default async function ArticlesPage() {
-    const snapshot = await getDocs(
-        query(
-            collection(db, "external_links"),
-            orderBy("priority", "asc"),
-            orderBy("createdAt", "desc")
-        )
-    );
+    const snapshot = await adminDb
+        .collection("external_links")
+        .orderBy("priority", "asc")
+        .orderBy("createdAt", "desc")
+        .get();
 
     const links: LinkItem[] = snapshot.docs.map((doc) => {
         const data = doc.data();

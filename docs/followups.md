@@ -11,9 +11,7 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
   - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
   - [2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)](#2026-05-11--resolve-29-npm-audit-vulnerabilities-3-critical-9-high)
-  - [2026-05-11 — Convert home, /articles, /post pages to RSC](#2026-05-11--convert-home-articles-post-pages-to-rsc)
   - [2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive](#2026-05-11--modal-accessibility-focus-trap-aria-dialog-primitive)
-  - [2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store](#2026-05-11--cleanup-dead-components-scaffold-svgs-dsstore)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
@@ -23,6 +21,8 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — SECURITY: harden /api/send-feedback against IP spoofing and CSRF](#2026-05-11--security-harden-apisend-feedback-against-ip-spoofing-and-csrf-resolved)
   - [2026-05-11 — SECURITY: sanitize URLs in markdown and link inputs](#2026-05-11--security-sanitize-urls-in-markdown-and-link-inputs-resolved)
   - [2026-05-11 — SECURITY: add CSP + security headers + /admin middleware](#2026-05-11--security-add-csp--security-headers--admin-middleware-resolved)
+  - [2026-05-11 — Convert home, /articles, /post pages to RSC](#2026-05-11--convert-home-articles-post-pages-to-rsc-resolved)
+  - [2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store](#2026-05-11--cleanup-dead-components-scaffold-svgs-dsstore-resolved)
 - [Abandoned](#abandoned)
 
 ## Active
@@ -71,15 +71,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Shape of work:** (1) Bump `next` to `15.5.16+` to clear the Next.js advisories. (2) Run `npm audit fix` for non-breaking transitive fixes. (3) For remaining: identify which are reachable from the actual app (most criticals are likely transitive from `firebase-admin` or build tooling). (4) Run typecheck + build + smoke-test before pushing. Hold the more aggressive `--force` updates until each can be validated individually.
 
-### 2026-05-11 — Convert home, /articles, /post pages to RSC
-
-**What:** Three pages are needlessly client-rendered or use the wrong SDK. (1) `src/app/page.tsx:1` has `'use client'` only to wrap in a framer-motion `PageWrapper`. `HeroSection` already declares its own boundary; `AdsSection` is pure static. The home page (highest-traffic surface) ships unnecessary JS. (2) `src/app/articles/page.tsx:1-4` is an async RSC but imports `db` from the client SDK (`lib/firebase.ts`). Should use `adminDb` from `lib/firebase-admin.ts`. (3) `src/app/post/[id]/page.tsx` fetches post + comments in `useEffect` with no Suspense; should be RSC with a client island for the comment form only.
-
-**Why noticed:** May 11, 2026 code audit.
-
-**Anchors:** `src/app/page.tsx`, `src/app/components/PageWrapper.tsx` (delete after the conversion — only callsite is `page.tsx`), `src/app/articles/page.tsx`, `src/app/post/[id]/page.tsx`.
-
-**Shape of work:** Per page: remove `'use client'` from the route, move client-only pieces (ContactModal, comment form) into their own boundaries. Switch articles to `adminDb`. Replace post-page `useEffect` fetch with server-side fetch + a Suspense boundary around the comments client island.
 
 ### 2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive
 
@@ -150,6 +141,18 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **What:** `next.config.ts` (new) declares site-wide security headers: a CSP allowing only the explicit external services we depend on (Firebase, Vercel Analytics, Google Fonts, Upstash), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `Strict-Transport-Security` with two-year max-age + preload. `src/middleware.ts` (new) matches `/admin/:path*` and redirects to `/` when the `__session` cookie is absent — kills the layout-flash before the page-level admin guard kicks in.
 
 **Anchors:** `next.config.ts`, `src/middleware.ts`.
+
+### 2026-05-11 — Convert home, /articles, /post pages to RSC (resolved)
+
+**What:** Home page (`src/app/page.tsx`) is now a pure server component — dropped `'use client'`, deleted `PageWrapper` (its only callsite), HeroSection keeps its own client boundary for the ContactModal, AdsSection ships as pure RSC. Home went from 5.41 kB to 4.93 kB First Load JS. `/articles` switched from the client Firestore SDK (`db` from `lib/firebase.ts`) to `adminDb` from `lib/firebase-admin.ts` for its server-side query. `/post/[id]` split: the route file is now an async RSC that fetches post + comments via `adminDb`, calls `notFound()` on missing post, and renders the new `PostPageClient` client island with serialized initial state. The client island still handles all interactivity (edit toggle, comment form, comment list mutations) but doesn't need a useEffect data fetch on mount.
+
+**Anchors:** `src/app/page.tsx`, `src/app/components/PageWrapper.tsx` (deleted), `src/app/articles/page.tsx`, `src/app/post/[id]/page.tsx`, `src/app/post/[id]/PostPageClient.tsx` (new).
+
+### 2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store (resolved)
+
+**What:** Deleted unused files: `src/app/components/Modal.tsx`, `TaxImpactCTA.tsx`, `Layout/AppLayout.tsx`, `PostFeed.tsx`, `lib/searchPosts.ts`, `PageWrapper.tsx`, plus six Next scaffold assets (`next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`, `noise.png`). Footer's internal anchors converted to `next/link`. `.DS_Store` files were already gitignored and untracked — no action needed.
+
+**Anchors:** see deletions in commits `cc6cc06` (cleanup) and the RSC commit.
 
 ## Abandoned
 

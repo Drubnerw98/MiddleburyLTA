@@ -1,189 +1,66 @@
-"use client";
+import { notFound } from "next/navigation";
+import { adminDb } from "../../../../lib/firebase-admin";
+import PostPageClient, {
+  type Comment,
+  type PostData,
+} from "./PostPageClient";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  orderBy,
-  getDocs,
-} from "firebase/firestore";
-import { db, auth } from "../../../../lib/firebase";
-import { updatePostInlineAction } from "@/app/actions/adminPostAction";
-import { useAuthState } from "react-firebase-hooks/auth";
+export const dynamic = "force-dynamic";
 
-import PostDisplay from "@/app/components/Posts/PostDisplay";
-import PostEdit from "@/app/components/Posts/PostEdit";
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-import { CommentForm } from "@/app/components/Comments/CommentForm";
-import CommentList from "@/app/components/Comments/CommentList";
-import { createCommentAction } from "@/app/actions/createCommentAction";
-import { useIsAdmin } from "@/app/components/Auth/useIsAdmin";
+export default async function PostDetailPage({ params }: Props) {
+  const { id: postId } = await params;
 
-import { softDeleteComment } from "../../../../lib/comments";
-import { editCommentContent } from "../../../../lib/editcomments";
-
-interface Comment {
-  id: string;
-  uid: string;
-  author: string;
-  content: string;
-  timestamp?: { seconds: number };
-  edited?: boolean;
-  deleted?: boolean;
-}
-
-interface PostData {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  tags?: string[];
-  commentsDisabled?: boolean;
-}
-
-export default function PostDetailPage() {
-  const params = useParams();
-  const postId = params.id as string;
-
-  const [post, setPost] = useState<PostData | null>(null);
-  const [editing, setEditing] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [commentError, setCommentError] = useState<string | null>(null);
-  const [user] = useAuthState(auth);
-  const { isAdmin } = useIsAdmin();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const docRef = doc(db, "posts", postId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setPost({ id: docSnap.id, ...docSnap.data() } as PostData);
-      }
-
-      const q = query(
-          collection(db, "posts", postId, "comments"),
-          orderBy("timestamp", "asc")
-      );
-      const snapshot = await getDocs(q);
-      setComments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Comment[]);
-    };
-
-    void fetchData();
-  }, [postId]);
-
-  const refreshComments = async () => {
-    const q = query(
-        collection(db, "posts", postId, "comments"),
-        orderBy("timestamp", "asc")
-    );
-    const snapshot = await getDocs(q);
-    setComments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Comment[]);
-  };
-
-  const handleSubmitAction = async () => {
-    if (!commentText || !user) return;
-
-    const result = await createCommentAction(
-        postId,
-        commentText,
-        user.email || "Anonymous"
-    );
-
-    if (!result.success) {
-      setCommentError(result.message ?? "Something went wrong.");
-      return;
-    }
-
-    setCommentText("");
-    setCommentError(null);
-    await refreshComments();
-  };
-
-  const handleDeleteCommentAction = async (commentId: string) => {
-    await softDeleteComment(postId, commentId);
-    await refreshComments();
-  };
-
-  const handleEditCommentAction = async (commentId: string, newContent: string) => {
-    await editCommentContent(postId, commentId, newContent);
-    await refreshComments();
-  };
-
-  const handleSaveAction = async (updatedPost: PostData) => {
-    const result = await updatePostInlineAction(postId, {
-      title: updatedPost.title,
-      content: updatedPost.content,
-      tags: updatedPost.tags ?? [],
-      imageUrl: updatedPost.imageUrl ?? "",
-      commentsDisabled: updatedPost.commentsDisabled ?? false,
-    });
-    if (!result.success) {
-      console.error("Failed to save post:", result.message);
-      return;
-    }
-    setPost(updatedPost);
-    setEditing(false);
-  };
-
-  if (!post) {
-    return (
-        <div className="flex justify-center items-center min-h-[60vh] text-gray-400">
-          Loading post...
-        </div>
-    );
+  const postSnap = await adminDb.collection("posts").doc(postId).get();
+  if (!postSnap.exists) {
+    notFound();
   }
 
+  const postData = postSnap.data() ?? {};
+  const post: PostData = {
+    id: postSnap.id,
+    title: typeof postData.title === "string" ? postData.title : "",
+    content: typeof postData.content === "string" ? postData.content : "",
+    imageUrl:
+      typeof postData.imageUrl === "string" ? postData.imageUrl : undefined,
+    tags: Array.isArray(postData.tags) ? (postData.tags as string[]) : [],
+    commentsDisabled: postData.commentsDisabled === true,
+  };
+
+  const commentsSnap = await adminDb
+    .collection("posts")
+    .doc(postId)
+    .collection("comments")
+    .orderBy("timestamp", "asc")
+    .get();
+
+  const comments: Comment[] = commentsSnap.docs.map((doc) => {
+    const data = doc.data();
+    // Convert admin Timestamp to a plain serializable shape for the
+    // client. The Comment interface only needs seconds for sorting/display.
+    const timestamp =
+      data.timestamp && typeof data.timestamp.seconds === "number"
+        ? { seconds: data.timestamp.seconds }
+        : undefined;
+    return {
+      id: doc.id,
+      uid: typeof data.uid === "string" ? data.uid : "",
+      author: typeof data.author === "string" ? data.author : "",
+      content: typeof data.content === "string" ? data.content : "",
+      timestamp,
+      edited: data.edited === true,
+      deleted: data.deleted === true,
+    };
+  });
+
   return (
-      <div className="flex justify-center px-4">
-        <div className="w-full max-w-3xl space-y-8">
-          {editing ? (
-              <PostEdit
-                  postId={postId}
-                  post={post}
-                  onSaveAction={handleSaveAction}
-              />
-          ) : (
-              <PostDisplay
-                  title={post.title}
-                  content={post.content}
-                  imageUrl={post.imageUrl}
-                  tags={post.tags}
-              />
-          )}
-
-          {!post.commentsDisabled ? (
-              <div className="bg-[#2c3545]/80 backdrop-blur border border-white/10 shadow-[inset_0_0_0.5px_rgba(255,255,255,0.05)] rounded-lg p-6 mb-12">
-                <h3 className="text-xl font-semibold text-white mb-4">Comments</h3>
-
-                <CommentForm
-                    commentText={commentText}
-                    setCommentTextAction={setCommentText}
-                    onSubmitAction={handleSubmitAction}
-                    isAuthenticated={!!user}
-                />
-
-                {commentError && (
-                    <p className="text-red-400 text-sm mt-2">{commentError}</p>
-                )}
-
-                <CommentList
-                    comments={comments}
-                    isAdmin={isAdmin}
-                    currentUserId={user?.uid || ""}
-                    onDeleteCommentAction={handleDeleteCommentAction}
-                    onEditCommentAction={handleEditCommentAction}
-                />
-              </div>
-          ) : (
-              <div className="bg-[#2c3545]/80 border border-white/10 rounded-lg p-6 mb-12 text-gray-400 italic text-center text-sm shadow-inner">
-                Comments are disabled for this post.
-              </div>
-          )}
-        </div>
-      </div>
+    <PostPageClient
+      postId={postId}
+      initialPost={post}
+      initialComments={comments}
+    />
   );
 }
