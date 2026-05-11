@@ -18,7 +18,7 @@ export default function HeroSection() {
     return (
         <>
             <main className="bg-paper">
-                <div className="mx-auto max-w-3xl px-5 sm:px-8 py-12 sm:py-20">
+                <div className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-20">
                     {/* Hero */}
                     <header>
                         <Eyebrow tone="oxblood">Middlebury Taxpayers</Eyebrow>

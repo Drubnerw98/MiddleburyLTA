@@ -4,7 +4,7 @@ import { DisplayHeading, Eyebrow, Lead } from "@/app/components/ui";
 export default function NotFound() {
   return (
     <main className="bg-paper min-h-screen">
-      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-20 sm:py-32">
+      <div className="mx-auto max-w-4xl px-5 sm:px-8 py-20 sm:py-32">
         <Eyebrow tone="oxblood">404 · Not found</Eyebrow>
         <DisplayHeading level={1} className="mt-3">
           We couldn&rsquo;t find that page.

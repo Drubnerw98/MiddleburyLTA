@@ -31,7 +31,7 @@ const ads: Ad[] = [
 export default function AdsSection() {
     return (
         <section className="bg-paper-deep border-t border-rule">
-            <div className="mx-auto max-w-3xl px-5 sm:px-8 py-14 sm:py-20">
+            <div className="mx-auto max-w-4xl px-5 sm:px-8 py-14 sm:py-20">
                 <Eyebrow tone="oxblood">Our 2026 ads</Eyebrow>
                 <DisplayHeading level={2} as="h2" className="mt-3">
                     What we&rsquo;re telling Middlebury.

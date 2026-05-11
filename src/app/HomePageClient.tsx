@@ -129,7 +129,7 @@ export default function HomePageClient() {
 
   return (
     <main className="bg-paper min-h-screen">
-      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-12 sm:py-20">
+      <div className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-20">
         {/* Header */}
         <header>
           <Eyebrow tone="oxblood">Updates</Eyebrow>
