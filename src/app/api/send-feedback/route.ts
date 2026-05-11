@@ -3,7 +3,10 @@ import { headers } from "next/headers";
 import { Resend } from "resend";
 import { feedbackRatelimit } from "../../../../lib/feedbackRateLimiter";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend is constructed inside the handler, not at module load. The
+// Resend constructor throws when RESEND_API_KEY is missing, which would
+// break `next build` page-data collection in any environment that doesn't
+// have the secret (e.g. GitHub Actions CI).
 
 const FEEDBACK_TO = process.env.FEEDBACK_TO_EMAIL ?? "mta.admn@gmail.com";
 const FEEDBACK_FROM =
@@ -74,6 +77,7 @@ export async function POST(req: Request) {
   const safeMessage = escapeHtml(trimMessage).replace(/\n/g, "<br/>");
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: FEEDBACK_FROM,
       to: [FEEDBACK_TO],
