@@ -38,6 +38,18 @@ export const ASSESSMENT_STEP = 1_000;
 // Source: Town Assessor's office summary, Spring 2026.
 export const DEFAULT_NEW_ASSESSMENT = 394_000;
 
+// Reference checkpoint — 10 Yale St, Middlebury.
+// A real-world outlier: appreciated 46.4% in the 2025 reval (vs. the
+// 35.4% town average), so the old "use town average" auto-estimate
+// understated the real impact for this household.
+//
+//   old assessment  $165,400  →  old tax  $165,400 × 32.52 / 1000 = $5,378.81
+//   new assessment  $242,270  →  new tax  $242,270 × 26.56 / 1000 = $6,434.69
+//   delta                                   +$1,055.88 / +19.63%
+//
+// If the calculator ever reports +$615 / +10.58% for this property,
+// the town-average shortcut has crept back in as a default — fix it.
+
 export function oldAnnualTax(oldAssessment: number): number {
   return (oldAssessment * OLD_MILL_RATE) / 1000;
 }

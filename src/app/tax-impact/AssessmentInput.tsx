@@ -7,7 +7,7 @@ import { ASSESSMENT_MIN, ASSESSMENT_MAX } from './constants';
 type Props = {
   label: string;
   helper?: string;
-  value: number;
+  value: number | null;
   onChange: (value: number) => void;
 };
 
@@ -20,18 +20,19 @@ const formatMoney = (value: number) =>
 
 export default function AssessmentInput({ label, helper, value, onChange }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [inputText, setInputText] = useState(value.toLocaleString());
+  const [inputText, setInputText] = useState(value !== null ? value.toLocaleString() : '');
 
-  // Keep displayed input text in sync with external value changes
-  // (e.g. the slider moving, or town-average derivation flipping on).
+  // Keep the displayed input text in sync with external value changes
+  // (slider moves, etc.). Skip while editing so we don't clobber typing.
   useEffect(() => {
-    if (!isEditing) setInputText(value.toLocaleString());
+    if (!isEditing) setInputText(value !== null ? value.toLocaleString() : '');
   }, [value, isEditing]);
 
   const commit = () => {
     const parsed = parseInt(inputText.replace(/[^\d]/g, ''), 10);
     if (!parsed || isNaN(parsed)) {
-      setInputText(value.toLocaleString());
+      // Invalid: revert to whatever value was set externally.
+      setInputText(value !== null ? value.toLocaleString() : '');
     } else {
       const clean = Math.max(ASSESSMENT_MIN, Math.min(parsed, ASSESSMENT_MAX));
       onChange(clean);
@@ -47,6 +48,12 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
     }
   };
 
+  // Slider needs a number. When empty, anchor it at the minimum so it
+  // doesn't render in an undefined state. The user has to commit a real
+  // number before the slider can do anything useful.
+  const sliderValue = value ?? ASSESSMENT_MIN;
+  const hasValue = value !== null;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-baseline gap-3 flex-wrap">
@@ -59,18 +66,22 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
         <div className="flex items-baseline gap-3 min-h-[40px]">
           {!isEditing ? (
             <>
-              <span className="font-serif text-3xl sm:text-4xl font-semibold tabular-nums text-ink">
-                {formatMoney(value)}
+              <span
+                className={`font-serif text-3xl sm:text-4xl font-semibold tabular-nums ${
+                  hasValue ? 'text-ink' : 'text-rule-strong'
+                }`}
+              >
+                {hasValue ? formatMoney(value) : '$ —'}
               </span>
               <button
                 type="button"
                 onClick={() => {
                   setIsEditing(true);
-                  setInputText(value.toLocaleString());
+                  setInputText(value !== null ? value.toLocaleString() : '');
                 }}
                 className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline-offset-4 hover:underline transition-colors"
               >
-                Edit
+                {hasValue ? 'Edit' : 'Enter'}
               </button>
             </>
           ) : (
@@ -86,6 +97,7 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
                 }}
                 onKeyDown={handleKeyDown}
                 onBlur={commit}
+                placeholder="0"
                 className="pl-7 w-44 font-sans text-xl font-semibold bg-bone border border-ink/40 px-3 py-2 focus:outline-none focus:border-ink text-right text-ink"
                 autoFocus
               />
@@ -93,8 +105,8 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
           )}
         </div>
       </div>
-      <div className="px-1">
-        <TaxImpactSlider confirmedValue={value} onConfirmedValueChange={onChange} />
+      <div className={`px-1 ${hasValue ? '' : 'opacity-40'}`}>
+        <TaxImpactSlider confirmedValue={sliderValue} onConfirmedValueChange={onChange} />
       </div>
     </div>
   );
