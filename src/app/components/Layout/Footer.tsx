@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
         <footer className="w-full bg-paper border-t border-rule-strong">
@@ -13,18 +15,18 @@ export default function Footer() {
                     </div>
 
                     <nav className="flex flex-wrap gap-x-6 gap-y-2 font-sans text-sm">
-                        <a href="/tax-impact" className="text-ink-soft hover:text-oxblood transition-colors">
+                        <Link href="/tax-impact" className="text-ink-soft hover:text-oxblood transition-colors">
                             Tax Impact
-                        </a>
-                        <a href="/articles" className="text-ink-soft hover:text-oxblood transition-colors">
+                        </Link>
+                        <Link href="/articles" className="text-ink-soft hover:text-oxblood transition-colors">
                             Articles
-                        </a>
-                        <a href="/who-we-are" className="text-ink-soft hover:text-oxblood transition-colors">
+                        </Link>
+                        <Link href="/who-we-are" className="text-ink-soft hover:text-oxblood transition-colors">
                             Who We Are
-                        </a>
-                        <a href="/updates" className="text-ink-soft hover:text-oxblood transition-colors">
+                        </Link>
+                        <Link href="/updates" className="text-ink-soft hover:text-oxblood transition-colors">
                             Updates
-                        </a>
+                        </Link>
                         <a href="mailto:mta.admn@gmail.com" className="text-ink-soft hover:text-oxblood transition-colors">
                             Contact
                         </a>
