@@ -51,7 +51,7 @@ export default function RootLayout({
             <meta name="theme-color" content="#F7F3EA" />
             <title>Middlebury Taxpayers</title>
         </head>
-        <body className="font-sans text-[#2E3D52] bg-white min-h-screen flex flex-col">
+        <body className="font-sans text-ink bg-paper min-h-screen flex flex-col">
         <NavBar />
         <main className="flex-grow">{children}</main>
         <Footer />
