@@ -85,17 +85,20 @@ To update for a future revaluation or rate change, edit
 
 ## Tech
 
-- **Next.js 15** (App Router, Turbopack, server actions)
+- **Next.js 15** (App Router, Turbopack, server actions, edge
+  middleware)
 - **React 19**, **TypeScript**, **Tailwind v4** with CSS-based `@theme`
   tokens
 - **Source Serif 4** + **Inter** loaded via `next/font/google` as the
   display + body type pairing
 - **Firebase** (Auth + Firestore + Storage), with `firebase-admin` for
   server-side privileged ops
+- **Zod** for boundary validation on every server action + API route
 - **Upstash Redis** for rate limiting (`@upstash/ratelimit`)
 - **Resend** for the contact-form email
-- **Radix UI** for the accessible slider
-- **Framer Motion** for entrance animations on posts surfaces
+- **Radix UI** for the accessible slider (`@radix-ui/react-slider`) and
+  modal primitives (`@radix-ui/react-dialog`)
+- **Framer Motion** for modal entrance/exit animations
 - Deployed on **Vercel**
 
 ## Design system
@@ -123,26 +126,35 @@ visualizations carry the pages. Image attributions live in
 ## Project layout
 
 ```
+next.config.ts          CSP + security headers (HSTS, X-Frame-Options,
+                        Permissions-Policy, Referrer-Policy)
+src/middleware.ts       edge middleware: gates /admin/* on the
+                        __session cookie before the layout renders
 src/app/
   page.tsx              landing page -> HeroSection + AdsSection
   HomePageClient.tsx    posts feed renderer (used by /updates)
   layout.tsx            root layout: fonts, NavBar, Footer, metadata
-  globals.css           @theme tokens, @layer base rules
+  globals.css           @theme tokens, @layer base rules, markdown
   tax-impact/
     page.tsx            calculator page
     constants.ts        all tax math: mill rates, bond rates, pure fns,
                         cited sources, numeric checkpoints
     AssessmentInput.tsx slider + numeric-edit input (number | null)
     TaxImpactSlider.tsx Radix-based assessment slider
-  articles/             external links page (Firestore-backed)
+  articles/             external links page (RSC, reads via adminDb)
   who-we-are/           About page with Drubner / Atlantic / Murtha bios
   updates/              posts feed (HomePageClient)
-  post/[id]/            single post with comments
+  post/[id]/            single post with comments (RSC + client island)
   admin/                admin dashboard (claim-gated)
   api/
     session/            login/logout: mints + clears the session cookie
     send-feedback/      contact form -> Resend, lazy-instantiated
-  actions/              server actions (createCommentAction, etc.)
+  actions/              server actions: createCommentAction,
+                        adminLinkActions, adminAboutAction,
+                        adminSettingsAction, adminCommentAction,
+                        adminPostAction. All run getUserIfAdmin()
+                        and parse input with Zod before writing
+                        via adminDb.
   components/
     ui/                 editorial-civic primitives (Eyebrow,
                         DisplayHeading, Lead, StatCard, Pullquote,
@@ -150,16 +162,21 @@ src/app/
     HeroSection.tsx     landing-page hero (typography-led)
     AdsSection.tsx      "Our 2026 ads" landing-page block
     AboutTheNumbers.tsx editorial blocks of 2026 facts
+    AnimatedModal.tsx   Radix Dialog + Framer Motion entrance
+    Posts/PostControls.tsx server actions for create/edit/delete post
+                          (lives next to the editor UI because of the
+                          FormData + image-upload coupling)
     Layout/             NavBar + Footer
     Auth/, Comments/, Posts/, Admin/  feature-scoped UI
 lib/
-  firebase.ts           web SDK init (client)
-  firebase-admin.ts     admin SDK init (server, lazy)
-  auth.ts               session-cookie helpers + admin claim check
+  firebase.ts           web SDK init (client; do NOT use server-side,
+                        GRPC Listen stream is unreliable in serverless)
+  firebase-admin.ts     admin SDK init (server, lazy proxy)
+  auth.ts               session-cookie helpers + getUserIfAdmin()
   rateLimiter.ts        general 5 req / 10s slider
   commentRateLimiter.ts 1 comment / 15s per user
-  feedbackRateLimiter.ts 3 emails / hour per IP
-  searchPosts.ts        Firestore query for the search bar
+  feedbackRateLimiter.ts per-IP (3/hour) + global circuit breaker
+                        (50/hour) for /api/send-feedback
 docs/
   followups.md          deferred / open project-scoped work
 public/
@@ -167,7 +184,9 @@ public/
   images/
     ATTRIBUTION.md      image licensing record
   docs/                 publicly linked PDFs (ads, source docs)
-firestore.rules         versioned Firestore security rules
+firestore.rules         allow read: if true on the public collections;
+                        allow write: if false site-wide (server
+                        actions are the only write path)
 storage.rules           Firebase Storage rules (admin-only writes)
 scripts/setAdmin.js     grant or revoke the `admin` custom claim on a user
 ```
@@ -178,6 +197,9 @@ scripts/setAdmin.js     grant or revoke the `admin` custom claim on a user
 - On login, the client posts the Firebase ID token to `/api/session`. The
   server verifies it and exchanges it for a long-lived **session cookie**
   (5 days), set as `__session` httpOnly + Secure.
+- On logout, `DELETE /api/session` calls `revokeRefreshTokens()` before
+  clearing the cookie so a stolen cookie is invalidated within one
+  request cycle instead of remaining valid for the full 5-day window.
 - Server actions and API routes call `getCurrentUser()` from `lib/auth.ts`,
   which calls `verifySessionCookie(cookie, true)`. The `true` flag checks
   for revocation.
@@ -185,6 +207,15 @@ scripts/setAdmin.js     grant or revoke the `admin` custom claim on a user
   match. Grant or revoke via `scripts/setAdmin.js`. The server reads the
   claim from the verified session cookie; the client reads it from
   `getIdTokenResult().claims.admin` via the `useIsAdmin` hook.
+- **All admin writes flow through server actions** in `src/app/actions/`
+  (and `src/app/components/Posts/PostControls.tsx` for posts). Each
+  action runs `getUserIfAdmin()` at the top, validates input with Zod
+  (URL allowlist, length caps, MIME allowlist for uploads), then writes
+  via `adminDb`. `firestore.rules` is `allow write: if false` site-wide —
+  the rules are a safety net, not the primary gate.
+- The `/admin` route is also gated by edge middleware (`src/middleware.ts`)
+  that redirects unauthenticated requests to `/` before the layout
+  renders, killing the auth-flash.
 
 ## Local development
 

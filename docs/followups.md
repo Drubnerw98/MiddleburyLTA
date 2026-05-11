@@ -89,9 +89,6 @@ The original `16 UNAUTHENTICATED` from `adminDb` turned out to be the service-ac
 
 **Takeaway for future RSC work in this repo:** Default to `adminDb` for any server-side Firestore read. The web SDK is a browser/long-lived-Node tool and is not safe to assume works in a serverless RSC even with public reads.
 
-
-
-
 ### 2026-05-11 — Activate AdsSection once ad PDFs land (resolved)
 
 **What:** `src/app/components/AdsSection.tsx` was built but unmounted on May 11 because the two ad PDFs were not yet in `public/docs/`. Same-session resolution: the PDFs were dropped into `public/docs/harsh-reality-may-2026.pdf` and `public/docs/closed-for-business-may-2026.pdf`, the component's `href` values were updated to match, and `<AdsSection />` was mounted in `src/app/page.tsx` below `<HeroSection />`.
