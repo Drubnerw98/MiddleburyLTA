@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import { saveAboutAction } from '@/app/actions/adminAboutAction';
 
 export default function AboutEditor() {
     const [content, setContent] = useState('');
@@ -10,6 +11,9 @@ export default function AboutEditor() {
     const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
+        // Read is fine via client SDK (publicly readable per firestore.rules).
+        // Writes go through the saveAboutAction below so the admin claim is
+        // re-verified server-side and content is length-capped.
         const fetchAbout = async () => {
             const docRef = doc(db, 'pages', 'about');
             const docSnap = await getDoc(docRef);
@@ -24,14 +28,13 @@ export default function AboutEditor() {
 
     const handleSave = () => {
         setStatus('Saving...');
-        startTransition(() => {
-            const docRef = doc(db, 'pages', 'about');
-            setDoc(docRef, { content })
-                .then(() => setStatus('Saved.'))
-                .catch((err) => {
-                    console.error(err);
-                    setStatus('Error saving.');
-                });
+        startTransition(async () => {
+            const result = await saveAboutAction(content);
+            if (result.success) {
+                setStatus('Saved.');
+            } else {
+                setStatus(result.message ?? 'Error saving.');
+            }
         });
     };
 

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import { saveSettingsAction } from '@/app/actions/adminSettingsAction';
 
 export default function SettingsPanel() {
     const [emailNotifications, setEmailNotifications] = useState(false);
@@ -10,6 +11,9 @@ export default function SettingsPanel() {
     const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
+        // Read via client SDK (admin doc is publicly readable per
+        // firestore.rules so the public site can check toggles). Writes go
+        // through saveSettingsAction so the admin claim is re-verified.
         const fetchSettings = async () => {
             const docRef = doc(db, 'admin', 'settings');
             const docSnap = await getDoc(docRef);
@@ -22,14 +26,13 @@ export default function SettingsPanel() {
 
     const handleSave = () => {
         setStatus('Saving...');
-        startTransition(() => {
-            const docRef = doc(db, 'admin', 'settings');
-            setDoc(docRef, { emailNotifications })
-                .then(() => setStatus('Saved.'))
-                .catch((err) => {
-                    console.error(err);
-                    setStatus('Error saving.');
-                });
+        startTransition(async () => {
+            const result = await saveSettingsAction({ emailNotifications });
+            if (result.success) {
+                setStatus('Saved.');
+            } else {
+                setStatus(result.message ?? 'Error saving.');
+            }
         });
     };
 

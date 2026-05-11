@@ -10,12 +10,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Confirm AdsSection placeholder copy against the real ads](#2026-05-11--confirm-adssection-placeholder-copy-against-the-real-ads)
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
   - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
-  - [2026-05-11 — SECURITY: migrate admin Firestore writes to server actions with Zod](#2026-05-11--security-migrate-admin-firestore-writes-to-server-actions-with-zod)
-  - [2026-05-11 — SECURITY: validate post image uploads](#2026-05-11--security-validate-post-image-uploads)
-  - [2026-05-11 — SECURITY: revoke refresh tokens on logout](#2026-05-11--security-revoke-refresh-tokens-on-logout)
-  - [2026-05-11 — SECURITY: harden /api/send-feedback against IP spoofing and CSRF](#2026-05-11--security-harden-apisend-feedback-against-ip-spoofing-and-csrf)
-  - [2026-05-11 — SECURITY: sanitize URLs in markdown and link inputs](#2026-05-11--security-sanitize-urls-in-markdown-and-link-inputs)
-  - [2026-05-11 — SECURITY: add CSP + security headers + /admin middleware](#2026-05-11--security-add-csp--security-headers--admin-middleware)
   - [2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)](#2026-05-11--resolve-29-npm-audit-vulnerabilities-3-critical-9-high)
   - [2026-05-11 — Convert home, /articles, /post pages to RSC](#2026-05-11--convert-home-articles-post-pages-to-rsc)
   - [2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive](#2026-05-11--modal-accessibility-focus-trap-aria-dialog-primitive)
@@ -23,6 +17,12 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
+  - [2026-05-11 — SECURITY: migrate admin Firestore writes to server actions with Zod](#2026-05-11--security-migrate-admin-firestore-writes-to-server-actions-with-zod-resolved)
+  - [2026-05-11 — SECURITY: validate post image uploads](#2026-05-11--security-validate-post-image-uploads-resolved)
+  - [2026-05-11 — SECURITY: revoke refresh tokens on logout](#2026-05-11--security-revoke-refresh-tokens-on-logout-resolved)
+  - [2026-05-11 — SECURITY: harden /api/send-feedback against IP spoofing and CSRF](#2026-05-11--security-harden-apisend-feedback-against-ip-spoofing-and-csrf-resolved)
+  - [2026-05-11 — SECURITY: sanitize URLs in markdown and link inputs](#2026-05-11--security-sanitize-urls-in-markdown-and-link-inputs-resolved)
+  - [2026-05-11 — SECURITY: add CSP + security headers + /admin middleware](#2026-05-11--security-add-csp--security-headers--admin-middleware-resolved)
 - [Abandoned](#abandoned)
 
 ## Active
@@ -60,70 +60,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **Shape of work:** Two passes. (1) Public-facing post components (PostFeed, PostPreview, PostDisplay, LinkPreview) — apply paper / bone / ink / oxblood, lift typography to serif headlines + sans body to match Articles. Tag pills become small oxblood text links instead of yellow-tinted chips. (2) Admin/editor surfaces (PostManager, PostEdit, CommentManager, admin dashboard) — less aesthetic load, but should at least drop the yellow buttons in favor of bg-ink.
 
 **Open questions:** Do tagged posts need their own listing/filter UI, or is the search bar enough? Are comments going to stay or be reconsidered? (Comment styling lives in the same neglected pocket.)
-
-### 2026-05-11 — SECURITY: migrate admin Firestore writes to server actions with Zod
-
-**What:** Several admin surfaces write directly to Firestore from the browser using the Web SDK: `LinkManager.tsx:19` (`addDoc` to `external_links`), `AboutEditor.tsx:29` (`setDoc` to `admin/about`), `SettingsPanel.tsx:27` (`setDoc` to `admin/settings`), `CommentManager.tsx:64` (`updateDoc`/`deleteDoc` on comments), `src/app/post/[id]/page.tsx:117-118` (`updateDoc` on full post from the edit UI). All rely on `firestore.rules` admin-claim enforcement, with zero server-side validation, length caps, or URL sanitization. A compromised admin token = unbounded writes; a future rules bug = wide-open writes. The `external_links` URL field is the worst — it's never validated, so `javascript:` schemes become stored XSS on `/articles`.
-
-**Why noticed:** May 11, 2026 security audit (two independent passes both flagged).
-
-**Anchors:** `src/app/components/LinkManager.tsx`, `src/app/components/AboutEditor.tsx`, `src/app/components/SettingsPanel.tsx`, `src/app/components/CommentManager.tsx`, `src/app/post/[id]/page.tsx`, `src/app/components/LinkPreview.tsx:11-13` (where the unsanitized URL renders), `firestore.rules`.
-
-**What's been considered:** Drub's CLAUDE.md "schema as contract AND validator" rule fits exactly. One Zod schema per write surface gives the same shape on client + server.
-
-**Shape of work:** For each surface: create a server action under `src/app/actions/`, define a Zod schema (URL allowlist `http(s)`/`mailto`, length caps everywhere, tag count caps), call `getUserIfAdmin()` at the top, parse with Zod, then write via `adminDb`. Strip the client-side `addDoc`/`updateDoc`/`setDoc`/`deleteDoc` calls and replace with action invocations. Update `firestore.rules` to deny client writes on `external_links`, `admin/*` (rules become a safety net, not the primary gate).
-
-**Open questions:** Do we keep client SDK writes for comments (where rate-limit-by-uid already runs in `createCommentAction`)? Probably yes — that path is the model the others should follow.
-
-### 2026-05-11 — SECURITY: validate post image uploads
-
-**What:** `PostControls.tsx:22-38` accepts any `File` from the multipart `FormData` and uploads to `post-images/${fileId}-${image.name}` with `public: true` on the storage bucket. No MIME check, no size cap beyond Next's 5 MB body limit, the original filename is interpolated raw into the storage path. A malicious admin (or compromised token) can upload an SVG with embedded scripts, a 4.9 MB file to drive storage cost, or use a crafted filename for path-traversal-adjacent shenanigans.
-
-**Why noticed:** May 11, 2026 security audit.
-
-**Anchors:** `src/app/components/Posts/PostControls.tsx:22-38`, `storage.rules` (currently deny-all, which is correct — the Admin SDK is the upload path).
-
-**Shape of work:** Allowlist `image/png|image/jpeg|image/webp|image/gif`, cap `image.size` at ~2 MB, derive the file extension from the validated MIME (not the user-supplied filename), build the storage path as `post-images/${fileId}.${ext}`. Optional: run the buffer through a tiny `image-size`-style check to confirm magic bytes match the MIME.
-
-### 2026-05-11 — SECURITY: revoke refresh tokens on logout
-
-**What:** `DELETE /api/session` only clears the `__session` browser cookie. It does NOT call `auth.revokeRefreshTokens(uid)`, so a stolen session cookie remains valid for the full 5-day window even after a "Log out" click. Firebase only treats a session as revoked once refresh tokens are revoked server-side.
-
-**Why noticed:** May 11, 2026 security audit.
-
-**Anchors:** `src/app/api/session/route.ts` (`DELETE` handler), `lib/auth.ts:20` (where `checkRevoked: true` is enforced on verification).
-
-**Shape of work:** In `DELETE`, read the session cookie, run `verifySessionCookie(cookie, true)` to extract `uid` (catching expired/invalid), then call `getAdminAuth().revokeRefreshTokens(uid)` before clearing the cookie. Tolerate failures (already-revoked, expired) gracefully — logout should always succeed on the client side.
-
-### 2026-05-11 — SECURITY: harden /api/send-feedback against IP spoofing and CSRF
-
-**What:** The feedback handler keys its rate limiter on `x-forwarded-for.split(',')[0]` (`src/app/api/send-feedback/route.ts:31`) with no validation. On Vercel the platform sets this header, but a direct request to the underlying runtime or any deployment without the right proxy chain lets an attacker rotate IPs per request and bypass the 3/hour cap — every accepted request bills a Resend send and lands in `mta.admn@gmail.com`'s inbox. The handler also has no `Origin` check, so cross-origin POSTs from any other site succeed.
-
-**Why noticed:** May 11, 2026 security audit.
-
-**Anchors:** `src/app/api/send-feedback/route.ts:31`, `lib/feedbackRateLimiter.ts`.
-
-**Shape of work:** (1) Use Next.js's `request.ip` (Edge) or Vercel's `x-real-ip` header for the rate-limit key. (2) Add a global per-deployment circuit-breaker bucket (e.g. 100/hour total) on top of the per-IP bucket so an attacker can't email-bomb even if they break the IP key. (3) Verify `Origin` matches an allowlist (`https://middleburytaxpayers.com`) on every state-changing route; reject mismatches with 403.
-
-### 2026-05-11 — SECURITY: sanitize URLs in markdown and link inputs
-
-**What:** `react-markdown@10` is safe by default (no `rehype-raw`, so raw HTML is stripped), but markdown links are NOT URL-sanitized — `[click](javascript:alert(1))` renders as a clickable XSS sink. Same risk on `external_links.url` (admin-typed URL stored raw, rendered in `LinkPreview.tsx:13` as an anchor `href`). Admin-only today, but the markdown editor goes to a public page (posts) and the URL field renders on `/articles`.
-
-**Why noticed:** May 11, 2026 security audit (also overlaps with admin-write-surface item above).
-
-**Anchors:** `src/app/components/Posts/PostDisplay.tsx:60` (markdown render), `src/app/components/LinkPreview.tsx:13` (link href), `src/app/components/AboutEditor.tsx` (About markdown).
-
-**Shape of work:** Add `rehype-sanitize` to the markdown pipeline (or use ReactMarkdown's `urlTransform` prop with a scheme allowlist). Validate `external_links.url` with a Zod schema that asserts `URL.protocol === 'https:' || === 'http:'` as part of the admin-write refactor.
-
-### 2026-05-11 — SECURITY: add CSP + security headers + /admin middleware
-
-**What:** No `Content-Security-Policy`, `X-Frame-Options`, `Referrer-Policy`, or `Permissions-Policy` headers are set. Direct hits to `/admin` flash the dashboard layout to unauthenticated users before the client-side check redirects — there's no edge gate. A strict CSP would also serve as defense-in-depth against the residual XSS surfaces above.
-
-**Why noticed:** May 11, 2026 security audit.
-
-**Anchors:** `next.config.ts` (does not exist — needs creating or `next.config.mjs`), missing `src/middleware.ts`, `src/app/admin/page.tsx`.
-
-**Shape of work:** (1) Add `next.config.ts` with `headers()` returning CSP (start with `default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://vercel.live; ...`), `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`. (2) Add `src/middleware.ts` that runs on `/admin/:path*` and redirects to `/` if no `__session` cookie is present (verify in the route, not the middleware — keep middleware fast).
 
 ### 2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)
 
@@ -178,6 +114,42 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **What:** David and Norman Drubner were removed as a named individuals section on `/who-we-are`. In their place, two corporate sections were added: Drubner Equities (David's firm) and Atlantic Management (their industrial development partner), each with a logo and a corporate bio supplied by David. The Murtha Enterprises / Route 188 LLC section was preserved unchanged.
 
 **Anchors:** `src/app/who-we-are/page.tsx`, `public/images/drubner-equities-logo.png`, `public/images/atlantic-management-logo.png`.
+
+### 2026-05-11 — SECURITY: migrate admin Firestore writes to server actions with Zod (resolved)
+
+**What:** All admin client-side Firestore writes moved to server actions in `src/app/actions/`. Each action runs `getUserIfAdmin()` at the top, parses with a Zod schema (URL allowlist, length caps, tag count caps), then writes via `adminDb`. Five new actions: `adminLinkActions.ts` (createLinkAction, deleteLinkAction), `adminAboutAction.ts` (saveAboutAction), `adminSettingsAction.ts` (saveSettingsAction), `adminCommentAction.ts` (deleteCommentAsAdminAction), `adminPostAction.ts` (updatePostInlineAction for the /post/[id] inline editor). Client components (`LinkManager`, `AboutEditor`, `SettingsPanel`, `CommentManager`, `post/[id]/page.tsx`) now call these actions instead of `addDoc`/`updateDoc`/`setDoc`/`deleteDoc`. `firestore.rules` tightened to `allow write: if false` across all collections — server actions are the only write path, rules are the safety net.
+
+**Anchors:** `src/app/actions/adminLinkActions.ts`, `adminAboutAction.ts`, `adminSettingsAction.ts`, `adminCommentAction.ts`, `adminPostAction.ts`, `firestore.rules`.
+
+### 2026-05-11 — SECURITY: validate post image uploads (resolved)
+
+**What:** `PostControls.tsx`'s `uploadImageToStorage` now allowlists MIME types (PNG/JPEG/WebP/GIF), caps file size at 2 MB, and builds the storage path from a UUID + the extension derived from the validated MIME — the user-supplied filename is discarded. Returns a user-safe error message on validation failure via a new `UploadError` class. SVG is explicitly excluded (script vector when served from a public bucket).
+
+**Anchors:** `src/app/components/Posts/PostControls.tsx` (`uploadImageToStorage`, `createPostAction`, `editPostAction`).
+
+### 2026-05-11 — SECURITY: revoke refresh tokens on logout (resolved)
+
+**What:** `DELETE /api/session` now reads the session cookie, runs `verifySessionCookie(cookie, true)` to extract `uid`, and calls `revokeRefreshTokens(decoded.sub)` before clearing the cookie. An already-expired or invalid cookie is tolerated (logout still succeeds for the user). Stolen session cookies are invalidated within the next request cycle instead of remaining valid for the full 5-day window.
+
+**Anchors:** `src/app/api/session/route.ts` (DELETE handler), `lib/auth.ts`.
+
+### 2026-05-11 — SECURITY: harden /api/send-feedback against IP spoofing and CSRF (resolved)
+
+**What:** Three changes: (1) Origin allowlist check at the top of POST — anything not in the production / dev origin set returns 403 before any work. (2) Two-layer rate limit: per-IP (3/hour) keyed on `x-real-ip` (Vercel-set) with `x-forwarded-for` fallback, plus a global circuit breaker (50/hour) on a single key that fires regardless of IP attribution. (3) `feedbackRateLimiter.ts` split into `feedbackRatelimit` (per-IP) + `feedbackGlobalRatelimit`, both checked before sending.
+
+**Anchors:** `src/app/api/send-feedback/route.ts`, `lib/feedbackRateLimiter.ts`.
+
+### 2026-05-11 — SECURITY: sanitize URLs in markdown and link inputs (resolved)
+
+**What:** Two paths: (1) `PostDisplay.tsx` now passes `urlTransform={safeUrl}` to ReactMarkdown, which drops any link whose protocol isn't `https`/`http`/`mailto`. Prevents `[click](javascript:...)` becoming a clickable href. (2) Link URLs are validated server-side in `adminLinkActions.createLinkAction` via the same allowlist. Bad URLs are rejected before they hit Firestore.
+
+**Anchors:** `src/app/components/Posts/PostDisplay.tsx` (`safeUrl`), `src/app/actions/adminLinkActions.ts` (`SAFE_URL_SCHEMES`).
+
+### 2026-05-11 — SECURITY: add CSP + security headers + /admin middleware (resolved)
+
+**What:** `next.config.ts` (new) declares site-wide security headers: a CSP allowing only the explicit external services we depend on (Firebase, Vercel Analytics, Google Fonts, Upstash), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `Strict-Transport-Security` with two-year max-age + preload. `src/middleware.ts` (new) matches `/admin/:path*` and redirects to `/` when the `__session` cookie is absent — kills the layout-flash before the page-level admin guard kicks in.
+
+**Anchors:** `next.config.ts`, `src/middleware.ts`.
 
 ## Abandoned
 

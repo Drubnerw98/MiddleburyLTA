@@ -16,19 +16,52 @@ function parseTags(raw: unknown): string[] {
     .filter(Boolean);
 }
 
+// Allowlist of MIME types we accept for post hero images. SVG is
+// excluded intentionally — SVGs can carry inline scripts and we
+// serve image URLs from a public bucket. Animated GIFs allowed for
+// editorial reasons.
+const ALLOWED_IMAGE_TYPES: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+// Hard cap below the Next 5MB body limit so we reject before reading
+// the whole body. Anything bigger should be optimized first.
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+class UploadError extends Error {}
+
 /**
- * Uploads an image to Firebase Storage and returns its public URL.
+ * Uploads a validated image to Firebase Storage and returns its public URL.
+ * Throws UploadError with a user-safe message if the file fails validation.
  */
 async function uploadImageToStorage(image: File): Promise<string> {
+  const ext = ALLOWED_IMAGE_TYPES[image.type];
+  if (!ext) {
+    throw new UploadError(
+      `Unsupported image type. Use PNG, JPEG, WebP, or GIF.`,
+    );
+  }
+  if (image.size > MAX_IMAGE_BYTES) {
+    throw new UploadError(
+      `Image is too large. Max ${MAX_IMAGE_BYTES / 1024 / 1024}MB.`,
+    );
+  }
+
+  // Build the storage path from a UUID + the extension we derived from
+  // the (validated) MIME. The original filename is discarded so a
+  // crafted filename can't influence the storage path.
   const fileId = uuidv4();
+  const filename = `post-images/${fileId}.${ext}`;
   const bucket = adminStorage.bucket();
-  const filename = `post-images/${fileId}-${image.name}`;
   const file = bucket.file(filename);
   const buffer = Buffer.from(await image.arrayBuffer());
 
   await file.save(buffer, {
     metadata: {
-      contentType: image.type || "application/octet-stream",
+      contentType: image.type,
       cacheControl: "public, max-age=3600",
     },
     public: true,
@@ -70,7 +103,14 @@ export async function createPostAction(formData: FormData) {
 
   let imageUrl = "";
   if (image && image.size > 0) {
-    imageUrl = await uploadImageToStorage(image);
+    try {
+      imageUrl = await uploadImageToStorage(image);
+    } catch (err) {
+      if (err instanceof UploadError) {
+        return { success: false, message: err.message };
+      }
+      throw err;
+    }
   }
 
   await adminDb.collection("posts").add({
@@ -129,10 +169,19 @@ export async function editPostAction(formData: FormData) {
   }
 
   if (image && image.size > 0) {
+    let newUrl: string;
+    try {
+      newUrl = await uploadImageToStorage(image);
+    } catch (err) {
+      if (err instanceof UploadError) {
+        return { success: false, message: err.message };
+      }
+      throw err;
+    }
     if (existingData.imageUrl) {
       await deleteImageByUrl(existingData.imageUrl);
     }
-    updateData.imageUrl = await uploadImageToStorage(image);
+    updateData.imageUrl = newUrl;
   }
 
   await docRef.update(updateData);

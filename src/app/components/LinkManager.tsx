@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { db } from '../../../lib/firebase'
+import { createLinkAction } from '@/app/actions/adminLinkActions'
 
 export default function LinkManager() {
     const [title, setTitle] = useState('')
@@ -10,41 +9,59 @@ export default function LinkManager() {
     const [description, setDescription] = useState('')
     const [source, setSource] = useState('')
     const [datePublished, setDatePublished] = useState('')
-    const [success, setSuccess] = useState(false)
+    const [status, setStatus] = useState<
+        | { kind: 'idle' }
+        | { kind: 'saving' }
+        | { kind: 'success' }
+        | { kind: 'error'; message: string }
+    >({ kind: 'idle' })
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setStatus({ kind: 'saving' })
 
-        try {
-            await addDoc(collection(db, 'external_links'), {
-                title,
-                url,
-                description,
-                source,
-                datePublished,
-                createdAt: serverTimestamp(),
+        const result = await createLinkAction({
+            title,
+            url,
+            description,
+            source,
+            datePublished,
+        })
+
+        if (!result.success) {
+            const fieldMsg = result.fieldErrors
+                ? Object.entries(result.fieldErrors)
+                      .map(([k, v]) => `${k}: ${v?.join(', ')}`)
+                      .join(' · ')
+                : ''
+            setStatus({
+                kind: 'error',
+                message: result.message ?? fieldMsg ?? 'Failed to save link.',
             })
-
-            setSuccess(true)
-            setTitle('')
-            setUrl('')
-            setDescription('')
-            setSource('')
-            setDatePublished('')
-
-            setTimeout(() => setSuccess(false), 3000)
-        } catch (err) {
-            console.error('Error adding document:', err)
+            return
         }
+
+        setStatus({ kind: 'success' })
+        setTitle('')
+        setUrl('')
+        setDescription('')
+        setSource('')
+        setDatePublished('')
+        setTimeout(() => setStatus({ kind: 'idle' }), 3000)
     }
 
     return (
         <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md border border-gray-200">
             <h2 className="text-2xl font-semibold text-[#1A2E49] mb-6">Add New Article or Link</h2>
 
-            {success && (
+            {status.kind === 'success' && (
                 <p className="text-green-600 mb-4 transition-opacity duration-300">
                     Link added successfully!
+                </p>
+            )}
+            {status.kind === 'error' && (
+                <p className="text-red-600 mb-4 text-sm">
+                    {status.message}
                 </p>
             )}
 
@@ -98,9 +115,10 @@ export default function LinkManager() {
 
                 <button
                     type="submit"
-                    className="bg-[#1A2E49] text-white px-6 py-2 rounded-md hover:bg-[#2e4a6e] transition"
+                    disabled={status.kind === 'saving'}
+                    className="bg-[#1A2E49] text-white px-6 py-2 rounded-md hover:bg-[#2e4a6e] transition disabled:opacity-60"
                 >
-                    Submit
+                    {status.kind === 'saving' ? 'Saving…' : 'Submit'}
                 </button>
             </form>
         </div>

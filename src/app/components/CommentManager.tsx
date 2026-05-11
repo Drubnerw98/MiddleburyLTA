@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import { deleteCommentAsAdminAction } from '@/app/actions/adminCommentAction';
 
 interface Comment {
   id: string;
@@ -16,6 +17,7 @@ export default function CommentManager() {
   const [postTitles, setPostTitles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -60,13 +62,19 @@ export default function CommentManager() {
   }, []);
 
   const handleDelete = async (postId: string, commentId: string) => {
+    const key = `${postId}-${commentId}`;
+    setPendingDelete(key);
     try {
-      await deleteDoc(doc(db, 'posts', postId, 'comments', commentId));
+      const result = await deleteCommentAsAdminAction(postId, commentId);
+      if (!result.success) {
+        console.error('Delete failed:', result.message);
+        return;
+      }
       setComments((prev) =>
           prev.filter((c) => !(c.id === commentId && c.postId === postId))
       );
-    } catch (err) {
-      console.error('Failed to delete comment:', err);
+    } finally {
+      setPendingDelete(null);
     }
   };
 
@@ -89,9 +97,12 @@ export default function CommentManager() {
         )}
 
         <div className="space-y-6">
-          {comments.map((comment) => (
+          {comments.map((comment) => {
+            const key = `${comment.postId}-${comment.id}`;
+            const isDeleting = pendingDelete === key;
+            return (
               <div
-                  key={`${comment.postId}-${comment.id}`}
+                  key={key}
                   className="border border-gray-300 p-5 rounded-md shadow-sm hover:shadow transition bg-gray-50"
               >
                 <p className="text-sm text-gray-800 italic mb-2">“{comment.text}”</p>
@@ -108,12 +119,14 @@ export default function CommentManager() {
 
                 <button
                     onClick={() => handleDelete(comment.postId, comment.id)}
-                    className="mt-3 px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-500 transition"
+                    disabled={isDeleting}
+                    className="mt-3 px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-500 transition disabled:opacity-60"
                 >
-                  Delete
+                  {isDeleting ? 'Deleting…' : 'Delete'}
                 </button>
               </div>
-          ))}
+            );
+          })}
         </div>
       </div>
   );

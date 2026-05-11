@@ -1,53 +1,49 @@
 rules_version = '2';
 
-// Defense in depth — every privileged write is also enforced by server actions
-// behind the admin custom claim. These rules are the secondary layer in case
-// any path slips past the server-side check.
+// All writes are now performed server-side via the Admin SDK (which
+// bypasses these rules) from server actions that validate input with
+// Zod and re-check the admin claim. Client writes are denied across
+// the board as a safety net. Reads remain public on the surfaces the
+// public site needs.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isAdmin() {
-      return isSignedIn() && request.auth.token.admin == true;
-    }
-
-    // Public-facing posts: anyone can read; only admins can mutate.
+    // Public-facing posts and their comments. Reads are open; all
+    // writes flow through server actions in src/app/actions/.
     match /posts/{postId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if false;
 
-      // Comments on a post:
-      //  - anyone can read
-      //  - signed-in users can create their own comment (must own the uid field)
-      //  - the comment owner OR an admin can edit/delete
       match /comments/{commentId} {
         allow read: if true;
-
-        allow create: if isSignedIn()
-          && request.resource.data.uid == request.auth.uid;
-
-        allow update, delete: if isAdmin()
-          || (isSignedIn() && resource.data.uid == request.auth.uid);
+        allow write: if false;
       }
     }
 
-    // Curated external links (Articles & Links page).
+    // Curated external links (Articles & Links page). Reads public,
+    // writes through adminLinkActions.ts only.
     match /external_links/{linkId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if false;
     }
 
-    // Editable About copy + admin settings.
+    // Editable About copy. Reads public so AboutEditor can prefill,
+    // writes through adminAboutAction.ts.
+    match /pages/{pageId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Admin settings (e.g. emailNotifications toggle). Reads public
+    // because surfaces need to know the toggle state; writes through
+    // adminSettingsAction.ts.
     match /admin/{docId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if false;
     }
 
-    // Default deny — anything not explicitly matched above is locked down.
+    // Default deny — anything not explicitly matched above is locked.
     match /{document=**} {
       allow read, write: if false;
     }

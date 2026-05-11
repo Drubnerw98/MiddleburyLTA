@@ -9,9 +9,9 @@ import {
   query,
   orderBy,
   getDocs,
-  updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../../../../lib/firebase";
+import { updatePostInlineAction } from "@/app/actions/adminPostAction";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import PostDisplay from "@/app/components/Posts/PostDisplay";
@@ -114,9 +114,17 @@ export default function PostDetailPage() {
   };
 
   const handleSaveAction = async (updatedPost: PostData) => {
-    const { id: _id, ...rest } = updatedPost;
-    void _id;
-    await updateDoc(doc(db, "posts", postId), rest);
+    const result = await updatePostInlineAction(postId, {
+      title: updatedPost.title,
+      content: updatedPost.content,
+      tags: updatedPost.tags ?? [],
+      imageUrl: updatedPost.imageUrl ?? "",
+      commentsDisabled: updatedPost.commentsDisabled ?? false,
+    });
+    if (!result.success) {
+      console.error("Failed to save post:", result.message);
+      return;
+    }
     setPost(updatedPost);
     setEditing(false);
   };
