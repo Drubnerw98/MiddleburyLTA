@@ -26,10 +26,13 @@ const sourceSerif = Source_Serif_4({
 
 export const metadata: Metadata = {
     title: "Middlebury Taxpayers",
-    description: "A community-driven space for facts, updates, and civic discussion.",
+    description: "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M Region 15 school bond affect property tax bills, and advocates for a broader commercial tax base.",
     icons: {
-        icon: "/favicon-v2.ico",
-        shortcut: "/favicon-v2.ico",
+        icon: [
+            { url: "/favicon.svg", type: "image/svg+xml" },
+            { url: "/favicon-v2.ico", sizes: "any" },
+        ],
+        shortcut: "/favicon.svg",
         apple: "/favicon-v2.ico",
     },
 };
@@ -42,10 +45,11 @@ export default function RootLayout({
     return (
         <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`}>
         <head>
-            <link rel="icon" href="/favicon-v2.ico" sizes="any" />
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+            <link rel="alternate icon" href="/favicon-v2.ico" sizes="any" />
             <link rel="apple-touch-icon" href="/favicon-v2.ico" />
-            <meta name="theme-color" content="#ffffff" />
-            <title>Middlebury Tax Payers</title>
+            <meta name="theme-color" content="#F7F3EA" />
+            <title>Middlebury Taxpayers</title>
         </head>
         <body className="font-sans text-[#2E3D52] bg-white min-h-screen flex flex-col">
         <NavBar />
