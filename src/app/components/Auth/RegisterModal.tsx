@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -17,26 +17,10 @@ interface RegisterModalProps {
 const auth = getAuth(app);
 
 export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null);
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onCloseAction();
-        };
-        if (isOpen) document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
-    }, [isOpen, onCloseAction]);
-
-    const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (modalRef.current && e.target === modalRef.current) {
-            onCloseAction();
-        }
-    };
 
     const handleRegister = async () => {
         try {
@@ -54,12 +38,8 @@ export default function RegisterModal({ isOpen, onCloseAction }: RegisterModalPr
     };
 
     return (
-        <AnimatedModal isOpen={isOpen} onClose={onCloseAction}>
-            <div
-                ref={modalRef}
-                onClick={handleClickOutside}
-                className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4"
-            >
+        <AnimatedModal isOpen={isOpen} onClose={onCloseAction} title="Register">
+            <div className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4">
                 <h2 className="text-xl font-bold">Register</h2>
 
                 <input

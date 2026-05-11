@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { getDoc, doc } from 'firebase/firestore';
-import { db } from '../../../../lib/firebase';
+import { useState } from 'react';
 import AnimatedModal from '@/app/components/AnimatedModal';
 
 interface ContactModalProps {
@@ -11,49 +9,27 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onCloseAction }: ContactModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null);
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onCloseAction();
-        };
-        if (isOpen) document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
-    }, [isOpen, onCloseAction]);
-
-    const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (modalRef.current && e.target === modalRef.current) {
-            onCloseAction();
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const feedback = { name, email, message };
 
         try {
-            const settingsRef = doc(db, 'admin', 'settings');
-            const settingsSnap = await getDoc(settingsRef);
-            const shouldNotify = settingsSnap.exists() && settingsSnap.data().emailNotifications;
+            const res = await fetch('/api/send-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(feedback),
+            });
 
-            if (shouldNotify) {
-                const res = await fetch('/api/send-feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(feedback),
-                });
-
-                const result = await res.json();
-                if (!res.ok) {
-                    console.error('Email failed:', result.error);
-                    setStatus('error');
-                    return;
-                }
+            const result = await res.json();
+            if (!res.ok) {
+                console.error('Email failed:', result.error);
+                setStatus('error');
+                return;
             }
 
             setStatus('success');
@@ -67,12 +43,8 @@ export default function ContactModal({ isOpen, onCloseAction }: ContactModalProp
     };
 
     return (
-        <AnimatedModal isOpen={isOpen} onClose={onCloseAction}>
-            <div
-                ref={modalRef}
-                onClick={handleClickOutside}
-                className="text-white bg-[#373F4D] w-full max-w-lg p-6 rounded-xl shadow-xl space-y-4"
-            >
+        <AnimatedModal isOpen={isOpen} onClose={onCloseAction} title="Contact Us">
+            <div className="text-white bg-[#373F4D] w-full max-w-lg p-6 rounded-xl shadow-xl space-y-4">
                 <h2 className="text-xl font-bold">Contact Us</h2>
 
                 {status === 'success' && (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../../../../lib/firebase';
 import AnimatedModal from '@/app/components/AnimatedModal';
@@ -13,25 +13,9 @@ interface LoginModalProps {
 const auth = getAuth(app);
 
 export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null);
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onCloseAction();
-        };
-        if (isOpen) document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
-    }, [isOpen, onCloseAction]);
-
-    const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (modalRef.current && e.target === modalRef.current) {
-            onCloseAction();
-        }
-    };
 
     const handleLogin = async () => {
         try {
@@ -55,12 +39,8 @@ export default function LoginModal({ isOpen, onCloseAction }: LoginModalProps) {
     };
 
     return (
-        <AnimatedModal isOpen={isOpen} onClose={onCloseAction}>
-            <div
-                ref={modalRef}
-                onClick={handleClickOutside}
-                className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4"
-            >
+        <AnimatedModal isOpen={isOpen} onClose={onCloseAction} title="Login">
+            <div className="bg-[#373F4D] text-white w-full max-w-sm p-6 rounded-xl shadow-xl space-y-4">
                 <h2 className="text-xl font-bold">Login</h2>
 
                 <input

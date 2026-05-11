@@ -11,7 +11,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
   - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
   - [2026-05-11 — Resolve 29 npm audit vulnerabilities (3 critical, 9 high)](#2026-05-11--resolve-29-npm-audit-vulnerabilities-3-critical-9-high)
-  - [2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive](#2026-05-11--modal-accessibility-focus-trap-aria-dialog-primitive)
 - [Resolved](#resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
@@ -23,6 +22,7 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
   - [2026-05-11 — SECURITY: add CSP + security headers + /admin middleware](#2026-05-11--security-add-csp--security-headers--admin-middleware-resolved)
   - [2026-05-11 — Convert home, /articles, /post pages to RSC](#2026-05-11--convert-home-articles-post-pages-to-rsc-resolved)
   - [2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store](#2026-05-11--cleanup-dead-components-scaffold-svgs-dsstore-resolved)
+  - [2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive](#2026-05-11--modal-accessibility-focus-trap-aria-dialog-primitive-resolved)
 - [Abandoned](#abandoned)
 
 ## Active
@@ -71,16 +71,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Shape of work:** (1) Bump `next` to `15.5.16+` to clear the Next.js advisories. (2) Run `npm audit fix` for non-breaking transitive fixes. (3) For remaining: identify which are reachable from the actual app (most criticals are likely transitive from `firebase-admin` or build tooling). (4) Run typecheck + build + smoke-test before pushing. Hold the more aggressive `--force` updates until each can be validated individually.
 
-
-### 2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive
-
-**What:** `LoginModal`, `RegisterModal`, `ContactModal` all lack `role="dialog"`, `aria-modal="true"`, focus trap, and return-focus on close. ESC + click-outside handlers are duplicated across the three (identical 6-line blocks). Each is built on a custom `AnimatedModal` component.
-
-**Why noticed:** May 11, 2026 code audit.
-
-**Anchors:** `src/app/components/AnimatedModal.tsx`, `src/app/components/Auth/LoginModal.tsx`, `src/app/components/Auth/RegisterModal.tsx`, `src/app/components/About/ContactModal.tsx`.
-
-**Shape of work:** Adopt `@radix-ui/react-dialog` (already transitively in the bundle via `@radix-ui/react-slider`). It handles focus trap, ESC, click-outside, ARIA, and return-focus automatically. Drop the custom `AnimatedModal`; preserve the framer-motion entrance by wrapping Radix's `Content` with a `motion.div`.
 
 ## Resolved
 
@@ -143,6 +133,14 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 **What:** Deleted unused files: `src/app/components/Modal.tsx`, `TaxImpactCTA.tsx`, `Layout/AppLayout.tsx`, `PostFeed.tsx`, `lib/searchPosts.ts`, `PageWrapper.tsx`, plus six Next scaffold assets (`next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`, `noise.png`). Footer's internal anchors converted to `next/link`. `.DS_Store` files were already gitignored and untracked — no action needed.
 
 **Anchors:** see deletions in commits `cc6cc06` (cleanup) and the RSC commit.
+
+### 2026-05-11 — Modal accessibility: focus trap, ARIA, dialog primitive (resolved)
+
+**What:** `AnimatedModal.tsx` rewritten on top of `@radix-ui/react-dialog`. Radix handles focus trap, focus restoration, ESC, click-on-overlay, `aria-modal`, `aria-labelledby`, `aria-describedby`, and portal rendering. Framer-motion entrance/exit preserved by passing `motion.div` to Radix's `asChild` on Overlay + Content. Callers (`LoginModal`, `RegisterModal`, `ContactModal`) lost their duplicated ESC handler + modalRef + click-outside checks (~6 lines each). Also fixed a UX bug where clicking on the modal's own padding/background closed it (the previous click-outside check was on the OUTER modal container, not the scrim).
+
+Bonus: `ContactModal` no longer reads `admin/settings.emailNotifications` from the client — that check was misleading anyway (server doesn't honor it, and "off" silently swallowed the message as a fake success). The form just POSTs to `/api/send-feedback`, which has its own server-side gating.
+
+**Anchors:** `src/app/components/AnimatedModal.tsx`, `src/app/components/Auth/LoginModal.tsx`, `src/app/components/Auth/RegisterModal.tsx`, `src/app/components/About/ContactModal.tsx`. New dep: `@radix-ui/react-dialog`.
 
 ## Abandoned
 
