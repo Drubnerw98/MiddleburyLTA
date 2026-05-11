@@ -38,14 +38,14 @@ export default function HeroSection() {
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
                             <Link
                                 href="/tax-impact"
-                                className="inline-flex items-center justify-center gap-2 bg-ink px-6 py-3 font-sans text-sm font-semibold tracking-wide text-paper no-underline hover:bg-ink-soft transition-colors"
+                                className="inline-flex items-center justify-center gap-2 bg-ink px-7 py-3.5 font-sans text-base font-semibold text-bone no-underline hover:bg-ink-soft transition-colors"
                             >
                                 See your tax impact
                                 <span aria-hidden>&rarr;</span>
                             </Link>
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="inline-flex items-center justify-center px-5 py-3 font-sans text-sm font-semibold tracking-wide text-ink hover:text-oxblood border border-ink/30 hover:border-oxblood transition-colors w-max"
+                                className="inline-flex items-center justify-center px-7 py-3.5 font-sans text-base font-semibold text-ink hover:bg-ink hover:text-bone border border-ink transition-colors w-max"
                             >
                                 Contact us
                             </button>
@@ -231,7 +231,7 @@ export default function HeroSection() {
                     <div className="mt-12 sm:mt-14 text-center">
                         <Link
                             href="/tax-impact"
-                            className="inline-flex items-center justify-center gap-2 bg-ink px-7 py-3.5 font-sans text-sm font-semibold tracking-wide text-paper no-underline hover:bg-ink-soft transition-colors"
+                            className="inline-flex items-center justify-center gap-2 bg-ink px-8 py-4 font-sans text-base font-semibold text-bone no-underline hover:bg-ink-soft transition-colors"
                         >
                             Run your numbers
                             <span aria-hidden>&rarr;</span>

@@ -2,15 +2,17 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../../lib/firebase';
-import Logo from '../Logo/logo';
 import LoginModal from '../Auth/LoginModal';
 import RegisterModal from '../Auth/RegisterModal';
 import { useIsAdmin } from '../Auth/useIsAdmin';
 import { useAuthState } from 'react-firebase-hooks/auth';
+
+const navLinkClass =
+    'font-sans text-sm text-ink-soft hover:text-oxblood transition-colors';
 
 export default function NavBar() {
   const router = useRouter();
@@ -28,25 +30,16 @@ export default function NavBar() {
 
   const username = user?.email?.split('@')[0];
 
-  const [navLinkClass, setNavLinkClass] = useState('text-sm text-[#2E3D52] hover:underline transition cursor-pointer');
-
-  useEffect(() => {
-    setNavLinkClass('text-sm text-[#2E3D52] hover:text-[#516684] hover:underline transition cursor-pointer');
-  }, []);
-
   return (
-      <nav className="w-full bg-white z-50 relative">
-        <div className="w-full px-4 sm:px-6 py-4 flex items-center justify-between max-w-[2440px] mx-auto">
+      <nav className="w-full bg-paper border-b border-rule z-50 relative">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8 py-4 flex items-center justify-between">
           {/* Left Section */}
-          <div className="flex items-center gap-x-6">
+          <div className="flex items-center gap-x-8">
             <Link
                 href="/"
-                className="flex items-center space-x-2 hover:opacity-90 transition"
+                className="font-serif text-lg sm:text-xl font-semibold text-ink tracking-tight hover:text-oxblood transition-colors"
             >
-              <Logo className="w-8 h-8 text-[#2E3D52]" />
-              <span className="text-[#2E3D52] font-bold text-lg tracking-tight">
               Middlebury Taxpayers
-            </span>
             </Link>
 
             {/* Desktop links */}
@@ -55,17 +48,19 @@ export default function NavBar() {
                 Tax Impact
               </Link>
               <Link href="/articles" className={navLinkClass}>
-                Articles & Links
+                Articles
               </Link>
-              {/* NEW: Who We Are */}
               <Link href="/who-we-are" className={navLinkClass}>
                 Who We Are
+              </Link>
+              <Link href="/updates" className={navLinkClass}>
+                Updates
               </Link>
             </div>
           </div>
 
           {/* Right Section */}
-          <div className="hidden sm:flex items-center gap-x-6">
+          <div className="hidden sm:flex items-center gap-x-5">
             {isAdmin && (
                 <Link href="/admin" className={navLinkClass}>
                   Admin
@@ -73,9 +68,9 @@ export default function NavBar() {
             )}
             {user ? (
                 <>
-              <span className={navLinkClass} title={user.email ?? ''}>
-                Signed in as <span className="font-medium">{username}</span>
-              </span>
+                  <span className="font-sans text-sm text-muted" title={user.email ?? ''}>
+                    {username}
+                  </span>
                   <button onClick={handleLogout} className={navLinkClass}>
                     Log out
                   </button>
@@ -100,7 +95,7 @@ export default function NavBar() {
 
           {/* Hamburger Button */}
           <button
-              className="sm:hidden text-[#2E3D52] focus:outline-none"
+              className="sm:hidden text-ink focus:outline-none"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
           >
@@ -108,7 +103,7 @@ export default function NavBar() {
                 className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 viewBox="0 0 24 24"
             >
               {menuOpen ? (
@@ -122,7 +117,7 @@ export default function NavBar() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-            <div className="sm:hidden px-4 pb-4 space-y-3">
+            <div className="sm:hidden px-5 pb-5 space-y-3 border-t border-rule pt-3">
               <Link
                   href="/tax-impact"
                   className={`${navLinkClass} block`}
@@ -135,15 +130,21 @@ export default function NavBar() {
                   className={`${navLinkClass} block`}
                   onClick={() => setMenuOpen(false)}
               >
-                Articles & Links
+                Articles
               </Link>
-              {/* NEW: Who We Are (mobile) */}
               <Link
                   href="/who-we-are"
                   className={`${navLinkClass} block`}
                   onClick={() => setMenuOpen(false)}
               >
                 Who We Are
+              </Link>
+              <Link
+                  href="/updates"
+                  className={`${navLinkClass} block`}
+                  onClick={() => setMenuOpen(false)}
+              >
+                Updates
               </Link>
 
               {isAdmin && (
@@ -158,9 +159,9 @@ export default function NavBar() {
 
               {user ? (
                   <>
-              <span className={`${navLinkClass} block`} title={user.email ?? ''}>
-                Signed in as <span className="font-medium">{username}</span>
-              </span>
+                    <span className="font-sans text-sm text-muted block" title={user.email ?? ''}>
+                      Signed in as <span className="font-medium text-ink">{username}</span>
+                    </span>
                     <button
                         onClick={() => {
                           handleLogout();
