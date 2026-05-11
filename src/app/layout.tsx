@@ -24,9 +24,39 @@ const sourceSerif = Source_Serif_4({
     weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = "https://middleburytaxpayers.com";
+const SITE_DESCRIPTION =
+    "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M Region 15 school bond affect property tax bills, and advocates for a broader commercial tax base.";
+
 export const metadata: Metadata = {
-    title: "Middlebury Taxpayers",
-    description: "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M Region 15 school bond affect property tax bills, and advocates for a broader commercial tax base.",
+    metadataBase: new URL(SITE_URL),
+    title: {
+        default: "Middlebury Taxpayers",
+        template: "%s · Middlebury Taxpayers",
+    },
+    description: SITE_DESCRIPTION,
+    applicationName: "Middlebury Taxpayers",
+    keywords: [
+        "Middlebury CT",
+        "property taxes",
+        "2025 revaluation",
+        "Region 15 school bond",
+        "tax impact calculator",
+    ],
+    authors: [{ name: "Middlebury Taxpayers" }],
+    openGraph: {
+        type: "website",
+        siteName: "Middlebury Taxpayers",
+        title: "Middlebury Taxpayers",
+        description: SITE_DESCRIPTION,
+        url: SITE_URL,
+        locale: "en_US",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Middlebury Taxpayers",
+        description: SITE_DESCRIPTION,
+    },
     icons: {
         icon: [
             { url: "/favicon.svg", type: "image/svg+xml" },
