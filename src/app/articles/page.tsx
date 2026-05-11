@@ -15,10 +15,13 @@ export const dynamic = "force-dynamic";
 // adminDb is a one-line change once auth is resolved.
 
 export default async function ArticlesPage() {
+    // Sort by createdAt desc only. The previous query also ordered by a
+    // `priority` field, but nothing in the codebase has ever set it, so
+    // Firestore was silently excluding every document from the result
+    // (orderBy on a missing field drops the doc).
     const snapshot = await getDocs(
         query(
             collection(db, "external_links"),
-            orderBy("priority", "asc"),
             orderBy("createdAt", "desc"),
         ),
     );
