@@ -9,11 +9,11 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 - [Active](#active)
   - [2026-05-11 — Confirm AdsSection placeholder copy against the real ads](#2026-05-11--confirm-adssection-placeholder-copy-against-the-real-ads)
   - [2026-05-11 — Bond-impact explainer page (Work item E, deferred)](#2026-05-11--bond-impact-explainer-page-work-item-e-deferred)
-  - [2026-05-11 — Reskin posts and admin UI for editorial-civic](#2026-05-11--reskin-posts-and-admin-ui-for-editorial-civic)
+  - [2026-05-11 — Reskin posts, auth modals, contact, and admin UI for editorial-civic](#2026-05-11--reskin-posts-auth-modals-contact-and-admin-ui-for-editorial-civic)
   - [2026-05-11 — Remaining 11 low/moderate npm audit advisories](#2026-05-11--remaining-11-lowmoderate-npm-audit-advisories)
-  - [2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session)](#2026-05-11--security-rotate-firebase-service-account-key-leaked-in-debug-session)
-  - [2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles](#2026-05-11--investigate-admin-sdk-firestore-auth-failure-on-articles)
 - [Resolved](#resolved)
+  - [2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session)](#2026-05-11--security-rotate-firebase-service-account-key-leaked-in-debug-session-resolved)
+  - [2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles](#2026-05-11--investigate-admin-sdk-firestore-auth-failure-on-articles-resolved)
   - [2026-05-11 — Activate AdsSection once ad PDFs land](#2026-05-11--activate-adssection-once-ad-pdfs-land-resolved)
   - [2026-05-11 — Restructure "Who we are" around the underlying entities](#2026-05-11--restructure-who-we-are-around-the-underlying-entities-resolved)
   - [2026-05-11 — SECURITY: migrate admin Firestore writes to server actions with Zod](#2026-05-11--security-migrate-admin-firestore-writes-to-server-actions-with-zod-resolved)
@@ -52,15 +52,15 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Open questions:** Does Phoenix Advisors' amortization PDF exist in a shareable form? Do we want a year-by-year chart or just a Year-1 / peak summary?
 
-### 2026-05-11 — Reskin posts and admin UI for editorial-civic
+### 2026-05-11 — Reskin posts, auth modals, contact, and admin UI for editorial-civic
 
-**What:** Most posts- and admin-scoped components were not touched in the May 11 redesign because there are no live posts yet and the admin dashboard is claim-gated. They still use the pre-redesign dark navy + yellow-300 palette (`bg-[#1e2633]/90`, `border-yellow-400/20`, `text-yellow-300`, `bg-yellow-500`, etc.) and will look visually disconnected the moment a post is published.
+**What:** Three pockets of the site still wear the pre-redesign dark navy + yellow palette and look visually disconnected from the editorial-civic surfaces shipped on May 11. (1) Posts/admin components (no live posts yet, admin is claim-gated, so they're invisible to the public for now). (2) The auth modals (`LoginModal`, `RegisterModal`) and `ContactModal` — `bg-[#373F4D]`, `bg-sky-600` buttons, `bg-[#1e2633]` error chips. These are *publicly visible* the moment a user clicks Login / Register / Contact on the navbar, so this is the higher-priority half. (3) `LinkPreview`, `CommentManager`, comment UI — all in the same pocket.
 
-**Why noticed:** Surfaced during the editorial-civic propagation when grepping for residual `bg-yellow` / `text-yellow-300` references. Deferred so the public-facing surfaces could ship coherent without blocking on a non-visible feature.
+**Why noticed:** Surfaced twice. First during May 11 propagation when grepping for residual `bg-yellow` / `text-yellow-300` references (deferred because no public surfaces depended on it). Second when the user confirmed it post-redesign: "we never upped the look for the rest of the site."
 
-**Anchors:** `src/app/components/PostFeed.tsx`, `src/app/components/PostManager.tsx`, `src/app/components/PostPreview.tsx`, `src/app/components/Posts/PostDisplay.tsx`, `src/app/components/Posts/PostEdit.tsx`, `src/app/components/LinkPreview.tsx`, `src/app/components/CommentManager.tsx`, `src/app/components/Comments/*`, `src/app/admin/page.tsx`.
+**Anchors:** `src/app/components/Auth/LoginModal.tsx`, `src/app/components/Auth/RegisterModal.tsx`, `src/app/components/About/ContactModal.tsx` (highest-priority — public-facing). Then: `src/app/components/PostManager.tsx`, `src/app/components/PostPreview.tsx`, `src/app/components/Posts/PostDisplay.tsx`, `src/app/components/Posts/PostEdit.tsx`, `src/app/components/Posts/PostControls.tsx`, `src/app/components/LinkPreview.tsx`, `src/app/components/CommentManager.tsx`, `src/app/components/Comments/*`, `src/app/admin/page.tsx`. Reference for the target palette: `src/app/components/HeroSection.tsx`, `src/app/articles/AnimatedArticles.tsx`, `src/app/globals.css` (`@theme` tokens).
 
-**Shape of work:** Two passes. (1) Public-facing post components (PostFeed, PostPreview, PostDisplay, LinkPreview) — apply paper / bone / ink / oxblood, lift typography to serif headlines + sans body to match Articles. Tag pills become small oxblood text links instead of yellow-tinted chips. (2) Admin/editor surfaces (PostManager, PostEdit, CommentManager, admin dashboard) — less aesthetic load, but should at least drop the yellow buttons in favor of bg-ink.
+**Shape of work:** Three passes, in priority order. (1) **Auth + contact modals** — paper background, ink text, oxblood accent, sans-serif inputs, `bg-ink text-bone` primary buttons. ~30 min. (2) **Public-facing post components** (PostPreview, PostDisplay, LinkPreview) — apply paper / bone / ink / oxblood, lift typography to serif headlines + sans body to match Articles. Tag pills become small oxblood text links instead of yellow-tinted chips. (3) **Admin/editor surfaces** (PostManager, PostEdit, PostControls, CommentManager, admin dashboard) — less aesthetic load, but should at least drop the yellow buttons in favor of bg-ink so the admin feels like the same product.
 
 **Open questions:** Do tagged posts need their own listing/filter UI, or is the search bar enough? Are comments going to stay or be reconsidered? (Comment styling lives in the same neglected pocket.)
 
@@ -74,30 +74,26 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Shape of work:** Watch for upstream releases (firebase-admin 13.10+ would likely pull in fresher transitives). When firebase-admin ships a patch that bumps google-gax, re-run `npm update && npm audit` and most of these should drop. The postcss moderate is gated on a Next.js minor bump (15.6+ when it ships).
 
-### 2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session)
-
-**What:** While debugging the `/articles` admin-SDK auth failure, a `bash source` of `.env.local` echoed the full `FIREBASE_SERVICE_ACCOUNT_KEY` JSON (including the private key) into the conversation transcript. The key needs to be rotated and the old one invalidated.
-
-**Why noticed:** Self-inflicted during the May 11 debug session, immediately flagged.
-
-**Anchors:** Firebase Console → Project Settings → Service Accounts (project `middlebury-low-tax`). The leaked key id starts with `88f474ea...`. The compromised service account email is `firebase-adminsdk-fbsvc@middlebury-low-tax.iam.gserviceaccount.com`.
-
-**Shape of work:** (1) Generate a new private key in the Firebase Console. (2) Update `FIREBASE_SERVICE_ACCOUNT_KEY` in Vercel's project env vars; redeploy. (3) Update `.env.local` with the new value. (4) Delete the old key in the Service Accounts → Manage permissions panel so anything scraped from the leak is dead. (5) Confirm prod is serving normally after the deploy. The leaked key only grants admin to `middlebury-low-tax` Firebase resources; no other accounts are exposed.
-
-### 2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles
-
-**What:** The May 11 RSC conversion of `/articles` switched from the client web SDK to `adminDb` (firebase-admin SDK). On both Vercel and local prod builds, the resulting Firestore query throws `16 UNAUTHENTICATED — Request had invalid authentication credentials`. The same `FIREBASE_SERVICE_ACCOUNT_KEY` env var is used by every other admin-SDK path (server actions for posts, session minting, logout revocation) and those continue to work. Workaround in place: `/articles` reverted to the client SDK (commit `63c9fb9`).
-
-**Why noticed:** Prod `/articles` returned a server-side exception after the RSC conversion.
-
-**Anchors:** `src/app/articles/page.tsx` (currently on client SDK), `lib/firebase-admin.ts` (lazy proxy + init), `package.json` (`firebase-admin` 13.9.0 since the May 11 update from 13.3.0).
-
-**What's been considered:** Possible causes — (1) firebase-admin 13.3 → 13.9 introduced a gRPC credential-handling regression for the Firestore client specifically (Auth still works); (2) the lazy Proxy in `firebase-admin.ts` has an edge case for chained `.collection().orderBy().get()` access patterns we didn't see in server actions; (3) Vercel's env-var injection produces a subtly different JSON shape vs `.env.local`; (4) the service account had a permissions change that affected Firestore-via-gRPC but not Auth-via-REST. After the key rotation followup above lands, redeploying with the fresh key may also fix this — if not, the next step is to bisect firebase-admin between 13.3 and 13.9.
-
-**Shape of work:** (1) After key rotation, re-attempt the RSC conversion on `/articles` (one-line change back to `adminDb`) and verify. (2) If still broken, instrument `firebase-admin.ts` to log the credential shape (without echoing the private key) and compare against a working path (e.g. a server action that's recently fired). (3) If isolated to the Firestore client, try `npm install firebase-admin@13.3.0` to confirm regression; file upstream if so. (4) Long-term: once resolved, re-do the RSC switch and revisit whether the lazy Proxy adds value or should be replaced with direct exports.
-
-
 ## Resolved
+
+### 2026-05-11 — SECURITY: rotate Firebase service-account key (leaked in debug session) (resolved)
+
+**What:** During debugging, a `bash source` of `.env.local` echoed the full `FIREBASE_SERVICE_ACCOUNT_KEY` JSON (including the private key) into the conversation transcript. Resolved same day: user generated a new key in Firebase Console, replaced the value in Vercel env vars, redeployed, and deleted the old key from Service Accounts → Manage permissions. Login + session minting confirmed working on the new key.
+
+**Anchors:** Firebase Console → Project Settings → Service Accounts (project `middlebury-low-tax`), service account `firebase-adminsdk-fbsvc@middlebury-low-tax.iam.gserviceaccount.com`.
+
+### 2026-05-11 — Investigate admin-SDK Firestore auth failure on /articles (resolved)
+
+**What:** Original framing assumed an admin-SDK auth regression, since prod `/articles` after the RSC conversion threw `16 UNAUTHENTICATED` on `adminDb` queries. Diagnostic logging on the *web*-SDK fallback revealed the actual root cause: the Firebase Web SDK cannot reliably reach Firestore from Vercel's serverless runtime — it opens a GRPC `Listen` stream, the connection fails (`@firebase/firestore: GrpcConnection RPC 'Listen' stream error`), the SDK drops into offline mode, and `getDocs` returns an empty snapshot **without throwing**. That's why the page silently said "No articles" even with 13 docs in Firestore and open read rules.
+
+The original `16 UNAUTHENTICATED` from `adminDb` turned out to be the service-account key issue that was rotated separately (see above). Once that landed, switching `/articles` back to `adminDb` (`commit d68d4ab`) fixed it cleanly — admin SDK uses HTTP/REST and works fine in short-lived functions.
+
+**Anchors:** `src/app/articles/page.tsx` (now uses `adminDb` again, with a comment explaining why), `lib/firebase-admin.ts`.
+
+**Takeaway for future RSC work in this repo:** Default to `adminDb` for any server-side Firestore read. The web SDK is a browser/long-lived-Node tool and is not safe to assume works in a serverless RSC even with public reads.
+
+
+
 
 ### 2026-05-11 — Activate AdsSection once ad PDFs land (resolved)
 
