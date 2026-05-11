@@ -82,16 +82,6 @@ Format: see the user-level `~/.claude/CLAUDE.md` "Followup detection" section.
 
 **Shape of work:** Adopt `@radix-ui/react-dialog` (already transitively in the bundle via `@radix-ui/react-slider`). It handles focus trap, ESC, click-outside, ARIA, and return-focus automatically. Drop the custom `AnimatedModal`; preserve the framer-motion entrance by wrapping Radix's `Content` with a `motion.div`.
 
-### 2026-05-11 — Cleanup: dead components, scaffold SVGs, .DS_Store
-
-**What:** Several files have zero callsites and should be deleted per the "delete instead of half-finished" rule: `src/app/components/Modal.tsx` (superseded by AnimatedModal), `src/app/components/TaxImpactCTA.tsx` (no callsites after the redesign), `src/app/components/Layout/AppLayout.tsx`, `src/app/components/PostFeed.tsx` (PostManager has its own list), `lib/searchPosts.ts` (HomePageClient does its own filtering). Plus Next scaffold SVGs in `public/` (`next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`, `noise.png`) — none referenced. `.DS_Store` files are tracked in the repo and should be removed + gitignored. Footer's internal `<a href>` should be `<Link>` for client-side nav.
-
-**Why noticed:** May 11, 2026 code audit.
-
-**Anchors:** files listed above, `.gitignore`, `src/app/components/Layout/Footer.tsx`.
-
-**Shape of work:** Delete the unused files. `git rm --cached` the `.DS_Store` files, ensure `.gitignore` covers them. Convert Footer `<a href>` → `<Link href>`. Single small commit.
-
 ## Resolved
 
 ### 2026-05-11 — Activate AdsSection once ad PDFs land (resolved)
