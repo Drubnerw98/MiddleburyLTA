@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import ContactModal from '@/app/components/About/ContactModal';
 import {
@@ -10,7 +9,6 @@ import {
     Eyebrow,
     Lead,
     Pullquote,
-    SourceLine,
     StatCard,
 } from '@/app/components/ui';
 
@@ -52,26 +50,8 @@ export default function HeroSection() {
                         </div>
                     </header>
 
-                    {/* Editorial photo */}
-                    <figure className="my-14 sm:my-20">
-                        <div className="relative w-full aspect-[4/3] overflow-hidden bg-ink/5">
-                            <Image
-                                src="/images/middlebury-town-hall.jpg"
-                                alt="Middlebury Town Hall, with the congregational church steeple visible behind"
-                                fill
-                                priority
-                                sizes="(min-width: 768px) 720px, 100vw"
-                                className="object-cover"
-                            />
-                        </div>
-                        <SourceLine className="mt-3">
-                            Middlebury Town Hall, on the National Register of Historic Places.
-                            Photo: Jerry Dougherty, CC BY 2.5 / Wikimedia Commons.
-                        </SourceLine>
-                    </figure>
-
                     {/* Section: Where things stand */}
-                    <section className="border-t border-rule pt-10 sm:pt-12">
+                    <section className="border-t border-rule pt-10 sm:pt-12 mt-14 sm:mt-20">
                         <Eyebrow tone="oxblood">Where things stand</Eyebrow>
                         <DisplayHeading level={2} as="h2" className="mt-3">
                             The post-revaluation reality.
