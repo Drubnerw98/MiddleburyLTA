@@ -1,31 +1,57 @@
 @import "tailwindcss";
 
-/*  Font Setup */
+/*
+ * Editorial-Civic design system tokens.
+ *
+ * The four-color palette: Ink (text/dark surfaces), Paper (warm cream page
+ * bg), Bone (white cards on Paper), Oxblood (tax-going-up / urgency). Moss
+ * for tax-going-down. Rule for subtle dividers. Muted for secondary text.
+ *
+ * Type: Source Serif 4 (variable) for display + lead + pullquote.
+ * Inter for body, captions, UI chrome. Both loaded via next/font/google
+ * in src/app/layout.tsx, which sets --font-inter and --font-source-serif
+ * on the <html> element. The @theme block below maps those into
+ * Tailwind's --font-sans / --font-serif tokens.
+ */
+@theme {
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+
+  --color-ink: #0B1726;
+  --color-ink-soft: #1E2A3C;
+  --color-paper: #F7F3EA;
+  --color-paper-deep: #EFE8D6;
+  --color-bone: #FFFFFF;
+  --color-oxblood: #9F2B2B;
+  --color-oxblood-soft: #C45252;
+  --color-moss: #3C4A2E;
+  --color-rule: #E2D8C5;
+  --color-rule-strong: #C9BFA5;
+  --color-muted: #6B6256;
+}
+
+/*
+ * Legacy Figma tokens. Kept for pages that still reference them directly
+ * (markdown content, modals, posts UI). Will be retired as those surfaces
+ * are migrated to the new palette.
+ */
 :root {
-  --font-sans: 'Inter', sans-serif;
-
-  /*  Color Tokens from Figma */
   --color-divider: #D9D9D9;
-
   --color-scrim: #1E2633;
   --color-L1: #F5F5F5;
   --color-L1-alt: #FFFFFF;
   --color-modal-bg: #373F4D;
   --color-L2: rgba(161, 182, 212, 0.15);
   --color-hover: rgba(161, 182, 212, 0.15);
-
   --color-text-on-dark: #FFFFFF;
   --color-text-on-light: #2E3D52;
   --color-placeholder: #99A1AF;
   --color-on-dark-secondary: #4C5B70;
-
   --color-bg-primary: #2E3D52;
   --color-bg-secondary: #516684;
   --color-bg-text: #1E2633;
-
   --color-stroke-on-dark: #4A5565;
   --color-stroke-on-light: #2E3D52;
-
   --color-progress-empty: rgba(161, 182, 212, 0.6);
 }
 

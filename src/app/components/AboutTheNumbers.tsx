@@ -1,34 +1,131 @@
 // src/components/AboutTheNumbers.tsx
+//
+// Editorial-civic restructure: each fact is a self-contained block
+// with an eyebrow, a stat-led headline, and supporting prose. Two
+// pullquotes (ADM and commercial) carry the heaviest policy points.
+
+import { DisplayHeading, Eyebrow, Pullquote, SourceLine } from "@/app/components/ui";
+
+type StatBlock = {
+    kind: "stat";
+    eyebrow: string;
+    stat: string;
+    body: string;
+};
+
+type QuoteBlock = {
+    kind: "quote";
+    eyebrow: string;
+    quote: string;
+    body: string;
+};
+
+type Block = StatBlock | QuoteBlock;
+
+const blocks: Block[] = [
+    {
+        kind: "stat",
+        eyebrow: "The Revaluation",
+        stat: "+35.4% / +10.4%",
+        body: "The average Middlebury home rose 35.4% in assessed value in the October 2025 revaluation. The average residential tax bill rose 10.4%. The mill rate moved from 32.52 to 26.56.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "The Town Budget",
+        stat: "+3.80%",
+        body: "The FY 2026–27 town budget is $13,985,958. Initial department requests totaled $15.1M (+12.29%) before the Board of Finance cut roughly $1.2M from the proposal. That level of cutting may not be repeatable in FY 2027–28.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "The Schools Share",
+        stat: "+1.57%",
+        body: "Middlebury's portion of Region 15 rose to $31,682,404. Schools remain 69.4% of Middlebury's total budget.",
+    },
+    {
+        kind: "quote",
+        eyebrow: "The ADM Formula",
+        quote: "Middlebury bore roughly 10% of the FY 2026–27 Region 15 increase. Its standing share is 33.13%.",
+        body: "Under C.G.S. §10-51(b)(1), Region 15 costs are apportioned each year by Average Daily Membership. Middlebury's enrollment share dropped slightly in the October 2025 count, so the town absorbed only about 10% of the $4.86M Region 15 increase. Not guaranteed to repeat next year.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "The Bond",
+        stat: "$224 million",
+        body: "Voters approved the Region 15 construction bond on May 6, 2026. Middlebury voted NO (539 to 648); Southbury's YES vote (1,935 to 1,172) carried the combined result. Middlebury is on the hook for its 33.13% share, roughly $26.6M to $29.8M in principal, about $49.2M over 30 years with interest.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "Bond Tax Impact",
+        stat: "$240 / $100k",
+        body: "Starting FY 2027–28, the bond adds roughly $240 per year per $100,000 of assessment in Year 1. The charge peaks near $321 per $100,000 around FY 2032–33.",
+    },
+    {
+        kind: "quote",
+        eyebrow: "Commercial Property",
+        quote: "Two commercial properties cut more than $349,000 in annual tax revenue from Middlebury's base.",
+        body: "Most commercial values rose 10–15% in the revaluation, which generally meant lower commercial tax bills under the new mill rate. Two large exceptions, driven by the Pizzuto / Hartley “8-3m” law and related MSTA litigation: 764 Southford Road dropped 60% (about $129,954 per year), and 199 Benson Road dropped 68% (about $219,167 per year).",
+    },
+    {
+        kind: "stat",
+        eyebrow: "Yale Avenue",
+        stat: "+16.87%",
+        body: "81 homes on Yale Avenue. Average assessment rose from $193,627 to $276,006. Average tax bill rose from $6,293 to $7,331, an increase of $1,038 per year.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "The Grand List",
+        stat: "Over 90% residential",
+        body: "Residential property is now more than 90% of the Grand List. There is effectively no commercial offset left to absorb future cost increases.",
+    },
+    {
+        kind: "stat",
+        eyebrow: "Connecticut Context",
+        stat: "3rd worst nationally",
+        body: "Connecticut ranks 3rd worst in the country for property taxes (effective rate roughly 1.54%, Tax Foundation 2026). The state's Education Cost Sharing foundation has been frozen at $11,525 per student since 2013. With inflation, it would be about $16,000 today.",
+    },
+];
 
 export default function AboutTheNumbers() {
-    const points = [
-        "2025 Revaluation: The average Middlebury home rose 35.4% in assessed value and the average residential tax bill rose 10.4%. The mill rate moved from 32.52 (FY 2025–26) to 26.56 (FY 2026–27).",
-        "FY 2026–27 town budget: $13,985,958 (+3.80% over FY 2025–26). Initial department requests totaled $15.1M (+12.29%) before the Board of Finance cut roughly $1.2M out of the proposal. That kind of cutting may not be repeatable in FY 2027–28.",
-        "Schools share: Middlebury's portion of Region 15 rose 1.57% to $31,682,404. Schools are still 69.4% of Middlebury's total budget.",
-        "Why the school bill only rose 1.57%: under C.G.S. §10-51(b)(1), Region 15 costs are apportioned each year by Average Daily Membership (ADM). Middlebury's enrollment share dropped slightly in the October 2025 count, so the town absorbed roughly 10% of the $4.86M Region 15 increase even though its standing share is 33.13%. Not guaranteed to repeat next year.",
-        "$224 million Region 15 construction bond: approved May 6, 2026. Middlebury voted NO (539 to 648); Southbury's YES vote (1,935 to 1,172) carried the combined result. Middlebury's 33.13% share is roughly $26.6M to $29.8M in principal, and about $49.2M over 30 years with interest.",
-        "Tax impact of the bond: starting FY 2027–28, the bond adds roughly $240 per year per $100,000 of assessment in Year 1, peaking near $321 per year per $100,000 around FY 2032–33.",
-        "Commercial property: most commercial values rose 10–15% in the revaluation, which generally meant lower commercial tax bills under the new mill rate. Two large exceptions saw dramatic drops, driven by the Pizzuto / Hartley “8-3m” law and related MSTA litigation: 764 Southford Road (–60%, about –$129,954 per year) and 199 Benson Road (–68%, about –$219,167 per year). Together those two properties removed more than $349,000 in annual tax revenue from the town.",
-        "Yale Avenue (81 homes) was a representative residential example. Average assessment rose from $193,627 to $276,006; average tax bill rose from $6,293 to $7,331, or +$1,038 per year (+16.87%).",
-        "Grand List composition: residential property is now over 90% of the Grand List. There is effectively no commercial offset left to absorb future cost increases.",
-        "Connecticut context: Connecticut is the 3rd worst state in the country for property taxes (effective rate roughly 1.54%, Tax Foundation 2026). The state's Education Cost Sharing foundation has been frozen at $11,525 per student since 2013; with inflation it would be about $16,000 today.",
-    ];
-
     return (
-        <>
-            <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-10 shadow-sm text-gray-800 space-y-6 text-sm leading-relaxed">
-                <h2 className="text-2xl font-bold text-slate-800">About the Numbers</h2>
-                <ul className="list-disc pl-6 space-y-4">
-                    {points.map((line, idx) => (
-                        <li key={idx}>{line}</li>
-                    ))}
-                </ul>
-            </section>
+        <section className="space-y-1">
+            <Eyebrow tone="muted">Reference</Eyebrow>
+            <DisplayHeading level={2} as="h2" className="mt-2">
+                About the numbers
+            </DisplayHeading>
+            <p className="font-sans text-base text-ink-soft mt-3 max-w-[60ch] leading-relaxed">
+                The ten figures driving every calculation on this site,
+                sourced and explained.
+            </p>
 
-            <section className="text-center text-sm text-slate-500 font-medium mt-6">
-                Figures based on the FY 2026–27 town budget, the October 2025 revaluation,
-                and the May 6, 2026 Region 15 bond referendum.
-            </section>
-        </>
+            <div className="mt-10 space-y-12">
+                {blocks.map((block, idx) => (
+                    <article key={idx} className="border-t border-rule pt-8">
+                        <Eyebrow>{block.eyebrow}</Eyebrow>
+                        {block.kind === "stat" ? (
+                            <>
+                                <p className="mt-3 font-serif text-3xl sm:text-4xl font-semibold text-ink tabular-nums">
+                                    {block.stat}
+                                </p>
+                                <p className="mt-4 font-sans text-base text-ink-soft max-w-[60ch] leading-relaxed">
+                                    {block.body}
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <Pullquote className="mt-4">{block.quote}</Pullquote>
+                                <p className="mt-5 font-sans text-base text-ink-soft max-w-[60ch] leading-relaxed">
+                                    {block.body}
+                                </p>
+                            </>
+                        )}
+                    </article>
+                ))}
+            </div>
+
+            <SourceLine className="mt-12 pt-6 border-t border-rule">
+                Figures based on the FY 2026–27 town budget, the October 2025
+                revaluation, and the May 6, 2026 Region 15 bond referendum.
+            </SourceLine>
+        </section>
     );
 }

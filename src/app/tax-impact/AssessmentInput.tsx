@@ -22,8 +22,8 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
   const [isEditing, setIsEditing] = useState(false);
   const [inputText, setInputText] = useState(value.toLocaleString());
 
-  // Keep the displayed input text in sync with external value changes
-  // (e.g. the slider above moving, or town-average derivation flipping on).
+  // Keep displayed input text in sync with external value changes
+  // (e.g. the slider moving, or town-average derivation flipping on).
   useEffect(() => {
     if (!isEditing) setInputText(value.toLocaleString());
   }, [value, isEditing]);
@@ -48,16 +48,18 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex justify-between items-center gap-3 flex-wrap">
+    <div className="space-y-4">
+      <div className="flex justify-between items-baseline gap-3 flex-wrap">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</p>
-          {helper && <p className="text-xs text-slate-400 mt-0.5">{helper}</p>}
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+            {label}
+          </p>
+          {helper && <p className="font-sans text-xs text-muted/80 mt-1">{helper}</p>}
         </div>
-        <div className="flex items-center gap-2 min-h-[44px]">
+        <div className="flex items-baseline gap-3 min-h-[40px]">
           {!isEditing ? (
             <>
-              <span className="text-2xl sm:text-3xl font-bold tabular-nums text-slate-900">
+              <span className="font-serif text-3xl sm:text-4xl font-semibold tabular-nums text-ink">
                 {formatMoney(value)}
               </span>
               <button
@@ -66,14 +68,14 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
                   setIsEditing(true);
                   setInputText(value.toLocaleString());
                 }}
-                className="text-sm bg-sky-600 text-white px-3 py-1.5 rounded-md hover:bg-sky-700 transition shadow-sm"
+                className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-oxblood hover:text-ink underline-offset-4 hover:underline transition-colors"
               >
                 Edit
               </button>
             </>
           ) : (
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted font-sans">$</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -84,14 +86,14 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
                 }}
                 onKeyDown={handleKeyDown}
                 onBlur={commit}
-                className="pl-7 w-40 text-xl font-semibold bg-white border-2 border-sky-300 rounded-md px-3 py-2 focus:outline-none focus:border-sky-500 text-center text-slate-900"
+                className="pl-7 w-44 font-sans text-xl font-semibold bg-bone border border-ink/40 px-3 py-2 focus:outline-none focus:border-ink text-right text-ink"
                 autoFocus
               />
             </div>
           )}
         </div>
       </div>
-      <div className="px-2 sm:px-6">
+      <div className="px-1">
         <TaxImpactSlider confirmedValue={value} onConfirmedValueChange={onChange} />
       </div>
     </div>

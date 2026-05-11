@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import AssessmentInput from './AssessmentInput';
 import AboutTheNumbers from '@/app/components/AboutTheNumbers';
 import {
@@ -15,6 +14,14 @@ import {
   oldAnnualTax,
   townAvgOldFromNew,
 } from './constants';
+import {
+  BarCompare,
+  Callout,
+  DisplayHeading,
+  Eyebrow,
+  Lead,
+  StatCard,
+} from '@/app/components/ui';
 
 const formatMoney = (value: number) =>
   value.toLocaleString('en-US', {
@@ -58,277 +65,224 @@ export default function TaxImpactPage() {
   const combinedDelta = combined2728Tax - oldTax;
   const combinedDeltaPct = oldTax > 0 ? combinedDelta / oldTax : 0;
 
-  const revalDeltaPositive = revalDelta > 0;
+  const revalTone: 'up' | 'down' | 'neutral' =
+    revalDelta > 0 ? 'up' : revalDelta < 0 ? 'down' : 'neutral';
 
   return (
-    <main className="bg-gradient-to-b from-slate-50 to-white min-h-screen py-12 sm:py-16 px-4">
-      <div className="max-w-5xl mx-auto space-y-12 sm:space-y-16">
+    <main className="bg-paper min-h-screen">
+      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-12 sm:py-20">
         {/* Header */}
-        <motion.section
-          className="text-center space-y-3"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-sky-700 bg-sky-50 px-3 py-1 rounded-full">
-            Calculator
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-            Your Property Tax Impact
-          </h1>
-          <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            2026 revaluation plus the FY 2027–28 Region 15 school bond, applied
-            to your home. Enter your new assessment to see the dollar change.
-          </p>
-        </motion.section>
+        <header className="mb-12 sm:mb-16">
+          <Eyebrow tone="oxblood">The Calculator</Eyebrow>
+          <DisplayHeading level={1} className="mt-3">
+            Your property tax,<br />reshaped twice.
+          </DisplayHeading>
+          <Lead className="mt-5">
+            The October 2025 revaluation already changed your tax bill.
+            The $224 million school construction bond approved in May
+            will change it again starting FY 2027–28. Enter your new
+            assessment to see both.
+          </Lead>
+        </header>
 
-        {/* Vision lookup callout */}
-        <motion.div
-          className="rounded-2xl border border-sky-200 bg-sky-50/70 p-5 sm:p-6 text-center sm:text-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.4 }}
-        >
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-sky-900">
-              Don&apos;t know your new assessment?
-            </p>
-            <p className="text-sm text-sky-800/80 mt-0.5">
-              Look it up on the Middlebury Vision Appraisal site. Most homeowners
-              search by street address.
-            </p>
-          </div>
-          <a
-            href="https://gis.vgsi.com/middleburyct"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 rounded-md bg-sky-700 px-4 py-2 text-sm font-semibold text-white no-underline hover:bg-sky-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 transition shadow-sm shrink-0"
-          >
-            Open Vision lookup
-            <span aria-hidden>↗</span>
-          </a>
-        </motion.div>
+        {/* Vision lookup */}
+        <div className="mb-12 border-l-2 border-ink pl-5 sm:pl-6 py-1">
+          <p className="font-sans text-sm font-semibold text-ink">
+            Don&apos;t know your new assessment?
+          </p>
+          <p className="font-sans text-sm text-ink-soft mt-1">
+            Look it up on the{' '}
+            <a
+              href="https://gis.vgsi.com/middleburyct"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-oxblood underline underline-offset-4 hover:text-ink transition-colors"
+            >
+              Middlebury Vision Appraisal site
+            </a>
+            . Most homeowners search by street address.
+          </p>
+        </div>
 
         {/* Inputs */}
-        <motion.section
-          className="bg-white border border-slate-200 rounded-2xl shadow-lg shadow-slate-200/60 p-6 sm:p-10 space-y-8"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.4 }}
-        >
+        <section className="bg-bone border border-rule px-6 sm:px-8 py-8 sm:py-10 mb-16">
           <AssessmentInput
-            label="Your New Assessment (FY 2026–27)"
+            label="Your New Assessment · FY 2026–27"
             helper="From the Vision Appraisal lookup above."
             value={newAssessment}
             onChange={setNewAssessment}
           />
 
-          <div className="border-t border-slate-100 pt-6 space-y-4">
+          <div className="mt-8 pt-8 border-t border-rule space-y-5">
             <label className="flex items-start gap-3 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={useTownAvg}
                 onChange={(e) => setUseTownAvg(e.target.checked)}
-                className="mt-1 h-4 w-4 accent-sky-600"
+                className="mt-1 h-4 w-4 accent-ink"
               />
-              <span className="text-sm">
-                <span className="font-medium text-slate-800">
-                  Use the town-average increase to estimate my prior assessment
+              <span className="font-sans text-sm">
+                <span className="font-semibold text-ink">
+                  Estimate my prior assessment from the town average
                 </span>
-                <span className="block text-xs text-slate-500 mt-0.5">
-                  Auto-fills your FY 2025–26 assessment as your new assessment
-                  ÷ {(1 + AVG_VALUE_INCREASE).toFixed(3)} (the town-wide +
-                  {(AVG_VALUE_INCREASE * 100).toFixed(1)}% reval average).
+                <span className="block text-muted mt-1 leading-[1.55]">
+                  Auto-fills your FY 2025–26 assessment as new ÷{' '}
+                  {(1 + AVG_VALUE_INCREASE).toFixed(3)} (the town-wide +
+                  {(AVG_VALUE_INCREASE * 100).toFixed(1)}% revaluation average).
                   Uncheck to enter the actual figure from your last tax bill.
                 </span>
               </span>
             </label>
 
             {useTownAvg ? (
-              <div className="rounded-lg bg-slate-50 border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Estimated Prior Assessment (FY 2025–26)
+              <div className="flex justify-between items-baseline border-t border-rule pt-5">
+                <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+                  Estimated Prior Assessment · FY 2025–26
                 </p>
-                <p className="text-2xl font-bold tabular-nums text-slate-900 mt-1">
+                <p className="font-serif text-2xl sm:text-3xl font-semibold tabular-nums text-ink">
                   {formatMoney(oldAssessment)}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Estimated from your new assessment. Your actual prior
-                  assessment may differ. Check your FY 2025–26 tax bill for
-                  the exact figure.
                 </p>
               </div>
             ) : (
-              <AssessmentInput
-                label="Your Prior Assessment (FY 2025–26)"
-                helper="The assessed value on your last tax bill, before October 2025."
-                value={manualOldAssessment}
-                onChange={setManualOldAssessment}
-              />
+              <div className="border-t border-rule pt-5">
+                <AssessmentInput
+                  label="Your Prior Assessment · FY 2025–26"
+                  helper="From your last tax bill, before October 2025."
+                  value={manualOldAssessment}
+                  onChange={setManualOldAssessment}
+                />
+              </div>
             )}
           </div>
-        </motion.section>
+        </section>
 
-        {/* Reval impact */}
-        <motion.section
-          className="space-y-5"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.4 }}
-        >
-          <div className="text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-widest text-sky-700">
-              Step 1
-            </p>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-              FY 2026–27 Revaluation Impact
-            </h2>
-            <p className="text-sm text-slate-600 mt-1">
-              Mill rate moves from {OLD_MILL_RATE} to {NEW_MILL_RATE}. Applied
-              to your assessment values above.
-            </p>
+        {/* Step 1: Reval impact */}
+        <section className="mb-16 sm:mb-20">
+          <Eyebrow tone="oxblood">Step One · Revaluation</Eyebrow>
+          <DisplayHeading level={2} as="h2" className="mt-3">
+            The 2025 reval, applied to your home.
+          </DisplayHeading>
+          <p className="font-sans text-sm text-ink-soft mt-3 max-w-[60ch]">
+            The mill rate moves from <span className="tabular-nums">{OLD_MILL_RATE}</span> to{' '}
+            <span className="tabular-nums">{NEW_MILL_RATE}</span>. Your assessment, not the mill
+            rate, drives the change in your bill.
+          </p>
+
+          <div className="mt-8 mb-10">
+            <BarCompare
+              bars={[
+                {
+                  label: `FY 2025–26  ·  ${OLD_MILL_RATE} mills`,
+                  value: oldTax,
+                  display: formatMoney(oldTax),
+                  tone: 'neutral',
+                },
+                {
+                  label: `FY 2026–27  ·  ${NEW_MILL_RATE} mills`,
+                  value: newTax,
+                  display: formatMoney(newTax),
+                  tone: revalTone,
+                },
+              ]}
+            />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-            <div className="rounded-xl bg-white border border-slate-200 py-5 px-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                FY 2025–26 Tax
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-slate-800">
-                {formatMoney(oldTax)}
-              </p>
-              <p className="text-xs text-slate-400 mt-1">at {OLD_MILL_RATE} mills</p>
-            </div>
-            <div className="rounded-xl bg-white border border-slate-200 py-5 px-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                FY 2026–27 Tax
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-slate-800">
-                {formatMoney(newTax)}
-              </p>
-              <p className="text-xs text-slate-400 mt-1">at {NEW_MILL_RATE} mills</p>
-            </div>
-            <div
-              className={`rounded-xl border py-5 px-4 shadow-sm ${
-                revalDeltaPositive
-                  ? 'bg-rose-50 border-rose-200'
-                  : 'bg-emerald-50 border-emerald-200'
-              }`}
-            >
-              <p
-                className={`text-xs font-semibold uppercase tracking-wider ${
-                  revalDeltaPositive ? 'text-rose-700' : 'text-emerald-700'
-                }`}
-              >
-                Change
-              </p>
-              <p
-                className={`mt-2 text-2xl font-bold tabular-nums ${
-                  revalDeltaPositive ? 'text-rose-700' : 'text-emerald-700'
-                }`}
-              >
-                {formatSignedMoney(revalDelta)}
-              </p>
-              <p
-                className={`text-xs mt-1 font-medium ${
-                  revalDeltaPositive ? 'text-rose-600' : 'text-emerald-600'
-                }`}
-              >
-                {formatSignedPct(revalDeltaPct)} vs. FY 2025–26
-              </p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <StatCard
+              label="FY 2025–26 Tax"
+              value={formatMoney(oldTax)}
+              caption={`at ${OLD_MILL_RATE} mills`}
+            />
+            <StatCard
+              label="FY 2026–27 Tax"
+              value={formatMoney(newTax)}
+              caption={`at ${NEW_MILL_RATE} mills`}
+            />
+            <StatCard
+              label="Change"
+              value={formatSignedMoney(revalDelta)}
+              caption={`${formatSignedPct(revalDeltaPct)} vs. FY 2025–26`}
+              tone={revalTone}
+            />
           </div>
-        </motion.section>
+        </section>
 
-        {/* Bond impact */}
-        <motion.section
-          className="space-y-5"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.4 }}
-        >
-          <div className="text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-widest text-amber-700">
-              Step 2
-            </p>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-              Starting FY 2027–28: $224M School Bond
-            </h2>
-            <p className="text-sm text-slate-600 mt-1">
-              Approved May 6, 2026. Year-1 charge: ${BOND_Y1_PER_100K} per
-              $100,000 of assessment, layered on top of the new mill rate.
-            </p>
+        {/* Step 2: Bond impact */}
+        <section className="mb-16 sm:mb-20">
+          <Eyebrow tone="oxblood">Step Two · School Bond</Eyebrow>
+          <DisplayHeading level={2} as="h2" className="mt-3">
+            The $224M school bond, year one.
+          </DisplayHeading>
+          <p className="font-sans text-sm text-ink-soft mt-3 max-w-[60ch]">
+            Voters approved the Region 15 construction bond on May 6, 2026. Starting
+            FY 2027–28, it adds about <span className="tabular-nums">${BOND_Y1_PER_100K}</span>{' '}
+            per <span className="tabular-nums">$100,000</span> of assessment in Year 1,
+            on top of the new mill rate.
+          </p>
+
+          <div className="mt-8 mb-10">
+            <BarCompare
+              bars={[
+                {
+                  label: `FY 2025–26  ·  before reval`,
+                  value: oldTax,
+                  display: formatMoney(oldTax),
+                  tone: 'neutral',
+                },
+                {
+                  label: `FY 2026–27  ·  reval only`,
+                  value: newTax,
+                  display: formatMoney(newTax),
+                  tone: 'neutral',
+                },
+                {
+                  label: `FY 2027–28  ·  reval + bond Y1`,
+                  value: combined2728Tax,
+                  display: formatMoney(combined2728Tax),
+                  tone: 'up',
+                },
+              ]}
+            />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-            <div className="rounded-xl bg-white border border-slate-200 py-5 px-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Year-1 Bond Charge
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-amber-700">
-                {formatMoney(bondY1)}
-              </p>
-              <p className="text-xs text-slate-400 mt-1">
-                per year, starting FY 2027–28
-              </p>
-            </div>
-            <div className="rounded-xl bg-white border border-slate-200 py-5 px-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                FY 2027–28 Total Tax
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-slate-800">
-                {formatMoney(combined2728Tax)}
-              </p>
-              <p className="text-xs text-slate-400 mt-1">
-                new mill rate + bond Y1
-              </p>
-            </div>
-            <div className="rounded-xl bg-rose-50 border border-rose-200 py-5 px-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
-                Two-Year Change
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-rose-700">
-                {formatSignedMoney(combinedDelta)}
-              </p>
-              <p className="text-xs mt-1 font-medium text-rose-600">
-                {formatSignedPct(combinedDeltaPct)} vs. FY 2025–26
-              </p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <StatCard
+              label="Year-1 Bond Charge"
+              value={formatMoney(bondY1)}
+              caption="per year, FY 2027–28"
+              tone="up"
+            />
+            <StatCard
+              label="FY 2027–28 Total Tax"
+              value={formatMoney(combined2728Tax)}
+              caption="new mill rate + bond Y1"
+            />
+            <StatCard
+              label="Two-Year Change"
+              value={formatSignedMoney(combinedDelta)}
+              caption={`${formatSignedPct(combinedDeltaPct)} vs. FY 2025–26`}
+              tone="up"
+            />
           </div>
-        </motion.section>
+        </section>
 
         {/* Caveat */}
-        <motion.aside
-          className="rounded-2xl border border-slate-300 bg-slate-100/70 p-5 sm:p-6 text-sm text-slate-700 leading-relaxed"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.4 }}
-        >
-          <p className="font-semibold text-slate-900 mb-2">
-            What this doesn&apos;t include
-          </p>
-          <p>
-            These figures do <span className="font-semibold">not</span> include
-            any further increases in the town or school operating budgets. In
-            FY 2026–27, the Board of Finance cut the proposed town budget from{' '}
-            <span className="font-semibold">+12.29%</span> down to{' '}
-            <span className="font-semibold">+3.80%</span>. That level of
-            cutting may not be possible in FY 2027–28. The Region 15 ADM
-            formula also reset Middlebury&apos;s share of the FY 2026–27
-            increase to roughly <span className="font-semibold">10%</span>{' '}
-            (against its 33.13% standing obligation); this is a one-year
-            outcome and is not guaranteed to recur.
-          </p>
-        </motion.aside>
+        <Callout title="What this estimate does not include">
+          Further increases to the town or school operating budgets. In
+          FY 2026–27, the Board of Finance cut the proposed town budget
+          from <span className="font-semibold">+12.29%</span> down to{' '}
+          <span className="font-semibold">+3.80%</span>; that level of
+          cutting may not be possible in FY 2027–28. The Region 15 ADM
+          formula also reset Middlebury&apos;s share of the FY 2026–27
+          increase to roughly <span className="font-semibold">10%</span>,
+          against its 33.13% standing obligation; a one-year outcome that
+          is not guaranteed to recur.
+        </Callout>
 
-        {/* About the Numbers */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65, duration: 0.4 }}
-        >
+        {/* About the numbers */}
+        <div className="mt-16 sm:mt-20">
           <AboutTheNumbers />
-        </motion.div>
+        </div>
       </div>
     </main>
   );
