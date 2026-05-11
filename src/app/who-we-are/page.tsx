@@ -4,7 +4,7 @@ import Image from "next/image";
 export const metadata = {
     title: "Who are we? | Middlebury Taxpayers",
     description:
-        "Learn who we are and why we’re advocating for responsible commercial development to protect Middlebury homeowners.",
+        "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M Region 15 school bond affect property tax bills, and advocates for a broader commercial tax base.",
 };
 
 export default function WhoWeArePage() {
@@ -33,10 +33,13 @@ export default function WhoWeArePage() {
             <section className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-10 sm:py-12">
                 <div className="space-y-8 text-[15px] leading-relaxed text-gray-900">
                     <p>
-                        Property owners who are concerned with the impact on taxes in
-                        Middlebury without new commercial development. Residential taxpayers
-                        will bear almost all of the tax increases due to the rising costs of
-                        schools and services in the town of Middlebury.
+                        Middlebury Taxpayers is a group of property owners tracking how
+                        the 2025 revaluation and the $224 million Region 15 school bond
+                        will affect property tax bills in town. With residential property
+                        now over 90% of the Grand List, most future cost increases will
+                        fall directly on homeowners. We publish the numbers, follow
+                        decisions at Town Hall and the Region 15 board, and advocate for
+                        a broader commercial tax base to reduce the pressure on residents.
                     </p>
 
                     <section>

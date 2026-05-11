@@ -77,7 +77,7 @@ export default function HeroSection() {
                                     className="text-xs sm:text-sm font-semibold uppercase tracking-[0.25em] text-yellow-300/90 mb-3 text-center sm:text-left"
                                     variants={itemVariants}
                                 >
-                                    Middlebury Lower Taxes Alliance
+                                    Middlebury Taxpayers
                                 </motion.p>
 
                                 {/* Headline + intro */}
@@ -93,7 +93,8 @@ export default function HeroSection() {
                                     className="text-base sm:text-xl text-white/85 mb-10 max-w-2xl text-center sm:text-left leading-relaxed"
                                     variants={itemVariants}
                                 >
-                                    Without new commercial development, homeowners will pay the price.
+                                    The 2025 revaluation moved your tax bill. The $224 million
+                                    Region 15 school bond will move it again starting in 2027.
                                 </motion.p>
 
                                 {/* The Problem */}
@@ -104,27 +105,29 @@ export default function HeroSection() {
                                 >
                                     <h2 id="problem-heading" className={sectionHeadingClass}>
                                         {accentBar}
-                                        The Problem
+                                        Where Things Stand
                                     </h2>
                                     <ul className={bulletClass}>
                                         <li>
-                                            Residential property values are{' '}
-                                            <Stat>up 40–50%</Stat> since 2020 Revaluation.
+                                            The October 2025 revaluation raised the average
+                                            Middlebury home’s value by <Stat>35.4%</Stat> and
+                                            the average tax bill by <Stat>10.4%</Stat>.
                                         </li>
                                         <li>
-                                            Commercial property values are falling, with many worth
-                                            less than five years ago.
+                                            Residential property is now{' '}
+                                            <Stat>over 90%</Stat> of the Grand List. There is
+                                            almost no commercial base left to absorb new town
+                                            and school costs.
                                         </li>
                                         <li>
-                                            After the 2025 revaluation, in the years ahead, close to{' '}
-                                            <Stat>95% of Middlebury’s tax base</Stat> could come
-                                            from homeowners. That means the tax burden shifts
-                                            directly onto you.
+                                            The mill rate reset from <Stat>32.52</Stat> to{' '}
+                                            <Stat>26.56</Stat>, but home values rose faster, so
+                                            most homeowners still pay more in FY 2026–27.
                                         </li>
                                     </ul>
                                 </motion.section>
 
-                                {/* The Costs Keep Rising */}
+                                {/* What's coming */}
                                 <motion.section
                                     className="mb-7"
                                     variants={itemVariants}
@@ -132,27 +135,34 @@ export default function HeroSection() {
                                 >
                                     <h2 id="costs-heading" className={sectionHeadingClass}>
                                         {accentBar}
-                                        The Costs Keep Rising
+                                        What’s Coming Next
                                     </h2>
                                     <ul className={bulletClass}>
                                         <li>
-                                            Town expenses grow <Stat>5% every year</Stat>, mostly
-                                            school costs.
+                                            The FY 2026–27 town budget was first proposed at{' '}
+                                            <Stat>+12.29%</Stat>. The Board of Finance cut it
+                                            to <Stat>+3.80%</Stat>. Those kinds of cuts may
+                                            not be possible again in FY 2027–28.
                                         </li>
                                         <li>
-                                            A new or refurbished school will cost{' '}
-                                            <Stat>$80 to $100 million</Stat>, of which Middlebury
-                                            must cover about 30%.
+                                            Voters approved the <Stat>$224 million</Stat>{' '}
+                                            Region 15 construction bond on May 6, 2026.
+                                            Middlebury voted no (539 to 648), but Southbury’s
+                                            yes vote carried the result. Middlebury is on the
+                                            hook for its 33.13% share, about{' '}
+                                            <Stat>$49.2 million</Stat> over 30 years with
+                                            interest.
                                         </li>
                                         <li>
-                                            With no remaining surpluses or savings, taxes will
-                                            climb at least <Stat>5% annually</Stat>, and likely
-                                            more after 2025.
+                                            The bond adds about <Stat>$240 per $100,000</Stat>{' '}
+                                            of assessment per year starting FY 2027–28, peaking
+                                            near <Stat>$321 per $100,000</Stat> around
+                                            FY 2032–33.
                                         </li>
                                     </ul>
                                 </motion.section>
 
-                                {/* Why Commercial Development Matters */}
+                                {/* Why the tax base matters */}
                                 <motion.section
                                     className="mb-8"
                                     variants={itemVariants}
@@ -160,13 +170,15 @@ export default function HeroSection() {
                                 >
                                     <h2 id="why-heading" className={sectionHeadingClass}>
                                         {accentBar}
-                                        Why Commercial Development Matters
+                                        Why the Tax Base Matters
                                     </h2>
                                     <ul className={bulletClass}>
                                         <li className="flex flex-col sm:flex-row sm:items-center gap-2">
                                             <span>
-                                                Residential properties cost towns more than they pay
-                                                in taxes. (CT Farm Bureau Chart)
+                                                Residential property in CT consumes about{' '}
+                                                <Stat>$1.11</Stat> in services for every{' '}
+                                                <Stat>$1.00</Stat> in tax paid. Commercial
+                                                property pays in about <Stat>$0.26</Stat>.
                                             </span>
                                             <Link
                                                 href="/docs/median-cost-public-services.pdf"
@@ -179,65 +191,61 @@ export default function HeroSection() {
                                             </Link>
                                         </li>
 
-                                        <li>
-                                            Commercial properties generate a net surplus, helping
-                                            keep taxes lower for everyone.
+                                        <li className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                            <span>
+                                                A handful of recent commercial taxpayers, including{' '}
+                                                <Stat>764 Southford Road</Stat> and{' '}
+                                                <Stat>199 Benson Road</Stat>, won large
+                                                assessment cuts under the Pizzuto / Hartley
+                                                “8-3m” law in 2025, removing more than{' '}
+                                                <Stat>$349,000</Stat> in annual tax revenue.
+                                            </span>
+                                            <Link
+                                                href="/docs/commercial-taxpayers-assessments-taxes.pdf"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={pdfBtnClass}
+                                                aria-label="Open PDF: Commercial taxpayers, assessments and taxes owed"
+                                            >
+                                                View PDF
+                                            </Link>
                                         </li>
 
-                                        <li>
-                                            Two recently blocked warehouse projects alone would
-                                            have added:
-                                            <ul className="list-[circle] space-y-2 pl-5 mt-3 marker:text-yellow-300/70">
-                                                <li className="flex flex-col sm:flex-row sm:items-center gap-2">
-                                                    <span>
-                                                        <Stat>$2 million</Stat> in one-time fees
-                                                        (4× all permits collected last year).
-                                                    </span>
-                                                    <Link
-                                                        href="/docs/fees-last-12-months.pdf"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={pdfBtnClass}
-                                                        aria-label="Open PDF: All fees paid in the last 12 months"
-                                                    >
-                                                        View PDF
-                                                    </Link>
-                                                </li>
-
-                                                <li className="flex flex-col sm:flex-row sm:items-center gap-2">
-                                                    <span>
-                                                        <Stat>$2.2 million annually</Stat> in new
-                                                        tax revenue, more than half of what all
-                                                        commercial properties now pay.
-                                                    </span>
-                                                    <Link
-                                                        href="/docs/commercial-taxpayers-assessments-taxes.pdf"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={pdfBtnClass}
-                                                        aria-label="Open PDF: Commercial taxpayers, assessments and taxes owed"
-                                                    >
-                                                        View PDF
-                                                    </Link>
-                                                </li>
-                                            </ul>
+                                        <li className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                            <span>
+                                                Middlebury collected about{' '}
+                                                <Stat>$500,000</Stat> in permit fees in the
+                                                last 12 months. A single sizeable commercial
+                                                project can dwarf that number in one-time fees
+                                                alone.
+                                            </span>
+                                            <Link
+                                                href="/docs/fees-last-12-months.pdf"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={pdfBtnClass}
+                                                aria-label="Open PDF: All fees paid in the last 12 months"
+                                            >
+                                                View PDF
+                                            </Link>
                                         </li>
                                     </ul>
                                 </motion.section>
 
-                                {/* Bottom line — pulled out as a callout */}
+                                {/* Bottom line callout */}
                                 <motion.aside
                                     className="mb-8 border-l-4 border-yellow-300 bg-white/5 backdrop-blur-sm pl-4 sm:pl-5 pr-4 py-4 rounded-r-md"
                                     variants={itemVariants}
                                 >
                                     <p className="text-sm sm:text-base font-medium leading-relaxed text-white">
-                                        Without responsible new development, homeowners will carry
-                                        nearly the entire tax load, and property taxes will rise
-                                        year after year.
+                                        The 2025 revaluation already shifted more cost onto
+                                        homeowners. The $224 million bond shifts more starting
+                                        in 2027. Without a stronger commercial base, every
+                                        future budget increase falls squarely on residents.
                                     </p>
                                     <p className="mt-2 text-sm sm:text-base font-semibold leading-relaxed text-yellow-100">
-                                        Middlebury needs commercial growth now to protect its
-                                        residents and secure its future.
+                                        Run your numbers, then watch what the town and the
+                                        region do next.
                                     </p>
                                 </motion.aside>
 
@@ -250,7 +258,7 @@ export default function HeroSection() {
                                         href="/tax-impact"
                                         className="inline-flex items-center justify-center gap-2 rounded-md bg-sky-600 px-7 py-3 text-base font-semibold text-white no-underline shadow-lg shadow-sky-900/40 hover:bg-sky-500 hover:shadow-sky-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 transition"
                                     >
-                                        See Your Savings
+                                        See Your Tax Impact
                                         <span aria-hidden>→</span>
                                     </Link>
                                     <button

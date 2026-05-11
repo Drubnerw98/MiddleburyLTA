@@ -132,7 +132,7 @@ export default function HomePageClient() {
         <div className="relative z-10 rounded-xl border border-white/10 bg-gradient-to-br from-blue-900/30 via-blue-800/10 to-transparent backdrop-blur-md p-6 shadow-md space-y-4">
           <div>
             <h1 className="text-4xl font-serif font-semibold text-yellow-300 tracking-tight mb-2">
-              MLTA Tax Impact Center
+              Tax Impact Center
             </h1>
             <p className="text-gray-300 text-base leading-relaxed">
               A community-powered space for facts, updates, and civic discussion.

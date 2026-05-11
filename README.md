@@ -1,22 +1,26 @@
-# MiddleburyLTA
+# MiddleburyTaxpayers
 
-Public-facing site for the Middlebury Lower Taxes Alliance (MLTA). It
-explains why the town's tax base needs new commercial development and gives
-homeowners a calculator to estimate the personal impact of two specific
-projects that were blocked in 2024.
+Public-facing site for Middlebury Taxpayers, the resident group tracking
+how the 2025 revaluation and the $224M Region 15 school bond affect
+Middlebury property tax bills. The site hosts a calculator that estimates
+the personal impact, an "About the Numbers" facts list, curated press
+coverage, and a community discussion area.
 
-Live at <https://middleburylowertaxesalliance.com>.
+Live at <https://middleburytaxpayers.com>.
 
 ## What's here
 
-- **Landing page** lays out the case for commercial development and links
-  to town records (permit fees, commercial assessment rolls, the CT Farm
-  Bureau cost-of-services chart).
-- **Tax Impact Calculator** is an interactive slider that scales the modeled
-  2024 tax bill for the median Middlebury home to your home's value, and
-  shows the bill with vs. without the proposed development.
+- **Landing page** opens with the post-revaluation reality, the FY 2026–27
+  town budget, and the $224M Region 15 school bond, then explains why the
+  commercial tax base matters with linked source documents.
+- **Tax Impact Calculator** lets a homeowner enter their prior and new
+  assessments (or use the town-average increase to estimate the prior
+  value), then shows the FY 2026–27 revaluation impact and the FY 2027–28
+  bond impact layered on top.
+- **About the Numbers** is a flat facts list that admins can update
+  through the dashboard. Anchored on FY 2026–27 figures.
 - **Articles & Links** is a curated set of external coverage and source
-  documents.
+  documents, grouped by publication.
 - **Posts and comments** support community discussion with auth-gated
   posting and admin moderation.
 - **Admin dashboard** manages posts, comments, the About copy, the link
@@ -25,35 +29,51 @@ Live at <https://middleburylowertaxesalliance.com>.
 
 ## Tax calculator methodology
 
-The calculator anchors on a single base case for a $360,000 Middlebury home
-in 2024:
+The calculator centralizes every numeric constant in
+`src/app/tax-impact/constants.ts`, and every constant cites its source in
+a comment. The headline inputs:
 
-| Scenario                | Modeled annual tax bill |
-| ----------------------- | ----------------------- |
-| Without new development | $11,729                 |
-| With new development    | $10,692                 |
-| Savings per household   | $1,037 (about 8.84%)    |
+| Constant            | Value | Source                                             |
+| ------------------- | ----- | -------------------------------------------------- |
+| `OLD_MILL_RATE`     | 32.52 | FY 2025–26, set by the Board of Finance May 2025   |
+| `NEW_MILL_RATE`     | 26.56 | FY 2026–27, set by the Board of Finance May 2026   |
+| `BOND_Y1_PER_100K`  | 240   | Phoenix Advisors amortization schedule, March 2026 |
+| `BOND_PEAK_PER_100K`| 321   | Same source. Peak ca. FY 2032–33                   |
+| `AVG_VALUE_INCREASE`| 0.354 | October 2025 reval, 3,097 residential homes        |
 
-The "with development" scenario assumes the two specific projects (Southford
-Road and Straits Turnpike) had been built, contributing the new tax revenue
-documented in `public/docs/`.
+> Note on the mill rate: the 2026 ad PDFs say "26.46" in body text but
+> compute every dollar figure inside the same ads with 26.56. The "26.46"
+> is a typo. 26.56 is the source of truth and is cross-verified against
+> the published 764 Southford Road numbers ($81,354 / $3,063,060 = 26.559).
 
-For homes other than $360k, the bill scales linearly:
+The math, in one place:
 
 ```
-multiplier      = userHomeValue / 360_000
-taxWithoutDev   = 11_729 × multiplier
-taxWithDev      = 10_692 × multiplier
+oldTax        = oldAssessment × 32.52 / 1000        // FY 2025–26
+newTax        = newAssessment × 26.56 / 1000        // FY 2026–27
+bondY1        = (newAssessment / 100_000) × 240     // FY 2027–28 onward
+totalFY27_28  = newTax + bondY1
 ```
 
-Linear scaling is correct for Connecticut property tax math: a single mill
-rate is applied to a uniform-ratio assessment, so doubling the assessed
-value doubles the tax bill. As a consequence, **every household sees the
-same percentage savings (~8.84%)**. The dollar amount changes with home
-value but the rate does not. That's a feature of the model, not a bug.
+If the user does not have their pre-reval tax bill handy, a "use the town
+average" checkbox derives the prior assessment as
+`newAssessment / (1 + 0.354)`.
 
-If the constants need to be updated for a new revaluation or revised
-projection, edit them in `src/app/tax-impact/page.tsx`.
+Linear scaling is correct for Connecticut property tax math: a single
+mill rate is applied to a uniform-ratio assessment, so doubling the
+assessed value doubles the tax bill. The calculator never invents a
+non-linear curve.
+
+**Numeric checkpoints (verify after any constant change):**
+
+| New assessment | Year-1 bond charge |
+| -------------- | ------------------ |
+| $200,000       | $480               |
+| $394,296       | $946.31            |
+| $500,000       | $1,200             |
+
+To update for a future revaluation or rate change, edit
+`src/app/tax-impact/constants.ts` and re-run the checkpoints.
 
 ## Tech
 

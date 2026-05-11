@@ -73,14 +73,24 @@ export default function LinkManager() {
                 />
                 <input
                     type="text"
-                    placeholder="Source (e.g. CT Mirror)"
+                    list="source-suggestions"
+                    placeholder="Source (e.g. CT Insider)"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
                 />
+                {/* Canonical source values used by the public Articles page for
+                    grouping. Free-text is still allowed; anything that doesn't
+                    match one of these labels falls under the "Other" group. */}
+                <datalist id="source-suggestions">
+                    <option value="CT Insider" />
+                    <option value="Hartford Courant" />
+                    <option value="Bee-Intelligencer" />
+                    <option value="Republican-American" />
+                </datalist>
                 <input
                     type="text"
-                    placeholder="Date Published (e.g. 2024-05-12)"
+                    placeholder="Date Published (e.g. 2026-05-12)"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
                     value={datePublished}
                     onChange={(e) => setDatePublished(e.target.value)}
