@@ -17,7 +17,7 @@ const ads: Ad[] = [
     {
         title: "The Harsh Reality",
         summary:
-            "A side-by-side look at how the 2025 revaluation hit Yale Avenue homes versus how two commercial properties saw tax bills cut by 60-68% under the Pizzuto / Hartley “8-3m” law.",
+            "A side-by-side look at how the 2025 revaluation hit Yale Avenue homes versus how two commercial properties saw tax bills cut by 60-68% under the “8-3m” law.",
         href: "/docs/harsh-reality-may-2026.pdf",
     },
     {

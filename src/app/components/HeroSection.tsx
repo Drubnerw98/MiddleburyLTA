@@ -27,7 +27,7 @@ export default function HeroSection() {
                         </DisplayHeading>
                         <Lead className="mt-5">
                             The October 2025 revaluation already moved your tax bill.
-                            The $224 million Region 15 school construction bond,
+                            The $224 million for 2 new schools in Region 15,
                             approved May 6, will move it again starting FY 2027&ndash;28.
                             This site shows what that means for your home and why
                             the broader tax base matters.
@@ -86,10 +86,10 @@ export default function HeroSection() {
                     <section className="border-t border-rule pt-10 sm:pt-12 mt-14 sm:mt-20">
                         <Eyebrow tone="oxblood">What&rsquo;s coming next</Eyebrow>
                         <DisplayHeading level={2} as="h2" className="mt-3">
-                            The $224 million bond ahead.
+                            The $224 million for 2 new schools ahead.
                         </DisplayHeading>
                         <p className="font-sans text-base text-ink-soft mt-4 max-w-[60ch] leading-relaxed">
-                            Voters approved the Region 15 school construction bond on
+                            Voters approved 2 new schools in Region 15 on
                             May 6, 2026. The cost arrives in stages, starting with the
                             FY 2027&ndash;28 tax bills.
                         </p>
@@ -106,9 +106,9 @@ export default function HeroSection() {
                                 caption="Proposed vs. final, FY 2026–27"
                             />
                             <StatCard
-                                label="Bond Authorized"
+                                label="Schools Authorized"
                                 value="$224 million"
-                                caption="Region 15 construction bond"
+                                caption="Region 15 — 2 new schools"
                                 tone="up"
                             />
                             <StatCard
@@ -160,7 +160,7 @@ export default function HeroSection() {
                                         A handful of recent commercial taxpayers, including{' '}
                                         <span className="font-semibold">764 Southford Road</span> and{' '}
                                         <span className="font-semibold">199 Benson Road</span>,
-                                        won large assessment cuts under the Pizzuto / Hartley
+                                        won large assessment cuts under the
                                         &ldquo;8-3m&rdquo; law in 2025, removing more than{' '}
                                         <span className="font-semibold">$349,000</span> in
                                         annual tax revenue.
@@ -202,9 +202,10 @@ export default function HeroSection() {
                     {/* Closing callout */}
                     <Callout title="The argument, in one line" className="mt-14 sm:mt-20">
                         The 2025 revaluation already shifted more cost onto
-                        homeowners. The $224 million bond shifts more starting in
-                        2027. Without a stronger commercial base, every future
-                        budget increase falls squarely on residents.
+                        homeowners. The $224 million for 2 new schools shifts
+                        more starting in 2027. Without a stronger commercial
+                        base, every future budget increase falls squarely on
+                        residents.
                     </Callout>
 
                     {/* Closing CTA */}

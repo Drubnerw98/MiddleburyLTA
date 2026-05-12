@@ -49,21 +49,21 @@ const blocks: Block[] = [
     },
     {
         kind: "stat",
-        eyebrow: "The Bond",
+        eyebrow: "2 New Schools",
         stat: "$224 million",
-        body: "Voters approved the Region 15 construction bond on May 6, 2026. Middlebury voted NO (539 to 648); Southbury's YES vote (1,935 to 1,172) carried the combined result. Middlebury is on the hook for its 33.13% share, roughly $26.6M to $29.8M in principal, about $49.2M over 30 years with interest.",
+        body: "Voters approved 2 new schools in Region 15 on May 6, 2026. Middlebury voted NO (539 to 648); Southbury's YES vote (1,935 to 1,172) carried the combined result. Middlebury is on the hook for its 33.13% share, roughly $26.6M to $29.8M in principal, about $49.2M over 30 years with interest.",
     },
     {
         kind: "stat",
-        eyebrow: "Bond Tax Impact",
+        eyebrow: "Schools Tax Impact",
         stat: "$240 / $100k",
-        body: "Starting FY 2027–28, the bond adds roughly $240 per year per $100,000 of assessment in Year 1. The charge peaks near $321 per $100,000 around FY 2032–33.",
+        body: "Starting FY 2027–28, the new schools add roughly $240 per year per $100,000 of assessment in Year 1. The charge peaks near $321 per $100,000 around FY 2032–33.",
     },
     {
         kind: "quote",
         eyebrow: "Commercial Property",
         quote: "Two commercial properties cut more than $349,000 in annual tax revenue from Middlebury's base.",
-        body: "Most commercial values rose 10–15% in the revaluation, which generally meant lower commercial tax bills under the new mill rate. Two large exceptions, driven by the Pizzuto / Hartley “8-3m” law and related MSTA litigation: 764 Southford Road dropped 60% (about $129,954 per year), and 199 Benson Road dropped 68% (about $219,167 per year).",
+        body: "Most commercial values rose 10–15% in the revaluation, which generally meant lower commercial tax bills under the new mill rate. Two large exceptions, driven by the “8-3m” law and related MSTA litigation: 764 Southford Road dropped 60% (about $129,954 per year), and 199 Benson Road dropped 68% (about $219,167 per year).",
     },
     {
         kind: "stat",
@@ -124,7 +124,7 @@ export default function AboutTheNumbers() {
 
             <SourceLine className="mt-12 pt-6 border-t border-rule">
                 Figures based on the FY 2026–27 town budget, the October 2025
-                revaluation, and the May 6, 2026 Region 15 bond referendum.
+                revaluation, and the May 6, 2026 Region 15 referendum on 2 new schools.
             </SourceLine>
         </section>
     );

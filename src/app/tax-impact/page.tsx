@@ -75,7 +75,7 @@ export default function TaxImpactPage() {
           </DisplayHeading>
           <Lead className="mt-5">
             The October 2025 revaluation already changed your tax bill.
-            The $224 million school construction bond approved in May
+            The $224 million for 2 new schools approved in May
             will change it again starting FY 2027–28. Enter both
             assessments below to see the dollar change for your home.
           </Lead>
@@ -271,12 +271,12 @@ function Results({ oldAssessment, newAssessment, usingTownAvg }: ResultsProps) {
 
       {/* Step 2: Bond impact */}
       <section className="mb-16 sm:mb-20">
-        <Eyebrow tone="oxblood">Step Two · School Bond</Eyebrow>
+        <Eyebrow tone="oxblood">Step Two · 2 New Schools</Eyebrow>
         <DisplayHeading level={2} as="h2" className="mt-3">
-          The $224M school bond, year one.
+          The $224M for 2 new schools, year one.
         </DisplayHeading>
         <p className="font-sans text-sm text-ink-soft mt-3 max-w-[60ch]">
-          Voters approved the Region 15 construction bond on May 6, 2026. Starting
+          Voters approved 2 new schools in Region 15 on May 6, 2026. Starting
           FY 2027–28, it adds about <span className="tabular-nums">${BOND_Y1_PER_100K}</span>{' '}
           per <span className="tabular-nums">$100,000</span> of assessment in Year 1,
           on top of the new mill rate.
@@ -298,7 +298,7 @@ function Results({ oldAssessment, newAssessment, usingTownAvg }: ResultsProps) {
                 tone: 'neutral',
               },
               {
-                label: `FY 2027–28  ·  reval + bond Y1`,
+                label: `FY 2027–28  ·  reval + schools Y1`,
                 value: combined2728Tax,
                 display: formatMoney(combined2728Tax),
                 tone: 'up',
@@ -309,7 +309,7 @@ function Results({ oldAssessment, newAssessment, usingTownAvg }: ResultsProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <StatCard
-            label="Year-1 Bond Charge"
+            label="Year-1 Schools Charge"
             value={formatMoney(bondY1)}
             caption="per year, FY 2027–28"
             tone="up"
@@ -317,7 +317,7 @@ function Results({ oldAssessment, newAssessment, usingTownAvg }: ResultsProps) {
           <StatCard
             label="FY 2027–28 Total Tax"
             value={formatMoney(combined2728Tax)}
-            caption="new mill rate + bond Y1"
+            caption="new mill rate + schools Y1"
           />
           <StatCard
             label="Two-Year Change"

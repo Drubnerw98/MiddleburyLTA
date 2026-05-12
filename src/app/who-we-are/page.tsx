@@ -5,7 +5,7 @@ import { DisplayHeading, Eyebrow, Lead } from "@/app/components/ui";
 export const metadata = {
     title: "Who are we? | Middlebury Taxpayers",
     description:
-        "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M Region 15 school bond affect property tax bills, and advocates for a broader commercial tax base.",
+        "Middlebury Taxpayers tracks how the 2025 revaluation and the $224M for 2 new schools in Region 15 affect property tax bills, and advocates for a broader commercial tax base.",
 };
 
 export default function WhoWeArePage() {
@@ -20,8 +20,8 @@ export default function WhoWeArePage() {
                     </DisplayHeading>
                     <Lead className="mt-5">
                         Middlebury Taxpayers is a group of property owners tracking
-                        how the 2025 revaluation and the $224 million Region 15
-                        school bond will affect property tax bills in town. With
+                        how the 2025 revaluation and the $224 million for 2 new
+                        schools in Region 15 will affect property tax bills in town. With
                         residential property now over 90% of the Grand List, most
                         future cost increases will fall directly on homeowners.
                         We publish the numbers, follow decisions at Town Hall and
