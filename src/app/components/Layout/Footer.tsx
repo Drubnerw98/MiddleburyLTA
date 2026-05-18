@@ -12,6 +12,22 @@ export default function Footer() {
                         <p className="font-sans text-xs text-muted mt-1">
                             © {new Date().getFullYear()}. All rights reserved.
                         </p>
+                        <p className="font-sans text-xs text-muted mt-2">
+                            Built by{" "}
+                            <a
+                                href="https://github.com/Drubnerw98"
+                                className="underline hover:text-oxblood transition-colors"
+                            >
+                                Will Drubner
+                            </a>{" "}
+                            ·{" "}
+                            <a
+                                href="https://github.com/Drubnerw98/MiddleburyLTA"
+                                className="underline hover:text-oxblood transition-colors"
+                            >
+                                Source
+                            </a>
+                        </p>
                     </div>
 
                     <nav className="flex flex-wrap gap-x-6 gap-y-2 font-sans text-sm">

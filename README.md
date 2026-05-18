@@ -1,5 +1,10 @@
 # MiddleburyTaxpayers
 
+Production Next.js 15 + Firebase site for a civic-advocacy group with real
+users. Includes a tax-impact calculator with cited numeric constants,
+edge-middleware-gated admin, Zod-validated server actions, and
+session-cookie auth with explicit revocation on logout.
+
 Public-facing site for Middlebury Taxpayers, the resident group tracking
 how the 2025 revaluation and the $224M Region 15 school bond affect
 Middlebury property tax bills. The site hosts a calculator that estimates
