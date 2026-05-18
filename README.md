@@ -13,6 +13,8 @@ coverage, and a community discussion area.
 
 Live at <https://middleburytaxpayers.com>.
 
+![Middlebury Taxpayers — landing page hero](./screenshots/hero.png)
+
 ## What's here
 
 - **Landing page** opens with the post-revaluation reality, the FY 2026–27
@@ -36,6 +38,8 @@ Live at <https://middleburytaxpayers.com>.
   allowlist.
 
 ## Tax calculator methodology
+
+![Tax Impact Calculator — both assessment inputs filled](./screenshots/tax-impact-calculator.png)
 
 The calculator centralizes every numeric constant in
 `src/app/tax-impact/constants.ts`, and every constant cites its source in
