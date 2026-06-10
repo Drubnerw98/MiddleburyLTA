@@ -4,10 +4,7 @@ import { z } from "zod";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUserIfAdmin } from "../../../lib/auth";
 import { adminDb } from "../../../lib/firebase-admin";
-
-// Allowlist URL schemes so a stored "javascript:" link can't become a
-// stored-XSS sink when LinkPreview renders the href.
-const SAFE_URL_SCHEMES = new Set(["https:", "http:", "mailto:"]);
+import { SAFE_URL_SCHEMES } from "../../../lib/safeUrl";
 
 const LinkSchema = z.object({
     title: z.string().trim().min(1, "Title is required.").max(300),
@@ -19,7 +16,7 @@ const LinkSchema = z.object({
         .refine((raw) => {
             try {
                 const u = new URL(raw);
-                return SAFE_URL_SCHEMES.has(u.protocol);
+                return SAFE_URL_SCHEMES.includes(u.protocol);
             } catch {
                 return false;
             }

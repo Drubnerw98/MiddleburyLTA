@@ -2,20 +2,7 @@
 
 import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
-
-// URL scheme allowlist for any link rendered out of markdown. Default
-// react-markdown allows javascript:/data: URLs through as anchor hrefs,
-// which is a stored-XSS sink when posts are admin-authored and rendered
-// to the public. Empty string makes react-markdown drop the href.
-const SAFE_URL_SCHEMES = ["https:", "http:", "mailto:"];
-function safeUrl(url: string): string {
-  try {
-    const parsed = new URL(url, "https://placeholder.invalid/");
-    return SAFE_URL_SCHEMES.includes(parsed.protocol) ? url : "";
-  } catch {
-    return "";
-  }
-}
+import { safeUrl } from "../../../../lib/safeUrl";
 
 interface PostDisplayProps {
   title: string;

@@ -3,6 +3,7 @@
 import BackToTopButton from "@/app/components/BackToTopButton";
 import { LinkItem } from "@/types/link";
 import { DisplayHeading, Eyebrow, Lead, SourceLine } from "@/app/components/ui";
+import { safeUrl } from "../../../lib/safeUrl";
 
 interface Props {
     links: LinkItem[];
@@ -84,7 +85,7 @@ export default function AnimatedArticles({ links }: Props) {
                                         >
                                             <h2 className="font-serif text-xl sm:text-2xl font-semibold leading-[1.25] text-ink">
                                                 <a
-                                                    href={link.url}
+                                                    href={safeUrl(link.url) || undefined}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="hover:text-oxblood transition-colors"
@@ -103,7 +104,7 @@ export default function AnimatedArticles({ links }: Props) {
                                             )}
                                             <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 mt-4">
                                                 <a
-                                                    href={link.url}
+                                                    href={safeUrl(link.url) || undefined}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
