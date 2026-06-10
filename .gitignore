@@ -61,4 +61,7 @@ firebase-debug.*.log
 Thumbs.db
 
 # stray files
-file-list.txt.claude/
+file-list.txt
+
+# Claude Code local settings
+.claude/
