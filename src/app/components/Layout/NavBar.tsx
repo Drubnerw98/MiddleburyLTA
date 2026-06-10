@@ -47,6 +47,9 @@ export default function NavBar() {
               <Link href="/tax-impact" className={navLinkClass}>
                 Tax Impact
               </Link>
+              <Link href="/bond-impact" className={navLinkClass}>
+                School Bond
+              </Link>
               <Link href="/articles" className={navLinkClass}>
                 Articles
               </Link>
@@ -124,6 +127,13 @@ export default function NavBar() {
                   onClick={() => setMenuOpen(false)}
               >
                 Tax Impact
+              </Link>
+              <Link
+                  href="/bond-impact"
+                  className={`${navLinkClass} block`}
+                  onClick={() => setMenuOpen(false)}
+              >
+                School Bond
               </Link>
               <Link
                   href="/articles"

@@ -31,7 +31,7 @@ export default function TaxImpactSlider({
         <Slider.Track className="relative h-[3px] w-full grow overflow-hidden bg-rule-strong">
           <Slider.Range className="absolute h-full bg-ink" />
         </Slider.Track>
-        <Slider.Thumb className="block h-5 w-5 rounded-full border border-ink bg-bone shadow-[0_1px_2px_rgba(11,23,38,0.2)] transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-oxblood focus-visible:ring-offset-2 focus-visible:ring-offset-paper" />
+        <Slider.Thumb className="block h-7 w-7 sm:h-5 sm:w-5 rounded-full border border-ink bg-bone shadow-[0_1px_2px_rgba(11,23,38,0.2)] transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-oxblood focus-visible:ring-offset-2 focus-visible:ring-offset-paper" />
       </Slider.Root>
       <div className="flex justify-between font-sans text-xs text-muted px-0.5 tabular-nums">
         <span>${ASSESSMENT_MIN.toLocaleString()}</span>

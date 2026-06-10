@@ -38,6 +38,12 @@ export const ASSESSMENT_STEP = 1_000;
 // Source: Town Assessor's office summary, Spring 2026.
 export const DEFAULT_NEW_ASSESSMENT = 394_000;
 
+// Exact town-average home assessment used in the 2026 ads' bond figures
+// ($946/yr year 1, $1,266/yr peak). Distinct from DEFAULT_NEW_ASSESSMENT,
+// which is the rounded slider default.
+// Source: "The Harsh Reality" ad, May 2026; Town Assessor's office summary.
+export const AVG_HOME_ASSESSMENT = 394_296;
+
 // Reference checkpoint — 10 Yale St, Middlebury.
 // A real-world outlier: appreciated 46.4% in the 2025 reval (vs. the
 // 35.4% town average), so the old "use town average" auto-estimate

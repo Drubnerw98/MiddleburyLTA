@@ -56,7 +56,7 @@ export default function AssessmentInput({ label, helper, value, onChange }: Prop
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-baseline gap-3 flex-wrap">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-baseline sm:gap-3">
         <div>
           <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
             {label}

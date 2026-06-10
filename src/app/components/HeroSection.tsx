@@ -118,6 +118,13 @@ export default function HeroSection() {
                                 tone="up"
                             />
                         </div>
+
+                        <Link
+                            href="/bond-impact"
+                            className="inline-block mt-8 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
+                        >
+                            How the bond charge works, year by year &rarr;
+                        </Link>
                     </section>
 
                     {/* Section: Why the tax base matters */}

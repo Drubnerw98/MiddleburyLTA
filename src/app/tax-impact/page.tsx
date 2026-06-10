@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import AssessmentInput from './AssessmentInput';
+import { buildShareQuery, parseAssessmentParam } from './urlState';
 import AboutTheNumbers from '@/app/components/AboutTheNumbers';
 import {
   AVG_VALUE_INCREASE,
@@ -63,6 +65,52 @@ export default function TaxImpactPage() {
   const oldAssessment = useTownAvg ? derivedOldAssessment : manualOldAssessment;
 
   const hasResults = newAssessment !== null && oldAssessment !== null;
+
+  // Restore state from a shared link on first mount. Read from
+  // window.location instead of useSearchParams so this client page
+  // doesn't need a Suspense boundary.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedNew = parseAssessmentParam(params.get('new'));
+    if (sharedNew !== null) setNewAssessment(sharedNew);
+    if (params.get('avg') === '1') {
+      setUseTownAvg(true);
+    } else {
+      const sharedPrior = parseAssessmentParam(params.get('prior'));
+      if (sharedPrior !== null) setManualOldAssessment(sharedPrior);
+    }
+  }, []);
+
+  // Mirror current inputs into the URL so the address bar is always a
+  // shareable link. replaceState keeps Back/Forward history clean.
+  useEffect(() => {
+    const query = buildShareQuery(newAssessment, manualOldAssessment, useTownAvg);
+    window.history.replaceState(null, '', `${window.location.pathname}${query}`);
+  }, [newAssessment, manualOldAssessment, useTownAvg]);
+
+  // Results render below the fold; without a cue, entering numbers
+  // appears to do nothing. Scroll to them when they first appear.
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const hadResults = useRef(false);
+  useEffect(() => {
+    if (hasResults && !hadResults.current) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      resultsRef.current?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }
+    hadResults.current = hasResults;
+  }, [hasResults]);
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied — it opens with your numbers filled in.');
+    } catch {
+      toast.error('Could not copy. Copy the address bar URL instead.');
+    }
+  };
 
   return (
     <main className="bg-paper min-h-screen">
@@ -173,11 +221,22 @@ export default function TaxImpactPage() {
             </p>
           </div>
         ) : (
-          <Results
-            oldAssessment={oldAssessment!}
-            newAssessment={newAssessment!}
-            usingTownAvg={useTownAvg}
-          />
+          <div ref={resultsRef} className="scroll-mt-6">
+            <Results
+              oldAssessment={oldAssessment!}
+              newAssessment={newAssessment!}
+              usingTownAvg={useTownAvg}
+            />
+            <div className="mt-10 text-center">
+              <button
+                type="button"
+                onClick={copyShareLink}
+                className="inline-flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-oxblood hover:text-ink underline underline-offset-4 transition-colors"
+              >
+                Copy a link to these numbers
+              </button>
+            </div>
+          </div>
         )}
 
         {/* About the numbers */}
